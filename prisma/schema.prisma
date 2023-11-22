@@ -21,3 +21,8 @@ model User {
   registered_at  DateTime @default(now())
   last_logged_at DateTime @default(now())
 }
+
+model EmailVerify {
+  id   String @id @default(uuid())
+  user String
+}
