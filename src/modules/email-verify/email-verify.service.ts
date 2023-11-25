@@ -45,6 +45,10 @@ export class EmailVerifyService {
     }
 
     async sendVerificationLetter(userId: string, email: string): Promise<void> {
+        const user = await this.usersService.findById(userId);
+        if (user.email_verified) {
+            return
+        }
         let emailVerify = await this.findByUserId(userId);
         if (!emailVerify) {
             emailVerify = await this.create(userId);
