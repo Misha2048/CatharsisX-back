@@ -11,7 +11,7 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   app.enableCors({
-    origin: ['*'],
+    origin: true,
     methods: ['*'],
     allowedHeaders: ['*'],
     credentials: true,
