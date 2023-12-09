@@ -1,13 +1,17 @@
-import { 
-    SignUpRequestDto,
-    LoginRequestDto,
-    UserResponseDto,
-    TokensResponseDto
-} from "./users";
+import {
+  SignUpRequestDto,
+  LoginRequestDto,
+  UserResponseDto,
+  TokensResponseDto,
+  ForgotPasswordRequestDto,
+  NewPasswordRequestDto,
+} from './users';
 
-export { 
-    SignUpRequestDto,
-    LoginRequestDto,
-    UserResponseDto,
-    TokensResponseDto
-}
+export {
+  SignUpRequestDto,
+  LoginRequestDto,
+  UserResponseDto,
+  TokensResponseDto,
+  ForgotPasswordRequestDto,
+  NewPasswordRequestDto,
+};
