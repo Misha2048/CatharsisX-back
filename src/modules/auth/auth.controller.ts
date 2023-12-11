@@ -66,12 +66,9 @@ export class AuthController {
   }
 
   @Post('new-password/:id')
-  NewPasswordRequest(
-    @Param('id') id: string,
-    @Body() newPasswordRequestDto: NewPasswordRequestDto,
-  ) {
+  NewPasswordRequest(@Body() newPasswordRequestDto: NewPasswordRequestDto) {
     return this.authService.NewPasswordRequest(
-      id,
+      newPasswordRequestDto.id,
       newPasswordRequestDto.password,
     );
   }

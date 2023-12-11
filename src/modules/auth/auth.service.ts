@@ -108,9 +108,15 @@ export class AuthService {
 
   async ForgotPasswordRequest(email: string): Promise<string> {
     const user = await this.usersService.findByEmail(email);
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
-    const emailVerify = await this.emailVerifyService.create(user.id);
+    let emailVerify = await this.emailVerifyService.findByUserId(user.id);
+
+    if (!emailVerify) {
+      emailVerify = await this.emailVerifyService.create(user.id);
+    }
 
     const Url = `${process.env.EMAIL_HOST}/password-reset/${emailVerify.id}`;
     await this.mailService.sendMail({
