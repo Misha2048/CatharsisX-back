@@ -106,7 +106,7 @@ export class AuthService {
     };
   }
 
-  async ForgotPasswordRequest(email: string): Promise<{ message: string }> {
+  async sendForgotPasswordLetter(email: string): Promise<{ message: string }> {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
       throw new NotFoundException('No user found with this email');
@@ -128,7 +128,7 @@ export class AuthService {
     return { message: 'Password reset link has been sent to your email.' };
   }
 
-  async NewPasswordRequest(
+  async setNewPassword(
     id: string,
     password: string,
   ): Promise<{ message: string }> {

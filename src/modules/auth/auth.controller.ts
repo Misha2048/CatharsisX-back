@@ -57,17 +57,17 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  ForgotPasswordRequest(
+  sendForgotPasswordLetter(
     @Body() forgotPasswordRequestDto: ForgotPasswordRequestDto,
   ) {
-    return this.authService.ForgotPasswordRequest(
+    return this.authService.sendForgotPasswordLetter(
       forgotPasswordRequestDto.email,
     );
   }
 
-  @Post('new-password/:id')
-  NewPasswordRequest(@Body() newPasswordRequestDto: NewPasswordRequestDto) {
-    return this.authService.NewPasswordRequest(
+  @Post('new-password')
+  setNewPassword(@Body() newPasswordRequestDto: NewPasswordRequestDto) {
+    return this.authService.setNewPassword(
       newPasswordRequestDto.id,
       newPasswordRequestDto.password,
     );
