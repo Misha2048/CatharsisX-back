@@ -106,10 +106,10 @@ export class AuthService {
     };
   }
 
-  async ForgotPasswordRequest(email: string): Promise<string> {
+  async ForgotPasswordRequest(email: string): Promise<{ message: string }> {
     const user = await this.usersService.findByEmail(email);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('No user found with this email');
     }
 
     let emailVerify = await this.emailVerifyService.findByUserId(user.id);
@@ -125,10 +125,13 @@ export class AuthService {
       html: `To reset your password click here: <a href="${Url}">${Url}</a>`,
     });
 
-    return 'Password reset link has been sent to your email.';
+    return { message: 'Password reset link has been sent to your email.' };
   }
 
-  async NewPasswordRequest(id: string, password: string): Promise<string> {
+  async NewPasswordRequest(
+    id: string,
+    password: string,
+  ): Promise<{ message: string }> {
     const emailVerify = await this.emailVerifyService.findById(id);
     if (!emailVerify) throw new NotFoundException('Invalid id');
 
@@ -140,6 +143,6 @@ export class AuthService {
 
     await this.emailVerifyService.deleteById(id);
 
-    return 'Password has been reset successfully.';
+    return { message: 'Password has been reset successfully.' };
   }
 }
