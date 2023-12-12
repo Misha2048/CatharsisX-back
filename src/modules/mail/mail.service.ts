@@ -4,16 +4,18 @@ import { openStdin } from 'process';
 
 @Injectable()
 export class MailService {
-    constructor(private readonly mailerService: MailerService) {}
+  constructor(private readonly mailerService: MailerService) {}
 
-    sendMail(opts: {
-        to: string,
-        subject: string,
-        html: string
-    }) {
-        this.mailerService.sendMail({
-            ...opts,
-            from: process.env.EMAIL_USER, 
-        });
+  async sendMail(opts: { to: string; subject: string; html: string }) {
+    try {
+      await this.mailerService.sendMail({
+        ...opts,
+        from: process.env.EMAIL_USER,
+      });
+      console.log('Email sent successfully.');
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw new Error('Failed to send email.');
     }
+  }
 }

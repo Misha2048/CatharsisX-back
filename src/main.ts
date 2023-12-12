@@ -13,7 +13,7 @@ async function bootstrap() {
   app.enableCors({
     origin: true,
     credentials: true,
-  })
+  });
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
