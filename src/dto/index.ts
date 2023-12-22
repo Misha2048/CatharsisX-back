@@ -15,3 +15,21 @@ export {
   ForgotPasswordRequestDto,
   NewPasswordRequestDto,
 };
+
+
+import {
+  UpdateStillageRequestDto,
+}from './stillages';
+
+export {
+  UpdateStillageRequestDto,
+};
+
+
+import {
+  UpdateStillageResponseDto,
+} from './stillages';
+
+export {
+  UpdateStillageResponseDto,
+};
