@@ -6,6 +6,7 @@ import { AuthModule } from '../auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from '../mail/mail.module';
 import { EmailVerifyModule } from '../email-verify/email-verify.module';
+import { StillagesModule } from '../stillages/stillages.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { EmailVerifyModule } from '../email-verify/email-verify.module';
     AuthModule,
     MailModule,
     EmailVerifyModule,
+    StillagesModule,
     ConfigModule.forRoot(),
   ],
   controllers: [AppController],
