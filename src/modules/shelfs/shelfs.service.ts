@@ -9,25 +9,25 @@ export class ShelfsService {
     findShelfsRequestDto: FindShelfsRequestDto,
     userId: string,
   ): Promise<Shelf[]> {
+    const filter = Object.entries(findShelfsRequestDto).reduce(
+      (filters, [key, value]) => {
+        if (value !== undefined && value !== '') {
+          filters[key] =
+            key === 'stillage'
+              ? { id: value }
+              : typeof value === 'string'
+              ? { contains: value }
+              : { gte: new Date(value) };
+        }
+        return filters;
+      },
+      {},
+    );
+
     return await client.shelf.findMany({
       where: {
         user: { id: userId },
-        stillage: findShelfsRequestDto.stillage
-          ? { id: findShelfsRequestDto.stillage }
-          : undefined,
-        name: findShelfsRequestDto.name
-          ? { contains: findShelfsRequestDto.name }
-          : undefined,
-        last_upload_at: findShelfsRequestDto.last_upload_at
-          ? {
-              gte: new Date(findShelfsRequestDto.last_upload_at),
-            }
-          : undefined,
-        created_at: findShelfsRequestDto.created_at
-          ? {
-              gte: new Date(findShelfsRequestDto.created_at),
-            }
-          : undefined,
+        ...filter,
       },
     });
   }
