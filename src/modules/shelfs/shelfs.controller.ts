@@ -2,7 +2,7 @@ import { Controller, Get, Query, UseGuards, Request } from '@nestjs/common';
 import { ShelfsService } from './shelfs.service';
 import { FindShelfsRequestDto } from 'src/dto/shelfs';
 import { AccessTokenGuard } from 'src/guards';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Shelfs')
 @Controller('shelfs')
@@ -14,6 +14,7 @@ export class ShelfsController {
     type: FindShelfsRequestDto,
     isArray: true,
   })
+  @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
   @Get()
   async findShelfs(
