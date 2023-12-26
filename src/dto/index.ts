@@ -27,9 +27,9 @@ export {
 
 
 import {
-  UpdateStillageResponseDto,
-} from './stillages';
+  UpdateShelfResponseDto,
+} from './shelfs';
 
 export {
-  UpdateStillageResponseDto,
+  UpdateShelfResponseDto,
 };
