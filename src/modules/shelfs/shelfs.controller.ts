@@ -2,7 +2,7 @@ import { Controller, Get, Query, UseGuards, Request, Patch, Param, Body, NotFoun
 import { ShelfsService } from './shelfs.service';
 import { FindShelfsRequestDto, UpdateShelfRequestDto, UpdateShelfResponseDto } from 'src/dto/shelfs';
 import { AccessTokenGuard } from 'src/guards';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { IShelfUpdateError } from '../../interfaces/IShelf';
 
 @ApiTags('Shelfs')
@@ -10,6 +10,12 @@ import { IShelfUpdateError } from '../../interfaces/IShelf';
 export class ShelfsController {
   constructor(private /* readonly */ shelfsService: ShelfsService) {}
 
+  @ApiOkResponse({
+    description: 'Search Shelfs ',
+    type: FindShelfsRequestDto,
+    isArray: true,
+  })
+  @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
   @Get()
   async findShelfs(
@@ -25,7 +31,6 @@ export class ShelfsController {
     type: UpdateShelfRequestDto,
     isArray: false,
   })
-
   @Patch(':id')
   @UseGuards(AccessTokenGuard)
   async updateShelf(@Param('id') id: string, @Body() updateShelfRequest: UpdateShelfRequestDto, @Request() req){
@@ -51,3 +56,11 @@ export class ShelfsController {
     return 'error_message' in object;
   }
 }
+/*
+function ApiOkResponse(arg0: { description: string; type: typeof FindShelfsRequestDto; isArray: boolean; }): (target: ShelfsController, propertyKey: "findShelfs", descriptor: TypedPropertyDescriptor<(findShelfsRequestDto: FindShelfsRequestDto, req: any) => Promise<{ id: string; userId: string; stillageId: string; name: string; last_upload_at: Date; created_at: Date; }[]>>) => void | TypedPropertyDescriptor<...> {
+  throw new Error('Function not implemented.');
+}
+function ApiBearerAuth(): (target: ShelfsController, propertyKey: "findShelfs", descriptor: TypedPropertyDescriptor<(findShelfsRequestDto: FindShelfsRequestDto, req: any) => Promise<{ id: string; userId: string; stillageId: string; name: string; last_upload_at: Date; created_at: Date; }[]>>) => void | TypedPropertyDescriptor<...> {
+  throw new Error('Function not implemented.');
+}
+*/
