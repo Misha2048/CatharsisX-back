@@ -40,7 +40,7 @@ export class ShelfsController {
     const shelf = await this.shelfsService.updateShelfs(id, req.user['id'], opts);
     
     if(this.instanceOfUpdateShelfError(shelf)){
-      console.log("Error message:\n\"" + shelf.error_message + "\"");
+      console.log("Error message:" + shelf.error_message);
       throw new NotFoundException('Shelf not found (check terminal for more detailed information)');
     }
 
