@@ -11,17 +11,19 @@ datasource db {
 }
 
 model User {
-  id             String     @id @default(uuid())
+  id             String      @id @default(uuid())
   first_name     String
   last_name      String
   email          String
   password       String
   refresh_token  String?
-  email_verified Boolean    @default(false)
-  registered_at  DateTime   @default(now())
-  last_logged_at DateTime   @default(now())
+  email_verified Boolean     @default(false)
+  registered_at  DateTime    @default(now())
+  last_logged_at DateTime    @default(now())
   stillages      Stillage[]
   Shelf          Shelf[]
+  university     University? @relation(fields: [university_id], references: [id])
+  university_id  String?
 }
 
 model EmailVerify {
@@ -37,7 +39,7 @@ model Stillage {
   created_at     DateTime @default(now())
   last_upload_at DateTime @default(now())
   shelf          Shelf[]
-  File           File[]
+  file           File[]
 }
 
 model Shelf {
@@ -68,4 +70,5 @@ model File {
 model University {
   id   String @id @default(uuid())
   name String
+  user User[]
 }
