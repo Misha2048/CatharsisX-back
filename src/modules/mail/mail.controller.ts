@@ -5,5 +5,5 @@ import { MailService } from './mail.service';
 @ApiTags('Mail')
 @Controller('mail')
 export class MailController {
-    constructor(private readonly mailService: MailService) {}
+  constructor(private readonly mailService: MailService) {}
 }

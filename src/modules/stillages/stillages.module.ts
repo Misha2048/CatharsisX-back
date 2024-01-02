@@ -4,6 +4,6 @@ import { StillagesService } from './stillages.service';
 
 @Module({
   controllers: [StillagesController],
-  providers: [StillagesService]
+  providers: [StillagesService],
 })
 export class StillagesModule {}

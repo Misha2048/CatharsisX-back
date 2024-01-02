@@ -1,7 +1,4 @@
-import { AccessTokenStrategy } from "./accessToken";
-import { RefreshTokenStrategy } from "./refreshToken";
+import { AccessTokenStrategy } from './accessToken';
+import { RefreshTokenStrategy } from './refreshToken';
 
-export {
-    AccessTokenStrategy,
-    RefreshTokenStrategy
-};
+export { AccessTokenStrategy, RefreshTokenStrategy };
