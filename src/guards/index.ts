@@ -1,7 +1,4 @@
-import { AccessTokenGuard } from "./AccessTokenGuard";
-import { RefreshTokenGuard } from "./RefreshTokenGuard";
+import { AccessTokenGuard } from './AccessTokenGuard';
+import { RefreshTokenGuard } from './RefreshTokenGuard';
 
-export {
-    AccessTokenGuard,
-    RefreshTokenGuard
-}
+export { AccessTokenGuard, RefreshTokenGuard };

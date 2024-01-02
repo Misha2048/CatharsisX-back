@@ -16,20 +16,10 @@ export {
   NewPasswordRequestDto,
 };
 
+import { UpdateStillageRequestDto } from './stillages';
 
-import {
-  UpdateStillageRequestDto,
-}from './stillages';
+export { UpdateStillageRequestDto };
 
-export {
-  UpdateStillageRequestDto,
-};
+import { UpdateStillageResponseDto } from './stillages';
 
-
-import {
-  UpdateStillageResponseDto,
-} from './stillages';
-
-export {
-  UpdateStillageResponseDto,
-};
+export { UpdateStillageResponseDto };

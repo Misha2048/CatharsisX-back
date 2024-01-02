@@ -37,6 +37,7 @@ model Stillage {
   created_at     DateTime @default(now())
   last_upload_at DateTime @default(now())
   shelf          Shelf[]
+  File           File[]
 }
 
 model Shelf {
@@ -48,4 +49,23 @@ model Shelf {
   name           String
   last_upload_at DateTime @default(now())
   created_at     DateTime @default(now())
+  file           File[]
+}
+
+model File {
+  id           String   @id @default(uuid())
+  filename     String
+  text_content String
+  content      Bytes
+  size         Int
+  uploaded_at  DateTime @default(now())
+  shelf        Shelf    @relation(fields: [shelf_id], references: [id])
+  shelf_id     String
+  stillage     Stillage @relation(fields: [stillage_Id], references: [id])
+  stillage_Id  String
+}
+
+model University {
+  id   String @id @default(uuid())
+  name String
 }
