@@ -38,6 +38,7 @@ export class StillagesController {
     return this.stillagesService.findStillages(
       findStillagesRequestDto,
       req.user['id'],
+      req.user['university_id'],
     );
   }
 
@@ -62,6 +63,7 @@ export class StillagesController {
     const stillage = await this.stillagesService.updateStillage(
       id,
       req.user['id'],
+      req.user['university_id'],
       opts,
     );
     if (!stillage) {

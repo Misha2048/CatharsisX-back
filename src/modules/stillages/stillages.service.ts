@@ -8,6 +8,7 @@ export class StillagesService {
   async findStillages(
     findStillagesRequestDto: FindStillagesRequestDto,
     userId: string,
+    university_id: string,
   ): Promise<Stillage[]> {
     const filter = Object.entries(findStillagesRequestDto).reduce(
       (filters, [key, value]) => {
@@ -25,6 +26,7 @@ export class StillagesService {
     return await client.stillage.findMany({
       where: {
         user: { id: userId },
+        university: { id: university_id },
         ...filter,
       },
     });
@@ -33,6 +35,7 @@ export class StillagesService {
   async updateStillage(
     id: string,
     userId: string,
+    university_id: string,
     opts: any,
   ): Promise<Stillage | null | undefined> {
     try {
@@ -40,6 +43,7 @@ export class StillagesService {
         where: {
           id,
           userId,
+          university_id,
         },
         data: opts,
       });
