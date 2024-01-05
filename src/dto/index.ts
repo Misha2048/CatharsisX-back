@@ -16,9 +16,9 @@ export {
   NewPasswordRequestDto,
 };
 
-import { UpdateStillageRequestDto } from './stillages';
+import { UpdateStillageRequestDto, UpdateStillageResponseDto } from './stillages';
 
-export { UpdateStillageRequestDto };
+export { UpdateStillageRequestDto, UpdateStillageResponseDto };
 
 import { UpdateShelfResponseDto } from './shelfs';
 
