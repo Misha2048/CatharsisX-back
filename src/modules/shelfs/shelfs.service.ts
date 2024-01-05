@@ -1,9 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FindShelfsRequestDto } from 'src/dto/shelfs';
 import client from 'src/db/prismaClient';
 import { Shelf } from '@prisma/client';
 import { IShelfUpdateError } from '../../interfaces/IShelf';
-
 
 @Injectable()
 export class ShelfsService {
@@ -34,37 +33,43 @@ export class ShelfsService {
     });
   }
 
-  async updateShelfs(id: string, userId: string, opts: any): Promise <Shelf | IShelfUpdateError>{
+  async updateShelfs(
+    id: string,
+    userId: string,
+    opts: any,
+  ): Promise<Shelf | IShelfUpdateError> {
     opts.stillageId = opts.stillage;
     delete opts.stillage;
-    
-    try{
+
+    try {
       return await client.shelf.update({
-        where:{
+        where: {
           id,
-          userId
+          userId,
         },
         data: opts,
-      })
-    }
-    catch(error){
-      
-      // Slice (start_position: ) of the stock error message
-      // start_position = beginning of this phrase ("return await client.shelf.update(")
-      // (index of this phrase inside the string), because it repeats in each error message,
-      // and adding the length of this part,
-      // so we need to "slice" a text after "return await client.shelf.update(" part
-      const textErrorMessage = error.message.slice(
-        error.message.indexOf("return await client.shelf.update(") +
-        "return await client.shelf.update(".length
-      )
-      
-      const updateError: IShelfUpdateError = {
-        error_message: textErrorMessage,
-        //error_status_code: "404"
-      }
-      
+      });
+    } catch (error) {
+      const errorCodes = {
+        P2025: {
+          error_message: error,
+          error_status_code: 404,
+          error_user_message: 'Shelf or stillage not found',
+        },
+        P2003: {
+          error_message: error,
+          error_status_code: 404,
+          error_user_message: 'Stillage not found',
+        },
+      };
+
+      const updateError: IShelfUpdateError = errorCodes[error.code];
+
       return updateError;
     }
+  }
+
+  instanceOfUpdateShelfError(object: any): object is IShelfUpdateError {
+    return 'error_message' in object;
   }
 }
