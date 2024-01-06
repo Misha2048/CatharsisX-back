@@ -5,6 +5,6 @@ import { ShelfsController } from './shelfs.controller';
 
 @Module({
   controllers: [ShelfsController],
-  providers: [ShelfsService]
+  providers: [ShelfsService],
 })
 export class ShelfsModule {}

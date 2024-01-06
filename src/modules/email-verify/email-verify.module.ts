@@ -8,6 +8,6 @@ import { UsersModule } from '../users/users.module';
   imports: [MailModule, UsersModule],
   providers: [EmailVerifyService],
   exports: [EmailVerifyService],
-  controllers: [EmailVerifyController]
+  controllers: [EmailVerifyController],
 })
 export class EmailVerifyModule {}
