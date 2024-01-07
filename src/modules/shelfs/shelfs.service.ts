@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FindShelfsRequestDto } from 'src/dto/shelfs';
 import client from 'src/db/prismaClient';
 import { Shelf } from '@prisma/client';
+import { IShelfUpdateError } from '../../interfaces/IShelf';
 
 @Injectable()
 export class ShelfsService {
@@ -30,5 +31,43 @@ export class ShelfsService {
         ...filter,
       },
     });
+  }
+
+  async updateShelfs(
+    id: string,
+    userId: string,
+    opts: any,
+  ): Promise<Shelf | IShelfUpdateError> {
+    opts.stillageId = opts.stillage;
+    delete opts.stillage;
+
+    // Declaring error codes from Prisma
+    const errorCodes = {
+      P2025: {
+        error_status_code: 404,
+        error_user_message: 'Shelf or stillage not found',
+      },
+      P2003: {
+        error_status_code: 404,
+        error_user_message: 'Stillage not found',
+      },
+    };
+
+    try {
+      return await client.shelf.update({
+        where: {
+          id,
+          userId,
+        },
+        data: opts,
+      });
+    } catch (error) {
+      const updateError: IShelfUpdateError = errorCodes[error.code];
+      return updateError;
+    }
+  }
+
+  instanceOfUpdateShelfError(object: any): object is IShelfUpdateError {
+    return 'error_status_code' in object;
   }
 }
