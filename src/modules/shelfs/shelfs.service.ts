@@ -41,6 +41,18 @@ export class ShelfsService {
     opts.stillageId = opts.stillage;
     delete opts.stillage;
 
+    // Declaring error codes from Prisma
+    const errorCodes = {
+      P2025: {
+        error_status_code: 404,
+        error_user_message: 'Shelf or stillage not found',
+      },
+      P2003: {
+        error_status_code: 404,
+        error_user_message: 'Stillage not found',
+      },
+    };
+
     try {
       return await client.shelf.update({
         where: {
@@ -50,26 +62,12 @@ export class ShelfsService {
         data: opts,
       });
     } catch (error) {
-      const errorCodes = {
-        P2025: {
-          error_message: error,
-          error_status_code: 404,
-          error_user_message: 'Shelf or stillage not found',
-        },
-        P2003: {
-          error_message: error,
-          error_status_code: 404,
-          error_user_message: 'Stillage not found',
-        },
-      };
-
       const updateError: IShelfUpdateError = errorCodes[error.code];
-
       return updateError;
     }
   }
 
   instanceOfUpdateShelfError(object: any): object is IShelfUpdateError {
-    return 'error_message' in object;
+    return 'error_status_code' in object;
   }
 }

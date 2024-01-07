@@ -16,7 +16,10 @@ export {
   NewPasswordRequestDto,
 };
 
-import { UpdateStillageRequestDto, UpdateStillageResponseDto } from './stillages';
+import {
+  UpdateStillageRequestDto,
+  UpdateStillageResponseDto,
+} from './stillages';
 
 export { UpdateStillageRequestDto, UpdateStillageResponseDto };
 

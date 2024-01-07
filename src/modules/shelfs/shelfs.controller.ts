@@ -59,10 +59,7 @@ export class ShelfsController {
     @Res() res,
   ) {
     // Checking is new stillage id belong to the user by its id
-    if (
-      updateShelfRequest.stillage !== undefined &&
-      updateShelfRequest.stillage !== null
-    ) {
+    if (updateShelfRequest.stillage) {
       const isStillageExist = await this.stillageService.findStillageById(
         updateShelfRequest.stillage,
         req.user['id'],
@@ -76,7 +73,7 @@ export class ShelfsController {
     // for an updating shelf's model
     const opts = {};
     for (const [key, value] of Object.entries(updateShelfRequest)) {
-      if (value !== undefined || value !== null) {
+      if (value !== undefined) {
         opts[key] = value;
       }
     }
@@ -94,8 +91,6 @@ export class ShelfsController {
 
     // Checking is shelf contain an UpdateShelfError interface (error message)
     if (this.shelfsService.instanceOfUpdateShelfError(shelf)) {
-      console.log(shelf.error_message);
-
       if (shelf.error_status_code) {
         return res.status(shelf.error_status_code).json({
           statusCode: shelf.error_status_code,
