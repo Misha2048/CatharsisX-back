@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { FindShelfsRequestDto } from 'src/dto/shelfs';
 import client from 'src/db/prismaClient';
 import { Shelf } from '@prisma/client';
@@ -69,5 +69,26 @@ export class ShelfsService {
 
   instanceOfUpdateShelfError(object: any): object is IShelfUpdateError {
     return 'error_status_code' in object;
+  }
+
+  async deleteShelfs(id: string, userId: string): Promise<Shelf> {
+    const shelf = await client.shelf.findUnique({ where: { id } });
+
+    if (!shelf) {
+      throw new NotFoundException('Shelf not found');
+    }
+
+    await client.file.deleteMany({
+      where: {
+        shelf_id: id,
+      },
+    });
+
+    return await client.shelf.delete({
+      where: {
+        id,
+        userId,
+      },
+    });
   }
 }
