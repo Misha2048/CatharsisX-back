@@ -12,7 +12,4 @@ export class UploadFileRequest {
 
   @ApiProperty()
   shelf_id: string;
-
-  @ApiProperty()
-  stillage_id: string;
 }
