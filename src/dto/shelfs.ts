@@ -46,5 +46,4 @@ export class UpdateShelfResponseDto {
 
   @ApiProperty()
   created_at: Date;
-
 }

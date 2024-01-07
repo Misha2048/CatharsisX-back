@@ -47,4 +47,20 @@ export class StillagesService {
       return undefined;
     }
   }
+
+  async findStillageById(
+    id: string,
+    userId: string,
+  ): Promise<Stillage | undefined> {
+    try {
+      return await client.stillage.findFirstOrThrow({
+        where: {
+          id,
+          userId,
+        },
+      });
+    } catch (error) {
+      return undefined;
+    }
+  }
 }
