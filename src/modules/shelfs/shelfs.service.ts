@@ -4,7 +4,6 @@ import client from 'src/db/prismaClient';
 import { Shelf } from '@prisma/client';
 import { IShelfUpdateError } from '../../interfaces/IShelf';
 
-
 @Injectable()
 export class ShelfsService {
   async findShelfs(
@@ -70,5 +69,26 @@ export class ShelfsService {
 
   instanceOfUpdateShelfError(object: any): object is IShelfUpdateError {
     return 'error_status_code' in object;
+  }
+
+  async deleteShelfs(id: string, userId: string): Promise<Shelf> {
+    const shelf = await client.shelf.findUnique({ where: { id } });
+
+    if (!shelf) {
+      throw new NotFoundException('Shelf not found');
+    }
+
+    await client.file.deleteMany({
+      where: {
+        shelf_id: id,
+      },
+    });
+
+    return await client.shelf.delete({
+      where: {
+        id,
+        userId,
+      },
+    });
   }
 }

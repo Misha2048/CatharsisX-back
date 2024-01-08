@@ -8,6 +8,8 @@ import { MailModule } from '../mail/mail.module';
 import { EmailVerifyModule } from '../email-verify/email-verify.module';
 import { StillagesModule } from '../stillages/stillages.module';
 import { ShelfsModule } from '../shelfs/shelfs.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { FilesModule } from '../files/files.module';
 
 @Module({
   imports: [
@@ -18,6 +20,10 @@ import { ShelfsModule } from '../shelfs/shelfs.module';
     StillagesModule,
     ShelfsModule,
     ConfigModule.forRoot(),
+    MulterModule.register({
+      dest: './uploads',
+    }),
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

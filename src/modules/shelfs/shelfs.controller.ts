@@ -11,6 +11,7 @@ import {
   ImATeapotException,
   BadRequestException,
   NotFoundException,
+  Delete,
 } from '@nestjs/common';
 import { ShelfsService } from './shelfs.service';
 import {
@@ -105,5 +106,13 @@ export class ShelfsController {
     }
 
     return res.json(new UpdateShelfResponseDto(shelf));
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Delete(':id')
+  async deleteShelfs(@Param('id') id: string, @Request() req) {
+    await this.shelfsService.deleteShelfs(id, req.user['id']);
+    return { message: 'Shelf and related files deleted successfully' };
   }
 }
