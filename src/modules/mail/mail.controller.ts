@@ -17,10 +17,8 @@ export class MailController {
   async sendNewUniversityProposalLetter(
     @Body() addUniversityRequest: AddUniversityRequestDto,
   ) {
-    const adminMail = process.env.EMAIL_ADMIN;
-
     this.mailService.sendMail({
-      to: adminMail,
+      to: process.env.EMAIL_ADMIN,
       subject: 'New Univerity Proposal',
       html: `<p style = "color: black;">A proposal for the new univerisity is <b>${addUniversityRequest.name}</b></p>`,
     });
