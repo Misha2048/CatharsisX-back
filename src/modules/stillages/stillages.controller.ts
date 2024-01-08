@@ -8,6 +8,7 @@ import {
   UseGuards,
   Get,
   Query,
+  Delete,
 } from '@nestjs/common';
 import {
   FindStillagesRequestDto,
@@ -17,7 +18,7 @@ import {
 import { AccessTokenGuard } from 'src/guards';
 import { StillagesService } from './stillages.service';
 import { Request } from 'express';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Stillages')
 @Controller('stillages')
@@ -68,5 +69,13 @@ export class StillagesController {
       throw new NotFoundException('Stillage not found');
     }
     return new UpdateStillageResponseDto(stillage);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Delete(':id')
+  async deleteStillage(@Param('id') id: string, @Req() req: Request) {
+    await this.stillagesService.deleteStillage(id, req.user['id']);
+    return { message: 'stillage deleted successfully' };
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import client from '../../db/prismaClient';
 import { Stillage } from '@prisma/client';
 import { FindStillagesRequestDto } from 'src/dto/stillages';
@@ -62,5 +62,33 @@ export class StillagesService {
     } catch (error) {
       return undefined;
     }
+  }
+
+  async deleteStillage(id: string, userId: string): Promise<Stillage> {
+    const stillage = await client.stillage.findUnique({ where: { id } });
+
+    if (!stillage) {
+      throw new NotFoundException('Stillage not found');
+    }
+
+    await client.file.deleteMany({
+      where: {
+        shelf_id: id,
+      },
+    });
+
+    await client.shelf.deleteMany({
+      where: {
+        stillageId: id,
+        userId,
+      },
+    });
+
+    return await client.stillage.delete({
+      where: {
+        id,
+        userId,
+      },
+    });
   }
 }
