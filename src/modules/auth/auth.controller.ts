@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { Request } from 'express';
 import { SignUpRequestDto, LoginRequestDto, TokensResponseDto } from 'src/dto';

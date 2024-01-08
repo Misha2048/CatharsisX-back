@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { openStdin } from 'process';
 
 @Injectable()
 export class MailService {

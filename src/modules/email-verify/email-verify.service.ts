@@ -63,7 +63,7 @@ export class EmailVerifyService {
   }
 
   async verify_email(userId: string): Promise<string> {
-    let emailVerify = await this.findById(userId);
+    const emailVerify = await this.findById(userId);
     if (!emailVerify) {
       return process.env.EMAIL_VERIFY_CALLBACK_URL;
     }

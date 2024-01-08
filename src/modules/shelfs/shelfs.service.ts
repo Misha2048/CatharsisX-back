@@ -1,9 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FindShelfsRequestDto } from 'src/dto/shelfs';
 import client from 'src/db/prismaClient';
 import { Shelf } from '@prisma/client';
 import { IShelfUpdateError } from '../../interfaces/IShelf';
-
 
 @Injectable()
 export class ShelfsService {
