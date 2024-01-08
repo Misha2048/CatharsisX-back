@@ -26,3 +26,7 @@ export { UpdateStillageRequestDto, UpdateStillageResponseDto };
 import { UpdateShelfResponseDto } from './shelfs';
 
 export { UpdateShelfResponseDto };
+
+import { AddUniversityRequestDto } from './mails';
+
+export { AddUniversityRequestDto };
