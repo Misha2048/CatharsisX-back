@@ -11,19 +11,20 @@ datasource db {
 }
 
 model User {
-  id             String      @id @default(uuid())
+  id             String          @id @default(uuid())
   first_name     String
   last_name      String
   email          String
   password       String
   refresh_token  String?
-  email_verified Boolean     @default(false)
-  registered_at  DateTime    @default(now())
-  last_logged_at DateTime    @default(now())
+  email_verified Boolean         @default(false)
+  registered_at  DateTime        @default(now())
+  last_logged_at DateTime        @default(now())
   stillages      Stillage[]
   Shelf          Shelf[]
-  university     University? @relation(fields: [university_id], references: [id])
+  university     University?     @relation(fields: [university_id], references: [id])
   university_id  String?
+  likedStillage  LikedStillage[]
 }
 
 model EmailVerify {
@@ -32,16 +33,17 @@ model EmailVerify {
 }
 
 model Stillage {
-  id             String     @id @default(uuid())
-  user           User       @relation(fields: [userId], references: [id])
+  id             String          @id @default(uuid())
+  user           User            @relation(fields: [userId], references: [id])
   userId         String
   name           String
-  created_at     DateTime   @default(now())
-  last_upload_at DateTime   @default(now())
+  created_at     DateTime        @default(now())
+  last_upload_at DateTime        @default(now())
   shelf          Shelf[]
   file           File[]
-  university     University @relation(fields: [university_id], references: [id])
+  university     University      @relation(fields: [university_id], references: [id])
   university_id  String
+  likedStillage  LikedStillage[]
 
   @@index([university_id])
 }
@@ -76,4 +78,12 @@ model University {
   name     String
   user     User[]
   stillage Stillage[]
+}
+
+model LikedStillage {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  stillage   Stillage @relation(fields: [stillageId], references: [id])
+  stillageId String
 }

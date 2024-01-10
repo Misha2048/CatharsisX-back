@@ -9,9 +9,11 @@ import {
   Get,
   Query,
   Delete,
+  Post,
 } from '@nestjs/common';
 import {
   FindStillagesRequestDto,
+  GetLikedStillagesRequestDTO,
   UpdateStillageRequestDto,
   UpdateStillageResponseDto,
 } from 'src/dto/stillages';
@@ -77,5 +79,30 @@ export class StillagesController {
   async deleteStillage(@Param('id') id: string, @Req() req: Request) {
     await this.stillagesService.deleteStillage(id, req.user['id']);
     return { message: 'stillage deleted successfully' };
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Patch('like/:id')
+  async toggleLikeStillage(@Param('id') id: string, @Req() req: Request) {
+    return await this.stillagesService.toggleLikeStillage(id, req.user['id']);
+  }
+
+  @ApiOkResponse({
+    description: 'Get liked stillages ',
+    type: GetLikedStillagesRequestDTO,
+    isArray: true,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Get('liked')
+  async getLikedStillages(
+    @Query() getLikedStillagesRequestDTO: GetLikedStillagesRequestDTO,
+    @Req() req: Request,
+  ) {
+    return this.stillagesService.getLikedStillages(
+      getLikedStillagesRequestDTO,
+      req.user['id'],
+    );
   }
 }

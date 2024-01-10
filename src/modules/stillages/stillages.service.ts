@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import client from '../../db/prismaClient';
-import { Stillage } from '@prisma/client';
-import { FindStillagesRequestDto } from 'src/dto/stillages';
+import { LikedStillage, Stillage } from '@prisma/client';
+import {
+  FindStillagesRequestDto,
+  GetLikedStillagesRequestDTO,
+} from 'src/dto/stillages';
 
 @Injectable()
 export class StillagesService {
@@ -94,5 +97,50 @@ export class StillagesService {
         userId,
       },
     });
+  }
+
+  async toggleLikeStillage(
+    stillageId: string,
+    userId: string,
+  ): Promise<LikedStillage> {
+    const stillage = await client.stillage.findUnique({
+      where: { id: stillageId },
+    });
+    if (!stillage) {
+      throw new NotFoundException(`Stillage with not found`);
+    }
+
+    const likedStillage = await client.likedStillage.findFirst({
+      where: {
+        stillageId: stillageId,
+        userId: userId,
+      },
+    });
+
+    if (likedStillage) {
+      return await client.likedStillage.delete({
+        where: { id: likedStillage.id },
+      });
+    } else {
+      return await client.likedStillage.create({
+        data: {
+          user: { connect: { id: userId } },
+          stillage: { connect: { id: stillageId } },
+        },
+      });
+    }
+  }
+
+  async getLikedStillages(
+    getLikedStillagesRequestDTO: GetLikedStillagesRequestDTO,
+    userId: string,
+  ): Promise<LikedStillage[]> {
+    return await client.$queryRaw`
+      SELECT * FROM "LikedStillage"
+      WHERE "userId" = ${userId}
+      LIMIT ${Number(getLikedStillagesRequestDTO.limit)} OFFSET ${Number(
+      getLikedStillagesRequestDTO.offset,
+    )};
+    `;
   }
 }
