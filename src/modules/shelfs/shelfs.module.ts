@@ -3,7 +3,6 @@ import { ShelfsService } from './shelfs.service';
 import { ShelfsController } from './shelfs.controller';
 import { StillagesModule } from '../stillages/stillages.module';
 
-
 @Module({
   controllers: [ShelfsController],
   providers: [ShelfsService],

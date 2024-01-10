@@ -10,6 +10,7 @@ import { StillagesModule } from '../stillages/stillages.module';
 import { ShelfsModule } from '../shelfs/shelfs.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { FilesModule } from '../files/files.module';
+import { UniversitiesModule } from '../universities/universities.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { FilesModule } from '../files/files.module';
       dest: './uploads',
     }),
     FilesModule,
+    UniversitiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
