@@ -13,12 +13,14 @@ export class ShelfsService {
     const filter = Object.entries(findShelfsRequestDto).reduce(
       (filters, [key, value]) => {
         if (value !== undefined && value !== '') {
-          filters[key] =
-            key === 'stillage'
-              ? { id: value }
-              : typeof value === 'string'
-              ? { contains: value }
-              : { gte: new Date(value) };
+          if (key === 'stillage') {
+            filters[key] = { id: value };
+          } else if (key === 'last_upload_at' || key === 'created_at') {
+            const dates = value.split(',');
+            filters[key] = { gte: new Date(dates[0]), lte: new Date(dates[1]) };
+          } else {
+            filters[key] = { contains: value };
+          }
         }
         return filters;
       },

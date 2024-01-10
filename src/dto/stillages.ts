@@ -11,10 +11,10 @@ export class FindStillagesRequestDto {
   name?: string;
 
   @ApiProperty()
-  last_upload_at?: Date;
+  last_upload_at?: Date[];
 
   @ApiProperty()
-  created_at?: Date;
+  created_at?: Date[];
 }
 
 export class UpdateStillageResponseDto {

@@ -8,7 +8,9 @@ import {
 import { FilesService } from './files.service';
 import { UploadFileRequest } from 'src/dto/file';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Files')
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
