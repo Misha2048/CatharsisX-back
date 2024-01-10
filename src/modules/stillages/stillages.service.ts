@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import client from '../../db/prismaClient';
-import { LikedStillage, Stillage } from '@prisma/client';
+import { Stillage } from '@prisma/client';
 import {
   FindStillagesRequestDto,
   GetLikedStillagesRequestDTO,
@@ -99,45 +99,45 @@ export class StillagesService {
     });
   }
 
-  async toggleLikeStillage(
-    stillageId: string,
-    userId: string,
-  ): Promise<LikedStillage> {
+  async toggleLikeStillage(stillageId: string, userId: string): Promise<void> {
+    const user = await client.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+
     const stillage = await client.stillage.findUnique({
       where: { id: stillageId },
     });
     if (!stillage) {
-      throw new NotFoundException(`Stillage with not found`);
+      throw new NotFoundException(`Stillage not found`);
     }
 
-    const likedStillage = await client.likedStillage.findFirst({
-      where: {
-        stillageId: stillageId,
-        userId: userId,
-      },
-    });
-
-    if (likedStillage) {
-      return await client.likedStillage.delete({
-        where: { id: likedStillage.id },
-      });
+    if (user.liked.includes(stillageId)) {
+      user.liked = user.liked.filter((id) => id !== stillageId);
     } else {
-      return await client.likedStillage.create({
-        data: {
-          user: { connect: { id: userId } },
-          stillage: { connect: { id: stillageId } },
-        },
-      });
+      user.liked.push(stillageId);
     }
+
+    await client.user.update({
+      where: { id: userId },
+      data: { liked: user.liked },
+    });
   }
 
   async getLikedStillages(
     getLikedStillagesRequestDTO: GetLikedStillagesRequestDTO,
     userId: string,
-  ): Promise<LikedStillage[]> {
+  ): Promise<Stillage[]> {
+    const user = await client.user.findUnique({
+      where: { id: userId },
+      select: { liked: true },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     return await client.$queryRaw`
-      SELECT * FROM "LikedStillage"
-      WHERE "userId" = ${userId}
+      SELECT * FROM "Stillage"
+      WHERE "id" = ANY (${user.liked || []})
       LIMIT ${Number(getLikedStillagesRequestDTO.limit)} OFFSET ${Number(
       getLikedStillagesRequestDTO.offset,
     )};
