@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import client from '../../db/prismaClient';
-import { University } from '@prisma/client';
 
 @Injectable()
 export class UniversitiesService {
-  async findUniversities(): Promise<University[]> {
-    return await client.university.findMany({
+  async findUniversities(): Promise<string[]> {
+    const universities = await client.university.findMany({
       orderBy: {
         name: 'asc',
       },
     });
+
+    const universitiesListStr = universities.map(function (university) {
+      return university['name'];
+    });
+
+    return universitiesListStr;
   }
 }

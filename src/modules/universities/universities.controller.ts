@@ -12,8 +12,9 @@ export class UniversitiesController {
     type: String,
     isArray: true,
   })
-  @Get('get-universities')
+  @Get()
   async findUniversities() {
+    // return ;
     return await this.universityService.findUniversities();
   }
 }
