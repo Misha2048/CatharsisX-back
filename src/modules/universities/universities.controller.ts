@@ -14,7 +14,6 @@ export class UniversitiesController {
   })
   @Get()
   async findUniversities() {
-    // return ;
     return await this.universityService.findUniversities();
   }
 }
