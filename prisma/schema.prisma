@@ -77,9 +77,3 @@ model University {
   user     User[]
   stillage Stillage[]
 }
-
-model PropertyStatus {
-  id       String     @id @default(uuid())
-  name     String
-  stillage Stillage[]
-}
