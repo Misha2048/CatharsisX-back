@@ -11,6 +11,7 @@ import { ShelfsModule } from '../shelfs/shelfs.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { FilesModule } from '../files/files.module';
 import { UniversitiesModule } from '../universities/universities.module';
+import { CatalogModule } from '../catalog/catalog.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UniversitiesModule } from '../universities/universities.module';
     }),
     FilesModule,
     UniversitiesModule,
+    CatalogModule,
   ],
   controllers: [AppController],
   providers: [AppService],
