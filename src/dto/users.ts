@@ -13,6 +13,9 @@ export class SignUpRequestDto {
 
   @ApiProperty()
   password: string;
+
+  @ApiProperty()
+  university_id: string;
 }
 
 export class LoginRequestDto {
