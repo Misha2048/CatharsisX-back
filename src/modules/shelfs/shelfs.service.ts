@@ -69,12 +69,25 @@ export class ShelfsService {
     }
   }
 
+  async findShelfsById(id: string, userId: string): Promise<Shelf | undefined> {
+    try {
+      return await client.shelf.findFirstOrThrow({
+        where: {
+          id,
+          userId,
+        },
+      });
+    } catch (error) {
+      return undefined;
+    }
+  }
+
   instanceOfUpdateShelfError(object: any): object is IShelfUpdateError {
     return 'error_status_code' in object;
   }
 
   async deleteShelfs(id: string, userId: string): Promise<Shelf> {
-    const shelf = await client.shelf.findUnique({ where: { id } });
+    const shelf = await this.findShelfsById(id, userId);
 
     if (!shelf) {
       throw new NotFoundException('Shelf not found');

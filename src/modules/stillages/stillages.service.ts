@@ -72,7 +72,7 @@ export class StillagesService {
   }
 
   async deleteStillage(id: string, userId: string): Promise<Stillage> {
-    const stillage = await client.stillage.findUnique({ where: { id } });
+    const stillage = await this.findStillageById(id, userId);
 
     if (!stillage) {
       throw new NotFoundException('Stillage not found');
