@@ -23,6 +23,7 @@ export class UpdateStillageResponseDto {
     this.name = stillage.name;
     this.created_at = stillage.created_at;
     this.last_upload_at = stillage.last_upload_at;
+    this.property_status = stillage.property_status;
   }
 
   @ApiProperty()
@@ -36,4 +37,7 @@ export class UpdateStillageResponseDto {
 
   @ApiProperty()
   last_upload_at: Date;
+
+  @ApiProperty()
+  property_status: string;
 }

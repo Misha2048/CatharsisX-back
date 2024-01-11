@@ -9,6 +9,7 @@ import {
   Get,
   Query,
   Delete,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   FindStillagesRequestDto,
@@ -77,5 +78,23 @@ export class StillagesController {
   async deleteStillage(@Param('id') id: string, @Req() req: Request) {
     await this.stillagesService.deleteStillage(id, req.user['id']);
     return { message: 'stillage deleted successfully' };
+  }
+
+  @ApiOkResponse({
+    description: "Updating Stillage's model property status",
+    type: UpdateStillageResponseDto,
+    isArray: false,
+  })
+  @Patch('property-status/:id')
+  @UseGuards(AccessTokenGuard)
+  async togglePropertyStatus(@Param('id') id: string, @Req() req: Request) {
+    const stillage = await this.stillagesService.updatePropertyStatus(
+      id,
+      req.user['id'],
+    );
+    if (!stillage) {
+      throw new BadRequestException('Could not update stillage');
+    }
+    return new UpdateStillageResponseDto(stillage);
   }
 }
