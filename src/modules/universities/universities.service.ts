@@ -10,9 +10,11 @@ export class UniversitiesService {
       },
     });
 
-    const universitiesListStr = universities.map(function (university) {
-      return university['name'];
-    });
+    const universitiesListStr = [];
+
+    for (const university of universities) {
+      universitiesListStr.push(university.name);
+    }
 
     return universitiesListStr;
   }
