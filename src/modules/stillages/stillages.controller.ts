@@ -9,7 +9,6 @@ import {
   Get,
   Query,
   Delete,
-  BadRequestException,
 } from '@nestjs/common';
 import {
   FindStillagesRequestDto,
@@ -44,8 +43,9 @@ export class StillagesController {
   }
 
   @ApiOkResponse({
-    description: 'Updating Stillage model fields',
-    type: UpdateStillageRequestDto,
+    description:
+      'Updating Stillage model fields. "property_status" field is for toggling a stillage\'s status (setting it private or public)',
+    type: UpdateStillageResponseDto,
     isArray: false,
   })
   @Patch(':id')
@@ -56,19 +56,39 @@ export class StillagesController {
     @Req() req: Request,
   ) {
     const opts = {};
+
+    if (updateStillageRequest.property_status === true) {
+      const stillage = await this.stillagesService.findStillageById(
+        id,
+        req.user['id'],
+      );
+
+      if (!stillage) {
+        throw new NotFoundException('Stillage not found');
+      }
+
+      opts['property_status'] =
+        stillage.property_status === 'private' ? 'public' : 'private';
+    }
+
     for (const [key, value] of Object.entries(updateStillageRequest)) {
-      if (value !== undefined || value !== null) {
+      if (key === 'property_status') {
+        continue;
+      } else if (value !== undefined || value !== null) {
         opts[key] = value;
       }
     }
+
     const stillage = await this.stillagesService.updateStillage(
       id,
       req.user['id'],
       opts,
     );
+
     if (!stillage) {
       throw new NotFoundException('Stillage not found');
     }
+
     return new UpdateStillageResponseDto(stillage);
   }
 
@@ -78,23 +98,5 @@ export class StillagesController {
   async deleteStillage(@Param('id') id: string, @Req() req: Request) {
     await this.stillagesService.deleteStillage(id, req.user['id']);
     return { message: 'stillage deleted successfully' };
-  }
-
-  @ApiOkResponse({
-    description: "Updating Stillage's model property status",
-    type: UpdateStillageResponseDto,
-    isArray: false,
-  })
-  @Patch('property-status/:id')
-  @UseGuards(AccessTokenGuard)
-  async togglePropertyStatus(@Param('id') id: string, @Req() req: Request) {
-    const stillage = await this.stillagesService.updatePropertyStatus(
-      id,
-      req.user['id'],
-    );
-    if (!stillage) {
-      throw new BadRequestException('Could not update stillage');
-    }
-    return new UpdateStillageResponseDto(stillage);
   }
 }

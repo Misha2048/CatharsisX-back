@@ -4,6 +4,12 @@ import { Stillage } from '@prisma/client';
 export class UpdateStillageRequestDto {
   @ApiProperty()
   name?: string;
+
+  @ApiProperty({
+    example:
+      'true (boolean), false (boolean) or nothing (this parameter is optional)',
+  })
+  property_status?: boolean;
 }
 
 export class FindStillagesRequestDto {
@@ -38,6 +44,8 @@ export class UpdateStillageResponseDto {
   @ApiProperty()
   last_upload_at: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'private / public (string)',
+  })
   property_status: string;
 }

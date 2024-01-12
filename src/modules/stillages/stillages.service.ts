@@ -95,26 +95,4 @@ export class StillagesService {
       },
     });
   }
-
-  async updatePropertyStatus(
-    id: string,
-    userId: string,
-  ): Promise<Stillage | undefined | null> {
-    const stillage = await this.findStillageById(id, userId);
-
-    if (!stillage) {
-      throw new NotFoundException('Stillage not found');
-    }
-
-    stillage.property_status =
-      stillage.property_status === 'private' ? 'public' : 'private';
-
-    return await client.stillage.update({
-      where: {
-        id,
-        userId,
-      },
-      data: stillage,
-    });
-  }
 }
