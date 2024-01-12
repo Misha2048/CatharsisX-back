@@ -30,3 +30,7 @@ export { UpdateShelfResponseDto };
 import { AddUniversityRequestDto } from './mails';
 
 export { AddUniversityRequestDto };
+
+import { GetUniversitiesResponseDto } from './universities';
+
+export { GetUniversitiesResponseDto };
