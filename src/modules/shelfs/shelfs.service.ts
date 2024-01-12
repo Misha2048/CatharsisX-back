@@ -16,8 +16,7 @@ export class ShelfsService {
           if (key === 'stillage') {
             filters[key] = { id: value };
           } else if (key === 'last_upload_at' || key === 'created_at') {
-            const dates = value.split(',');
-            filters[key] = { gte: new Date(dates[0]), lte: new Date(dates[1]) };
+            filters[key] = { gte: new Date(value[0]), lte: new Date(value[1]) };
           } else {
             filters[key] = { contains: value };
           }
@@ -69,12 +68,25 @@ export class ShelfsService {
     }
   }
 
+  async findShelfsById(id: string, userId: string): Promise<Shelf | undefined> {
+    try {
+      return await client.shelf.findFirstOrThrow({
+        where: {
+          id,
+          userId,
+        },
+      });
+    } catch (error) {
+      return undefined;
+    }
+  }
+
   instanceOfUpdateShelfError(object: any): object is IShelfUpdateError {
     return 'error_status_code' in object;
   }
 
   async deleteShelfs(id: string, userId: string): Promise<Shelf> {
-    const shelf = await client.shelf.findUnique({ where: { id } });
+    const shelf = await this.findShelfsById(id, userId);
 
     if (!shelf) {
       throw new NotFoundException('Shelf not found');

@@ -17,6 +17,14 @@ export class FindStillagesRequestDto {
   created_at?: Date[];
 }
 
+export class GetLikedStillagesRequestDTO {
+  @ApiProperty()
+  limit: number;
+
+  @ApiProperty()
+  offset: number;
+}
+
 export class UpdateStillageResponseDto {
   constructor(stillage: Stillage) {
     this.id = stillage.id;

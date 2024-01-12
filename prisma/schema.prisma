@@ -24,6 +24,7 @@ model User {
   Shelf          Shelf[]
   university     University? @relation(fields: [university_id], references: [id])
   university_id  String?
+  liked          String[]    @default([])
 }
 
 model EmailVerify {

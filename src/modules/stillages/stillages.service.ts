@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import client from '../../db/prismaClient';
 import { Stillage } from '@prisma/client';
-import { FindStillagesRequestDto } from 'src/dto/stillages';
+import {
+  FindStillagesRequestDto,
+  GetLikedStillagesRequestDTO,
+} from 'src/dto/stillages';
 
 @Injectable()
 export class StillagesService {
@@ -15,8 +18,7 @@ export class StillagesService {
           if (key === 'stillage') {
             filters[key] = { id: value };
           } else if (key === 'last_upload_at' || key === 'created_at') {
-            const dates = value.split(',');
-            filters[key] = { gte: new Date(dates[0]), lte: new Date(dates[1]) };
+            filters[key] = { gte: new Date(value[0]), lte: new Date(value[1]) };
           } else {
             filters[key] = { contains: value };
           }
@@ -69,7 +71,7 @@ export class StillagesService {
   }
 
   async deleteStillage(id: string, userId: string): Promise<Stillage> {
-    const stillage = await client.stillage.findUnique({ where: { id } });
+    const stillage = await this.findStillageById(id, userId);
 
     if (!stillage) {
       throw new NotFoundException('Stillage not found');
@@ -94,5 +96,48 @@ export class StillagesService {
         userId,
       },
     });
+  }
+
+  async toggleLikeStillage(stillageId: string, userId: string): Promise<void> {
+    const user = await client.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    const stillage = await this.findStillageById(stillageId, userId);
+    if (!stillage) {
+      throw new NotFoundException(`Stillage not found`);
+    }
+
+    if (user.liked.includes(stillageId)) {
+      user.liked = user.liked.filter((id) => id !== stillageId);
+    } else {
+      user.liked.push(stillageId);
+    }
+
+    await client.user.update({
+      where: { id: userId },
+      data: { liked: user.liked },
+    });
+  }
+
+  async getLikedStillages(
+    getLikedStillagesRequestDTO: GetLikedStillagesRequestDTO,
+    userId: string,
+  ): Promise<Stillage[]> {
+    const user = await client.user.findUnique({
+      where: { id: userId },
+      select: { liked: true },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return await client.$queryRaw`
+      SELECT * FROM "Stillage"
+      WHERE "id" = ANY (${user.liked || []})
+      LIMIT ${Number(getLikedStillagesRequestDTO.limit)} OFFSET ${Number(
+      getLikedStillagesRequestDTO.offset,
+    )};
+    `;
   }
 }
