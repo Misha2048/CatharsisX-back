@@ -16,8 +16,7 @@ export class ShelfsService {
           if (key === 'stillage') {
             filters[key] = { id: value };
           } else if (key === 'last_upload_at' || key === 'created_at') {
-            const dates = value.split(',');
-            filters[key] = { gte: new Date(dates[0]), lte: new Date(dates[1]) };
+            filters[key] = { gte: new Date(value[0]), lte: new Date(value[1]) };
           } else {
             filters[key] = { contains: value };
           }
