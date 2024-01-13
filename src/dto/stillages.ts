@@ -9,7 +9,7 @@ export class UpdateStillageRequestDto {
     example:
       'true (boolean), false (boolean) or nothing (this parameter is optional)',
   })
-  property_status?: boolean;
+  toggle_property_status?: boolean;
 }
 
 export class FindStillagesRequestDto {
