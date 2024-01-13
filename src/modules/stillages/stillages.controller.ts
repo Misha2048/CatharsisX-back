@@ -57,7 +57,7 @@ export class StillagesController {
   ) {
     const opts = {};
 
-    if (updateStillageRequest.property_status === true) {
+    if (updateStillageRequest.toggle_property_status === true) {
       const stillage = await this.stillagesService.findStillageById(
         id,
         req.user['id'],
@@ -72,7 +72,7 @@ export class StillagesController {
     }
 
     for (const [key, value] of Object.entries(updateStillageRequest)) {
-      if (key === 'property_status') {
+      if (key === 'toggle_property_status') {
         continue;
       } else if (value !== undefined || value !== null) {
         opts[key] = value;
