@@ -42,7 +42,7 @@ model Stillage {
   file           File[]
   university     University @relation(fields: [university_id], references: [id])
   university_id  String
-  property_status String    @default("private")
+  private_property_status   Boolean    @default(true)
 
   @@index([university_id])
 }

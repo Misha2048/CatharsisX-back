@@ -56,23 +56,13 @@ export class StillagesController {
     @Req() req: Request,
   ) {
     const opts = {};
-
-    if (updateStillageRequest.toggle_property_status === true) {
-      const stillage = await this.stillagesService.findStillageById(
-        id,
-        req.user['id'],
-      );
-
-      if (!stillage) {
-        throw new NotFoundException('Stillage not found');
-      }
-
-      opts['property_status'] =
-        stillage.property_status === 'private' ? 'public' : 'private';
+    if (updateStillageRequest.private_property_status != undefined) {
+      opts['private_property_status'] =
+        updateStillageRequest.private_property_status;
     }
 
     for (const [key, value] of Object.entries(updateStillageRequest)) {
-      if (key === 'toggle_property_status') {
+      if (key === 'private_property_status') {
         continue;
       } else if (value !== undefined || value !== null) {
         opts[key] = value;
