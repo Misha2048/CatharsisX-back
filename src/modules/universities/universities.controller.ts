@@ -15,6 +15,13 @@ export class UniversitiesController {
   })
   @Get()
   async findUniversities() {
-    return await this.universityService.findUniversities();
+    const universities = await this.universityService.findUniversities();
+    const getUniversitiesResponse: GetUniversitiesResponseDto[] = [];
+
+    for (const university of universities) {
+      getUniversitiesResponse.push(new GetUniversitiesResponseDto(university));
+    }
+
+    return getUniversitiesResponse;
   }
 }
