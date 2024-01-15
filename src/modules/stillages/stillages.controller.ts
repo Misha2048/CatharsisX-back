@@ -44,7 +44,7 @@ export class StillagesController {
 
   @ApiOkResponse({
     description:
-      'Updating Stillage model fields. "property_status" field is for toggling a stillage\'s status (setting it private or public)',
+      'Updating Stillage model fields. "private_property_status" field is for toggling a stillage\'s status (setting it private (true) or public (false))',
     type: UpdateStillageResponseDto,
     isArray: false,
   })
