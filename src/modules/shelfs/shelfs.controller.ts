@@ -48,7 +48,7 @@ export class ShelfsController {
 
   @ApiOkResponse({
     description: 'Updating Shelf model fields',
-    type: UpdateShelfRequestDto,
+    type: UpdateShelfResponseDto,
     isArray: false,
   })
   @Patch(':id')

@@ -2,7 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Stillage } from '@prisma/client';
 
 export class UpdateStillageRequestDto {
-  @ApiProperty()
+  @ApiProperty({
+    example:
+      "'firstStillage' or 'secondStillage' or 'thirdStillage' or 'Test_stillage' or 'test stillage' etc. (string) (optional parameter)",
+  })
   name?: string;
 
   @ApiProperty({
