@@ -7,9 +7,9 @@ export class UpdateStillageRequestDto {
 
   @ApiProperty({
     example:
-      'true (boolean), false (boolean) or nothing (this parameter is optional)',
+      'true (boolean)(private), false (boolean)(public) or nothing (this parameter is optional)',
   })
-  private_property_status?: boolean;
+  private?: boolean;
 }
 
 export class FindStillagesRequestDto {
@@ -29,7 +29,7 @@ export class UpdateStillageResponseDto {
     this.name = stillage.name;
     this.created_at = stillage.created_at;
     this.last_upload_at = stillage.last_upload_at;
-    this.private_property_status = stillage.private_property_status;
+    this.private = stillage.private;
   }
 
   @ApiProperty()
@@ -45,7 +45,7 @@ export class UpdateStillageResponseDto {
   last_upload_at: Date;
 
   @ApiProperty({
-    example: 'private (true(boolean)) / public (false(boolean))',
+    example: 'true (boolean)(private) / false (boolean)(public)',
   })
-  private_property_status: boolean;
+  private: boolean;
 }

@@ -56,15 +56,9 @@ export class StillagesController {
     @Req() req: Request,
   ) {
     const opts = {};
-    if (updateStillageRequest.private_property_status != undefined) {
-      opts['private_property_status'] =
-        updateStillageRequest.private_property_status;
-    }
 
     for (const [key, value] of Object.entries(updateStillageRequest)) {
-      if (key === 'private_property_status') {
-        continue;
-      } else if (value !== undefined || value !== null) {
+      if (value !== undefined) {
         opts[key] = value;
       }
     }
