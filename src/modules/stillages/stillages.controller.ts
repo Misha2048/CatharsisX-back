@@ -45,8 +45,9 @@ export class StillagesController {
   }
 
   @ApiOkResponse({
-    description: 'Updating Stillage model fields',
-    type: UpdateStillageRequestDto,
+    description:
+      'Updating Stillage model fields. "private" field is for toggling a stillage\'s status (setting it private (true) or public (false))',
+    type: UpdateStillageResponseDto,
     isArray: false,
   })
   @Patch(':id')
@@ -57,19 +58,23 @@ export class StillagesController {
     @Req() req: Request,
   ) {
     const opts = {};
+
     for (const [key, value] of Object.entries(updateStillageRequest)) {
-      if (value !== undefined || value !== null) {
+      if (value !== undefined) {
         opts[key] = value;
       }
     }
+
     const stillage = await this.stillagesService.updateStillage(
       id,
       req.user['id'],
       opts,
     );
+
     if (!stillage) {
       throw new NotFoundException('Stillage not found');
     }
+
     return new UpdateStillageResponseDto(stillage);
   }
 

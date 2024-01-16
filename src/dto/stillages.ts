@@ -2,8 +2,17 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Stillage } from '@prisma/client';
 
 export class UpdateStillageRequestDto {
-  @ApiProperty()
+  @ApiProperty({
+    example:
+      "'firstStillage' or 'secondStillage' or 'thirdStillage' or 'Test_stillage' or 'test stillage' etc. (string) (optional parameter)",
+  })
   name?: string;
+
+  @ApiProperty({
+    example:
+      'true (boolean)(private), false (boolean)(public) or nothing (this parameter is optional)',
+  })
+  private?: boolean;
 }
 
 export class FindStillagesRequestDto {
@@ -31,6 +40,7 @@ export class UpdateStillageResponseDto {
     this.name = stillage.name;
     this.created_at = stillage.created_at;
     this.last_upload_at = stillage.last_upload_at;
+    this.private = stillage.private;
   }
 
   @ApiProperty()
@@ -44,4 +54,9 @@ export class UpdateStillageResponseDto {
 
   @ApiProperty()
   last_upload_at: Date;
+
+  @ApiProperty({
+    example: 'true (boolean)(private) / false (boolean)(public)',
+  })
+  private: boolean;
 }

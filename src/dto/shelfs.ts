@@ -16,10 +16,15 @@ export class FindShelfsRequestDto {
 }
 
 export class UpdateShelfRequestDto {
-  @ApiProperty()
+  @ApiProperty({
+    example:
+      "'firstShelf' or 'secondShelf' or 'test shelf' or 'test' (string) (optional parameter)",
+  })
   name?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: "'1' or '2' or '3' or '4' etc. (string) (optional parameter)",
+  })
   stillage?: string;
 }
 
