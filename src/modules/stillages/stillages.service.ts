@@ -27,7 +27,6 @@ export class StillagesService {
       },
       {},
     );
-
     return await client.stillage.findMany({
       where: {
         user: { id: userId },
