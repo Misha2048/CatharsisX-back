@@ -28,6 +28,35 @@ export class UpdateShelfRequestDto {
   stillage?: string;
 }
 
+export class FindShelfsResponseDto {
+  constructor(shelf: Shelf) {
+    this.id = shelf.id;
+    this.userId = shelf.id;
+    this.name = shelf.name;
+    this.stillageId = shelf.stillageId;
+    this.last_upload_at = shelf.last_upload_at;
+    this.created_at = shelf.created_at;
+  }
+
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  stillageId: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  last_upload_at: Date;
+
+  @ApiProperty()
+  created_at: Date;
+}
+
 export class UpdateShelfResponseDto {
   constructor(shelf: Shelf) {
     this.id = shelf.id;
@@ -51,4 +80,13 @@ export class UpdateShelfResponseDto {
 
   @ApiProperty()
   created_at: Date;
+}
+
+export class DeleteShelfResponseDto {
+  constructor(message: string) {
+    this.message = message;
+  }
+
+  @ApiProperty()
+  message: string;
 }

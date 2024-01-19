@@ -4,17 +4,30 @@ import {
   Body,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { UploadFileRequest } from 'src/dto/file';
+import {
+  UploadFileErrorResponseDto,
+  UploadFileRequest,
+  UploadFileSuccessResponseDto,
+} from 'src/dto/file';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Files')
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
+  @ApiOkResponse({
+    description: 'File uploaded',
+    type: UploadFileSuccessResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Failed to upload file',
+    type: UploadFileErrorResponseDto,
+  })
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFileToShelf(
@@ -23,9 +36,11 @@ export class FilesController {
   ) {
     try {
       await this.filesService.uploadFileToShelf(uploadFileRequest, file);
-      return { message: 'File uploaded ' };
+      return new UploadFileSuccessResponseDto('File uploaded ');
     } catch (error) {
-      return { error: 'Failed' };
+      throw new BadRequestException(
+        new UploadFileErrorResponseDto(error.message),
+      );
     }
   }
 }
