@@ -26,12 +26,43 @@ export class FindStillagesRequestDto {
   created_at?: Date[];
 }
 
+export class FindStillagesResponseDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  created_at: string;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  last_upload_at: string;
+
+  @ApiProperty()
+  university_id: string;
+
+  @ApiProperty()
+  private: boolean;
+}
+
 export class GetLikedStillagesRequestDTO {
   @ApiProperty()
   limit: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'zero-based offset index' })
   offset: number;
+}
+
+export class GetLikedStillagesResponseDto {
+  @ApiProperty({ default: 10 })
+  count: number;
+
+  @ApiProperty({ isArray: true, type: FindStillagesResponseDto })
+  likedStillages: Stillage[];
 }
 
 export class UpdateStillageResponseDto {
@@ -59,4 +90,11 @@ export class UpdateStillageResponseDto {
     example: 'true (boolean)(private) / false (boolean)(public)',
   })
   private: boolean;
+}
+
+export class DeleteStillageResponseDto {
+  @ApiProperty({
+    example: 'stillage deleted successfully',
+  })
+  message: string;
 }
