@@ -79,7 +79,7 @@ export class StillagesService {
 
     await client.file.deleteMany({
       where: {
-        shelf_id: id,
+        stillage_Id: id,
       },
     });
 
