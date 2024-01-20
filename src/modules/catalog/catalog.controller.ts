@@ -10,6 +10,11 @@ import { GetCatalogRequestDto } from 'src/dto/catalog';
 export class CatalogController {
   constructor(private readonly catalogService: CatalogService) {}
 
+  @ApiOkResponse({
+    description: 'Get Catalog ',
+    type: GetCatalogRequestDto,
+    isArray: true,
+  })
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
   @Get()
