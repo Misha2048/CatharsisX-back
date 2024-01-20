@@ -3,7 +3,7 @@ import { CatalogService } from './catalog.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
 import { Request } from 'express';
-import { GetCatalogRequestDto } from 'src/dto/catalog';
+import { GetCatalogRequestDto, GetCatalogResponseDto } from 'src/dto/catalog';
 
 @ApiTags('Catalog')
 @Controller('catalog')
@@ -12,8 +12,8 @@ export class CatalogController {
 
   @ApiOkResponse({
     description: 'Get Catalog ',
-    type: GetCatalogRequestDto,
-    isArray: true,
+    type: GetCatalogResponseDto,
+    isArray: false,
   })
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)

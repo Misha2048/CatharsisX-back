@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { FindStillagesResponseDto } from './stillages';
+import { Stillage } from '@prisma/client';
 
 export class GetCatalogRequestDto {
   @ApiProperty()
@@ -6,4 +8,12 @@ export class GetCatalogRequestDto {
 
   @ApiProperty()
   offset: number;
+}
+
+export class GetCatalogResponseDto {
+  @ApiProperty()
+  count: number;
+
+  @ApiProperty({ isArray: true, type: FindStillagesResponseDto })
+  stillages: Stillage[];
 }
