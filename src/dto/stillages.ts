@@ -26,7 +26,7 @@ export class FindStillagesRequestDto {
   created_at?: Date[];
 }
 
-export class FindStillagesResponseDto {
+export class StillagesResponseDto {
   @ApiProperty()
   id: string;
 
@@ -49,6 +49,32 @@ export class FindStillagesResponseDto {
   private: boolean;
 }
 
+export class FindStillagesResponseDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  created_at: string;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  last_upload_at: string;
+
+  @ApiProperty()
+  university_id: string;
+
+  @ApiProperty()
+  private: boolean;
+
+  @ApiProperty()
+  liked: boolean;
+}
+
 export class GetLikedStillagesRequestDTO {
   @ApiProperty()
   limit: number;
@@ -61,7 +87,7 @@ export class GetLikedStillagesResponseDto {
   @ApiProperty({ default: 10 })
   count: number;
 
-  @ApiProperty({ isArray: true, type: FindStillagesResponseDto })
+  @ApiProperty({ isArray: true, type: StillagesResponseDto })
   likedStillages: Stillage[];
 }
 
