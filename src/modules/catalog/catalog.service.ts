@@ -8,8 +8,9 @@ export class CatalogService {
   async getCatalog(
     getCatalogRequestDto: GetCatalogRequestDto,
     userId: string,
-  ): Promise<Stillage[]> {
-    return await client.$queryRaw`
+  ): Promise<{ count: number; stillages: Stillage[] }> {
+    const count = await client.stillage.count({ where: { userId } });
+    const stillages: Stillage[] = await client.$queryRaw`
       SELECT * FROM "Stillage"
       WHERE "userId" = ${userId}
       ORDER BY RANDOM()
@@ -17,5 +18,6 @@ export class CatalogService {
       getCatalogRequestDto.offset,
     )};
     `;
+    return { count, stillages };
   }
 }

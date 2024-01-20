@@ -124,7 +124,7 @@ export class StillagesService {
   async getLikedStillages(
     getLikedStillagesRequestDTO: GetLikedStillagesRequestDTO,
     userId: string,
-  ): Promise<Stillage[]> {
+  ): Promise<{ count: number; likedStillages: Stillage[] }> {
     const user = await client.user.findUnique({
       where: { id: userId },
       select: { liked: true },
@@ -132,12 +132,14 @@ export class StillagesService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return await client.$queryRaw`
+    const count = user.liked.length;
+    const likedStillages: Stillage[] = await client.$queryRaw`
       SELECT * FROM "Stillage"
       WHERE "id" = ANY (${user.liked || []})
       LIMIT ${Number(getLikedStillagesRequestDTO.limit)} OFFSET ${Number(
       getLikedStillagesRequestDTO.offset,
     )};
     `;
+    return { count, likedStillages };
   }
 }
