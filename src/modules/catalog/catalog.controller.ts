@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards, Query, Req } from '@nestjs/common';
 import { CatalogService } from './catalog.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
 import { Request } from 'express';
 import { GetCatalogRequestDto } from 'src/dto/catalog';
