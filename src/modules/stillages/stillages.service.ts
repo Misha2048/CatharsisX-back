@@ -134,6 +134,7 @@ export class StillagesService {
     return await client.$queryRaw`
       SELECT * FROM "Stillage"
       WHERE "id" = ANY (${user.liked || []})
+      ORDER BY "created_at" ASC
       LIMIT ${Number(getLikedStillagesRequestDTO.limit)} OFFSET ${Number(
       getLikedStillagesRequestDTO.offset,
     )};

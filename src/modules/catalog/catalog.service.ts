@@ -12,7 +12,7 @@ export class CatalogService {
     return await client.$queryRaw`
       SELECT * FROM "Stillage"
       WHERE "userId" = ${userId}
-      ORDER BY RANDOM()
+      ORDER BY "created_at" ASC
       LIMIT ${Number(getCatalogRequestDto.limit)} OFFSET ${Number(
       getCatalogRequestDto.offset,
     )};
