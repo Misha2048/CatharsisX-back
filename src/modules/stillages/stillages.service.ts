@@ -27,6 +27,7 @@ export class StillagesService {
       },
       {},
     );
+
     return await client.stillage.findMany({
       where: {
         user: { id: userId },
@@ -132,14 +133,15 @@ export class StillagesService {
       throw new NotFoundException('User not found');
     }
     const count = user.liked.length;
-    const likedStillages: Stillage[] = await client.$queryRaw`
-      SELECT * FROM "Stillage"
-      WHERE "id" = ANY (${user.liked || []})
-      ORDER BY "created_at" ASC
-      LIMIT ${Number(getLikedStillagesRequestDTO.limit)} OFFSET ${Number(
-      getLikedStillagesRequestDTO.offset,
-    )};
-    `;
+    const likedStillages = await client.stillage.findMany({
+      where: {
+        id: {
+          in: user.liked || [],
+        },
+      },
+      take: Number(getLikedStillagesRequestDTO.limit) || 10,
+      skip: Number(getLikedStillagesRequestDTO.offset) || 0,
+    });
     return { count, likedStillages };
   }
 }
