@@ -38,6 +38,9 @@ export class ShelfsService {
         user: { id: userId },
         ...filter,
       },
+      orderBy: {
+        created_at: 'asc',
+      },
     });
   }
 
