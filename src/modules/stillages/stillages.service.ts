@@ -39,7 +39,6 @@ export class StillagesService {
     const likedStillages: Stillage[] = await client.stillage.findMany({
       where: {
         id: { in: likedStillageIDs },
-        user: { id: userId },
         ...filter,
       },
       orderBy: { created_at: 'asc' },
