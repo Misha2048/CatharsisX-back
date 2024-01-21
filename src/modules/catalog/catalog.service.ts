@@ -13,7 +13,7 @@ export class CatalogService {
     const stillages: Stillage[] = await client.$queryRaw`
       SELECT * FROM "Stillage"
       WHERE "userId" = ${userId}
-      ORDER BY "created_at" ASC
+      ORDER BY RANDOM()
       LIMIT ${Number(getCatalogRequestDto.limit)} OFFSET ${Number(
       getCatalogRequestDto.offset,
     )};
