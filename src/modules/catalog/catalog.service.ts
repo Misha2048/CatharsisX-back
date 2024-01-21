@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Stillage } from '@prisma/client';
-import { PrismaClient } from '@prisma/client';
-import { randomInt } from 'crypto';
+import client from '../../db/prismaClient';
 import { GetCatalogRequestDto } from 'src/dto/catalog';
-
-const prisma = new PrismaClient();
 
 @Injectable()
 export class CatalogService {
@@ -12,8 +9,8 @@ export class CatalogService {
     getCatalogRequestDto: GetCatalogRequestDto,
     userId: string,
   ): Promise<{ count: number; stillages: Stillage[] }> {
-    const count = await prisma.stillage.count({ where: { userId } });
-    const stillages: Stillage[] = await prisma.stillage.findMany({
+    const count = await client.stillage.count({ where: { userId } });
+    const stillages: Stillage[] = await client.stillage.findMany({
       where: {
         userId: userId,
       },
