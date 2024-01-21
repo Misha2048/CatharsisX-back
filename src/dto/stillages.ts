@@ -50,20 +50,27 @@ export class StillagesResponseDto {
 }
 
 export class FindStillagesResponseDto {
-  @ApiProperty()
-  id: string;
+  constructor(stillage: Stillage, liked: boolean) {
+    this.id = stillage.id;
+    this.name = stillage.name;
+    this.created_at = stillage.created_at;
+    this.last_upload_at = stillage.last_upload_at;
+    this.university_id = stillage.university_id;
+    this.private = stillage.private;
+    this.liked = liked;
+  }
 
   @ApiProperty()
-  userId: string;
+  id: string;
 
   @ApiProperty()
   name: string;
 
   @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
-  created_at: string;
+  created_at: Date;
 
   @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
-  last_upload_at: string;
+  last_upload_at: Date;
 
   @ApiProperty()
   university_id: string;

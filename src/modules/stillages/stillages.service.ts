@@ -36,27 +36,32 @@ export class StillagesService {
       })
       .then((obj) => obj.liked);
 
-    const likedStillages = (await client.stillage.findMany({
+    const likedStillages: Stillage[] = await client.stillage.findMany({
       where: {
         id: { in: likedStillageIDs },
         user: { id: userId },
         ...filter,
       },
       orderBy: { created_at: 'asc' },
-    })) as unknown as FindStillagesResponseDto[];
-    likedStillages.forEach((stillage) => (stillage.liked = true));
+    });
 
-    const notLikedStillages = (await client.stillage.findMany({
+    const notLikedStillages: Stillage[] = await client.stillage.findMany({
       where: {
         id: { notIn: likedStillageIDs },
         user: { id: userId },
         ...filter,
       },
       orderBy: { created_at: 'asc' },
-    })) as unknown as FindStillagesResponseDto[];
-    notLikedStillages.forEach((stillage) => (stillage.liked = false));
+    });
 
-    return [...likedStillages, ...notLikedStillages];
+    return [
+      ...likedStillages.map(
+        (stillage) => new FindStillagesResponseDto(stillage, true),
+      ),
+      ...notLikedStillages.map(
+        (stillage) => new FindStillagesResponseDto(stillage, false),
+      ),
+    ];
   }
 
   async updateStillage(
