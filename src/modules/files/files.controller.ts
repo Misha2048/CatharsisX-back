@@ -38,7 +38,6 @@ export class FilesController {
     type: UploadFileErrorResponseDto,
   })
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
   async uploadFileToShelf(
     @Body() uploadFileRequest: UploadFileRequest,
     @UploadedFile() file: Express.Multer.File,
