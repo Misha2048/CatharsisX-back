@@ -14,8 +14,8 @@ export class CatalogService {
       where: {
         userId: userId,
       },
-      take: Number(getCatalogRequestDto.limit) || 10,
-      skip: Number(getCatalogRequestDto.offset) || 0,
+      take: Number(getCatalogRequestDto.limit) || undefined,
+      skip: Number(getCatalogRequestDto.offset) || undefined,
     });
     return { count, stillages };
   }

@@ -139,8 +139,11 @@ export class StillagesService {
           in: user.liked || [],
         },
       },
-      take: Number(getLikedStillagesRequestDTO.limit) || 10,
-      skip: Number(getLikedStillagesRequestDTO.offset) || 0,
+      orderBy: {
+        name: 'asc',
+      },
+      take: Number(getLikedStillagesRequestDTO.limit) || undefined,
+      skip: Number(getLikedStillagesRequestDTO.offset) || undefined,
     });
     return { count, likedStillages };
   }
