@@ -2,13 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UploadFileRequest {
   @ApiProperty()
+  file: File;
+
+  @ApiProperty()
   filename: string;
-
-  @ApiProperty()
-  file_size: number;
-
-  @ApiProperty()
-  content: Buffer;
 
   @ApiProperty()
   shelf_id: string;

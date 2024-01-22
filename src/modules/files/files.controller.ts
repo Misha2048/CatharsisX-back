@@ -13,13 +13,22 @@ import {
   UploadFileSuccessResponseDto,
 } from 'src/dto/file';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBadRequestResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiConsumes,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Files')
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload File to Shelf' })
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOkResponse({
     description: 'File uploaded',
     type: UploadFileSuccessResponseDto,
