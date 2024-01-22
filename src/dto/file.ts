@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UploadFileRequest {
   @ApiProperty()
-  file: File;
+  file: Express.Multer.File;
 
   @ApiProperty()
   filename: string;
