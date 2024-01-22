@@ -7,13 +7,9 @@ import { GetCatalogRequestDto } from 'src/dto/catalog';
 export class CatalogService {
   async getCatalog(
     getCatalogRequestDto: GetCatalogRequestDto,
-    userId: string,
   ): Promise<{ count: number; stillages: Stillage[] }> {
-    const count = await client.stillage.count({ where: { userId } });
+    const count = await client.stillage.count();
     const stillages: Stillage[] = await client.stillage.findMany({
-      where: {
-        userId: userId,
-      },
       take: Number(getCatalogRequestDto.limit) || undefined,
       skip: Number(getCatalogRequestDto.offset) || undefined,
     });
