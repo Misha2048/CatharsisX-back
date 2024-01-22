@@ -4,6 +4,7 @@ import { Stillage } from '@prisma/client';
 import {
   FindStillagesRequestDto,
   GetLikedStillagesRequestDTO,
+  FindStillagesResponseDto,
 } from 'src/dto/stillages';
 
 @Injectable()
@@ -11,7 +12,7 @@ export class StillagesService {
   async findStillages(
     findStillagesRequestDto: FindStillagesRequestDto,
     userId: string,
-  ): Promise<Stillage[]> {
+  ): Promise<FindStillagesResponseDto[]> {
     const filter = Object.entries(findStillagesRequestDto).reduce(
       (filters, [key, value]) => {
         if (value !== undefined && value !== '') {
@@ -28,12 +29,38 @@ export class StillagesService {
       {},
     );
 
-    return await client.stillage.findMany({
+    const likedStillageIDs: string[] = await client.user
+      .findUnique({
+        select: { liked: true },
+        where: { id: userId },
+      })
+      .then((obj) => obj.liked);
+
+    const likedStillages: Stillage[] = await client.stillage.findMany({
       where: {
+        id: { in: likedStillageIDs },
+        ...filter,
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    const notLikedStillages: Stillage[] = await client.stillage.findMany({
+      where: {
+        id: { notIn: likedStillageIDs },
         user: { id: userId },
         ...filter,
       },
+      orderBy: { name: 'asc' },
     });
+
+    return [
+      ...likedStillages.map(
+        (stillage) => new FindStillagesResponseDto(stillage, true),
+      ),
+      ...notLikedStillages.map(
+        (stillage) => new FindStillagesResponseDto(stillage, false),
+      ),
+    ];
   }
 
   async updateStillage(
