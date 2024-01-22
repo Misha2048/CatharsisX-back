@@ -41,7 +41,7 @@ export class StillagesService {
         id: { in: likedStillageIDs },
         ...filter,
       },
-      orderBy: { created_at: 'asc' },
+      orderBy: { name: 'asc' },
     });
 
     const notLikedStillages: Stillage[] = await client.stillage.findMany({
@@ -50,7 +50,7 @@ export class StillagesService {
         user: { id: userId },
         ...filter,
       },
-      orderBy: { created_at: 'asc' },
+      orderBy: { name: 'asc' },
     });
 
     return [
