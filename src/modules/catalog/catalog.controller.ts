@@ -22,6 +22,6 @@ export class CatalogController {
     @Query() getCatalogRequestDto: GetCatalogRequestDto,
     @Req() req: Request,
   ) {
-    return this.catalogService.getCatalog(getCatalogRequestDto, req.user['id']);
+    return this.catalogService.getCatalog(getCatalogRequestDto);
   }
 }
