@@ -75,7 +75,7 @@ export class FindStillagesResponseDto {
   @ApiProperty()
   university_id: string;
 
-  @ApiProperty()
+  @ApiProperty({ default: false })
   private: boolean;
 
   @ApiProperty()
