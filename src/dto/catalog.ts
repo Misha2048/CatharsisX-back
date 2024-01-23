@@ -6,12 +6,12 @@ export class GetCatalogRequestDto {
   @ApiProperty()
   limit: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: 'zero-based offset index' })
   offset: number;
 }
 
 export class GetCatalogResponseDto {
-  @ApiProperty()
+  @ApiProperty({ default: 100 })
   count: number;
 
   @ApiProperty({ isArray: true, type: FindStillagesResponseDto })

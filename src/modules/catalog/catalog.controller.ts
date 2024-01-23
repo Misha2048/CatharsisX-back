@@ -11,7 +11,8 @@ export class CatalogController {
   constructor(private readonly catalogService: CatalogService) {}
 
   @ApiOkResponse({
-    description: 'Get Catalog ',
+    description:
+      "Get stillages that a user doesn't own and that are not private",
     type: GetCatalogResponseDto,
     isArray: false,
   })
@@ -22,6 +23,6 @@ export class CatalogController {
     @Query() getCatalogRequestDto: GetCatalogRequestDto,
     @Req() req: Request,
   ) {
-    return this.catalogService.getCatalog(getCatalogRequestDto);
+    return this.catalogService.getCatalog(getCatalogRequestDto, req.user['id']);
   }
 }
