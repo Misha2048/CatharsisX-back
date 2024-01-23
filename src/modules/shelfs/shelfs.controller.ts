@@ -15,7 +15,9 @@ import {
 } from '@nestjs/common';
 import { ShelfsService } from './shelfs.service';
 import {
+  DeleteShelfResponseDto,
   FindShelfsRequestDto,
+  FindShelfsResponseDto,
   UpdateShelfRequestDto,
   UpdateShelfResponseDto,
 } from 'src/dto/shelfs';
@@ -33,7 +35,7 @@ export class ShelfsController {
 
   @ApiOkResponse({
     description: 'Search Shelfs ',
-    type: FindShelfsRequestDto,
+    type: FindShelfsResponseDto,
     isArray: true,
   })
   @ApiBearerAuth()
@@ -108,11 +110,17 @@ export class ShelfsController {
     return res.json(new UpdateShelfResponseDto(shelf));
   }
 
+  @ApiOkResponse({
+    description: 'Delete Shelfs',
+    type: DeleteShelfResponseDto,
+  })
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
   @Delete(':id')
   async deleteShelfs(@Param('id') id: string, @Request() req) {
     await this.shelfsService.deleteShelfs(id, req.user['id']);
-    return { message: 'Shelf and related files deleted successfully' };
+    return new DeleteShelfResponseDto(
+      'Shelf and related files deleted successfully',
+    );
   }
 }
