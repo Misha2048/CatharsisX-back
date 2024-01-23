@@ -40,7 +40,7 @@ export class ShelfsService {
         ...filter,
       },
       orderBy: {
-        created_at: 'asc',
+        name: 'asc',
       },
     });
   }
