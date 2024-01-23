@@ -18,9 +18,10 @@ export class StillagesService {
           if (key === 'stillage') {
             filters[key] = { id: value };
           } else if (key === 'last_upload_at' || key === 'created_at') {
-            const dateFrom = convertTimestampToDate(new Date(value[0]));
-            const dateTo = convertTimestampToDate(new Date(value[1]));
+            const dateFrom = new Date(value[0]).setHours(0, 0, 0, 0);
+            const dateTo = new Date(value[1]);
             dateTo.setDate(dateTo.getDate() + 1);
+            dateTo.setHours(0, 0, 0, 0);
 
             filters[key] = { gte: dateFrom, lt: dateTo };
           } else {
@@ -144,9 +145,4 @@ export class StillagesService {
     )};
     `;
   }
-}
-
-function convertTimestampToDate(timestamp: Date) {
-  const formattedDate = timestamp.toISOString().slice(0, 10); // Extract YYYY-MM-DD
-  return new Date(formattedDate);
 }
