@@ -24,7 +24,7 @@ export class StillagesService {
             const dateTo = new Date(value[1]);
             dateTo.setDate(dateTo.getDate() + 1);
             dateTo.setHours(0, 0, 0, 0);
-            filters[key] = { gte: new Date(dateFrom), lt: new Date(dateTo) };
+            filters[key] = { gte: dateFrom, lt: dateTo };
           } else {
             filters[key] = { contains: value };
           }
