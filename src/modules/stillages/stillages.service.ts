@@ -136,7 +136,9 @@ export class StillagesService {
       throw new NotFoundException(`User not found`);
     }
 
-    const stillage = await this.findStillageById(stillageId, userId);
+    const stillage = await client.stillage.findUnique({
+      where: { id: stillageId },
+    });
     if (!stillage) {
       throw new NotFoundException(`Stillage not found`);
     }
