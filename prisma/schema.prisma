@@ -58,6 +58,7 @@ model Shelf {
   last_upload_at DateTime @default(now())
   created_at     DateTime @default(now())
   file           File[]
+  @@unique([name, stillageId], name:"uniqueNameInStillage")
 }
 
 model File {
