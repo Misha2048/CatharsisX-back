@@ -25,6 +25,8 @@ export class StillagesService {
             dateTo.setDate(dateTo.getDate() + 1);
             dateTo.setHours(0, 0, 0, 0);
             filters[key] = { gte: dateFrom, lt: dateTo };
+          } else if (key === 'name') {
+            filters[key] = { contains: value, mode: 'insensitive' };
           } else {
             filters[key] = { contains: value };
           }

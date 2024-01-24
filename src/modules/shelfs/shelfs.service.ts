@@ -25,6 +25,8 @@ export class ShelfsService {
               gte: dateFrom,
               lt: dateTo,
             };
+          } else if (key === 'name') {
+            filters[key] = { contains: value, mode: 'insensitive' };
           } else {
             filters[key] = { contains: value };
           }
