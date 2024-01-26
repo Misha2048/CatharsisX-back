@@ -67,81 +67,42 @@ export class FilesService {
 
       let parsedText;
 
-      if (fileType === 'pdf') {
-        try {
+      try {
+        if (
+          fileType === 'pdf' ||
+          fileType === 'docx' ||
+          fileType === 'xlsx' ||
+          fileType === 'pptx'
+        ) {
           parsedText = (
             await officeParser.parseOfficeAsync(file.buffer)
           ).trim();
-        } catch (error) {
-          this.logger.error(`Failed to parse pdf file: ${error.message}`);
-          throw new HttpException(
-            'Failed to parse pdf file!',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      } else if (fileType === 'docx') {
-        try {
-          parsedText = await officeParser.parseOfficeAsync(file.buffer);
-        } catch (error) {
-          this.logger.error(`Failed to parse docx file: ${error.message}`);
-          throw new HttpException(
-            'Failed to parse docx file!',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      } else if (fileType === 'xlsx') {
-        try {
-          parsedText = await officeParser.parseOfficeAsync(file.buffer);
-        } catch (error) {
-          this.logger.error(`Failed to parse xlsx file: ${error.message}`);
-          throw new HttpException(
-            'Failed to parse xlsx file!',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      } else if (fileType === 'rtf') {
-        try {
-          parseRTF.string(file.buffer, function (err, doc) {
-            if (err) throw err;
-            parsedText = '';
-            doc.content.forEach(function (element) {
-              if (element.content && element.content.length > 0) {
-                element.content.forEach(function (innerElement) {
-                  if (innerElement.value) {
-                    parsedText += innerElement.value;
-                  }
-                });
-              }
+        } else if (fileType === 'rtf') {
+          parsedText = await new Promise((resolve, reject) => {
+            parseRTF.string(file.buffer, function (err, doc) {
+              if (err) reject(err);
+              let text = '';
+              doc.content.forEach(function (element) {
+                if (element.content && element.content.length > 0) {
+                  element.content.forEach(function (innerElement) {
+                    if (innerElement.value) {
+                      text += innerElement.value;
+                    }
+                  });
+                }
+              });
+              resolve(text);
             });
           });
-        } catch (error) {
-          this.logger.error(`Failed to parse rtf file: ${error.message}`);
-          throw new HttpException(
-            'Failed to parse rtf file!',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
+        } else if (fileType === 'txt') {
+          parsedText = file.buffer.toString('utf-8');
+        } else {
+          throw new Error(`Unsupported file type: ${fileType}`);
         }
-      } else if (fileType === 'txt') {
-        try {
-          const txtData = await file.buffer.toString('utf-8');
-          parsedText = txtData;
-        } catch (error) {
-          this.logger.error(`Failed to parse txt file: ${error.message}`);
-          throw new HttpException(
-            'Failed to parse txt file!',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
-      } else if (fileType === 'pptx') {
-        try {
-          parsedText = await officeParser.parseOfficeAsync(file.buffer);
-        } catch (error) {
-          this.logger.error(`Failed to parse pptx file: ${error.message}`);
-          throw new HttpException(
-            'Failed to parse pptx file!',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
-        }
+      } catch (error) {
+        const errorMessage = `Failed to parse ${fileType} file: ${error.message}`;
+        this.logger.error(errorMessage);
+        throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
       const isValid = await this.validateFile(parsedText);
