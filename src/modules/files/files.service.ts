@@ -4,13 +4,15 @@ import { UploadFileRequest } from 'src/dto/file';
 import client from 'src/db/prismaClient';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
+import * as officeParser from 'officeparser';
+import * as parseRTF from 'rtf-parser';
 
 @Injectable()
 export class FilesService {
   private readonly logger = new Logger(FilesService.name);
   constructor(private readonly httpService: HttpService) {}
 
-  async validateFile(content: Buffer): Promise<boolean> {
+  async validateFile(parsedText: string): Promise<boolean> {
     try {
       if (!process.env.VALIDATE_FILES) {
         return true;
@@ -20,7 +22,7 @@ export class FilesService {
         this.httpService
           .post(
             'http://127.0.0.1:8000/validate/file/',
-            { text: content.toString() },
+            { text: parsedText },
             {
               headers: {
                 'x-api-key': process.env.AI_API_KEY,
@@ -61,7 +63,49 @@ export class FilesService {
     file: Express.Multer.File,
   ): Promise<void> {
     try {
-      const isValid = await this.validateFile(file.buffer);
+      const fileType = file.originalname.split('.').pop().toLowerCase();
+
+      let parsedText;
+
+      try {
+        if (
+          fileType === 'pdf' ||
+          fileType === 'docx' ||
+          fileType === 'xlsx' ||
+          fileType === 'pptx'
+        ) {
+          parsedText = (
+            await officeParser.parseOfficeAsync(file.buffer)
+          ).trim();
+        } else if (fileType === 'rtf') {
+          parsedText = await new Promise((resolve, reject) => {
+            parseRTF.string(file.buffer, function (err, doc) {
+              if (err) reject(err);
+              let text = '';
+              doc.content.forEach(function (element) {
+                if (element.content && element.content.length > 0) {
+                  element.content.forEach(function (innerElement) {
+                    if (innerElement.value) {
+                      text += innerElement.value;
+                    }
+                  });
+                }
+              });
+              resolve(text);
+            });
+          });
+        } else if (fileType === 'txt') {
+          parsedText = file.buffer.toString('utf-8');
+        } else {
+          throw new Error(`Unsupported file type: ${fileType}`);
+        }
+      } catch (error) {
+        const errorMessage = `Failed to parse ${fileType} file: ${error.message}`;
+        this.logger.error(errorMessage);
+        throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+
+      const isValid = await this.validateFile(parsedText);
 
       if (!isValid) {
         this.logger.error('Validation failed. File not uploaded.');
@@ -75,7 +119,7 @@ export class FilesService {
       await client.file.create({
         data: {
           filename: uploadFileRequest.filename,
-          text_content: file.buffer.toString('utf-8'),
+          text_content: parsedText,
           content: file.buffer,
           size: file.size,
           uploaded_at: new Date(),
