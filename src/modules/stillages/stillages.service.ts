@@ -150,8 +150,10 @@ export class StillagesService {
       throw new NotFoundException('User not found');
     }
     const count = user.liked.length;
+    const blackListKeys = ['limit', 'offset'];
     const filter = await this.commonService.getFilters(
       getLikedStillagesRequestDTO,
+      blackListKeys,
     );
     const likedStillages = await client.stillage.findMany({
       where: {

@@ -12,7 +12,11 @@ export class CatalogService {
     getCatalogRequestDto: GetCatalogRequestDto,
     userId: string,
   ): Promise<{ count: number; stillages: FindStillagesResponseDto[] }> {
-    const filter = await this.commonService.getFilters(getCatalogRequestDto);
+    const blackListKeys = ['limit', 'offset'];
+    const filter = await this.commonService.getFilters(
+      getCatalogRequestDto,
+      blackListKeys,
+    );
     const count = await client.stillage.count({
       where: { ...filter, NOT: { userId }, private: false },
     });

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CommonService {
-  async getFilters(dto: any) {
+  async getFilters(dto: any, blackListKeys: string[] = []) {
     return Object.entries(dto).reduce((filters, [key, value]) => {
-      if (value !== undefined && value !== '') {
+      if (value !== undefined && value !== '' && !blackListKeys.includes(key)) {
         if (key === 'stillage') {
           filters[key] = { id: value };
         } else if (key === 'last_upload_at' || key === 'created_at') {
@@ -16,6 +16,8 @@ export class CommonService {
           filters[key] = { gte: dateFrom, lt: dateTo };
         } else if (key === 'name') {
           filters[key] = { contains: value, mode: 'insensitive' };
+        } else {
+          filters[key] = { contains: value };
         }
       }
       return filters;
