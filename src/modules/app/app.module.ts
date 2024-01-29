@@ -12,6 +12,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { FilesModule } from '../files/files.module';
 import { UniversitiesModule } from '../universities/universities.module';
 import { CatalogModule } from '../catalog/catalog.module';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CatalogModule } from '../catalog/catalog.module';
     FilesModule,
     UniversitiesModule,
     CatalogModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

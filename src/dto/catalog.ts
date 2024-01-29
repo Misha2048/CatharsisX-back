@@ -4,6 +4,15 @@ import { Stillage } from '@prisma/client';
 
 export class GetCatalogRequestDto {
   @ApiProperty()
+  name?: string;
+
+  @ApiProperty()
+  last_upload_at?: Date[];
+
+  @ApiProperty()
+  created_at?: Date[];
+
+  @ApiProperty()
   limit: number;
 
   @ApiProperty({ description: 'zero-based offset index' })

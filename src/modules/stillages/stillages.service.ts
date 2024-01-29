@@ -6,35 +6,16 @@ import {
   GetLikedStillagesRequestDTO,
   FindStillagesResponseDto,
 } from 'src/dto/stillages';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class StillagesService {
+  constructor(private readonly commonService: CommonService) {}
   async findStillages(
     findStillagesRequestDto: FindStillagesRequestDto,
     userId: string,
   ): Promise<FindStillagesResponseDto[]> {
-    const filter = Object.entries(findStillagesRequestDto).reduce(
-      (filters, [key, value]) => {
-        if (value !== undefined && value !== '') {
-          if (key === 'stillage') {
-            filters[key] = { id: value };
-          } else if (key === 'last_upload_at' || key === 'created_at') {
-            const dateFrom = new Date(value[0]);
-            dateFrom.setHours(0, 0, 0, 0);
-            const dateTo = new Date(value[1]);
-            dateTo.setDate(dateTo.getDate() + 1);
-            dateTo.setHours(0, 0, 0, 0);
-            filters[key] = { gte: dateFrom, lt: dateTo };
-          } else if (key === 'name') {
-            filters[key] = { contains: value, mode: 'insensitive' };
-          } else {
-            filters[key] = { contains: value };
-          }
-        }
-        return filters;
-      },
-      {},
-    );
+    const filter = await this.commonService.getFilters(findStillagesRequestDto);
 
     const likedStillageIDs: string[] = await client.user
       .findUnique({
@@ -169,11 +150,15 @@ export class StillagesService {
       throw new NotFoundException('User not found');
     }
     const count = user.liked.length;
+    const filter = await this.commonService.getFilters(
+      getLikedStillagesRequestDTO,
+    );
     const likedStillages = await client.stillage.findMany({
       where: {
         id: {
           in: user.liked || [],
         },
+        ...filter,
       },
       orderBy: {
         name: 'asc',
