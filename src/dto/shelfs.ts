@@ -3,7 +3,7 @@ import { Shelf } from '@prisma/client';
 
 export class FindShelfsRequestDto {
   @ApiProperty()
-  stillage?: string;
+  stillage: string;
 
   @ApiProperty()
   name?: string;
@@ -31,7 +31,7 @@ export class UpdateShelfRequestDto {
 export class FindShelfsResponseDto {
   constructor(shelf: Shelf) {
     this.id = shelf.id;
-    this.userId = shelf.id;
+    this.userId = shelf.userId;
     this.name = shelf.name;
     this.stillageId = shelf.stillageId;
     this.last_upload_at = shelf.last_upload_at;
@@ -55,6 +55,14 @@ export class FindShelfsResponseDto {
 
   @ApiProperty()
   created_at: Date;
+}
+
+export class GetShelvesResponseDto {
+  @ApiProperty()
+  stillageName: string;
+
+  @ApiProperty({ isArray: true, type: FindShelfsResponseDto })
+  shelves: FindShelfsResponseDto[];
 }
 
 export class UpdateShelfResponseDto {
