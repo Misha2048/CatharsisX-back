@@ -18,6 +18,7 @@ import {
   DeleteShelfResponseDto,
   FindShelfsRequestDto,
   FindShelfsResponseDto,
+  GetShelvesResponseDto,
   UpdateShelfRequestDto,
   UpdateShelfResponseDto,
 } from 'src/dto/shelfs';
@@ -35,8 +36,8 @@ export class ShelfsController {
 
   @ApiOkResponse({
     description: 'Search Shelfs ',
-    type: FindShelfsResponseDto,
-    isArray: true,
+    type: GetShelvesResponseDto,
+    isArray: false,
   })
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
@@ -45,7 +46,25 @@ export class ShelfsController {
     @Query() findShelfsRequestDto: FindShelfsRequestDto,
     @Request() req,
   ) {
-    return this.shelfsService.findShelfs(findShelfsRequestDto, req.user['id']);
+    const stillage = await this.stillageService.findStillageById(
+      findShelfsRequestDto.stillage,
+      req.user['id'],
+    );
+
+    const stillageName = stillage ? stillage.name : undefined;
+
+    const shelfs = await this.shelfsService.findShelfs(
+      findShelfsRequestDto,
+      req.user['id'],
+    );
+
+    const findShelfsResponse: FindShelfsResponseDto[] = [];
+
+    for (const shelf of shelfs) {
+      findShelfsResponse.push(new FindShelfsResponseDto(shelf));
+    }
+
+    return { stillageName, findShelfsResponse };
   }
 
   @ApiOkResponse({

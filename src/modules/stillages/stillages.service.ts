@@ -71,7 +71,7 @@ export class StillagesService {
 
   async findStillageById(
     id: string,
-    userId: string,
+    userId?: string,
   ): Promise<Stillage | undefined> {
     try {
       return await client.stillage.findFirstOrThrow({
