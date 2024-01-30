@@ -118,7 +118,7 @@ export class AuthService {
       emailVerify = await this.emailVerifyService.create(user.id);
     }
 
-    const Url = `${process.env.EMAIL_HOST}/password-reset/${emailVerify.id}`;
+    const Url = `${process.env.FRONTEND_HOST}/password-reset/${emailVerify.id}`;
     await this.mailService.sendMail({
       to: email,
       subject: 'Password Reset Request',
