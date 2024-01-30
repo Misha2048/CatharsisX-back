@@ -61,7 +61,6 @@ export class ShelfsController {
     const findShelfsResponse: FindShelfsResponseDto[] = [];
 
     for (const shelf of shelfs) {
-      console.log(shelf);
       findShelfsResponse.push(new FindShelfsResponseDto(shelf));
     }
 
