@@ -99,12 +99,41 @@ export class GetLikedStillagesRequestDTO {
   offset: number;
 }
 
+export class LikedStillageDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  created_at: Date;
+
+  @ApiProperty()
+  last_upload_at: Date;
+
+  @ApiProperty()
+  university_id: string;
+
+  @ApiProperty()
+  private: boolean;
+
+  @ApiProperty({ default: true })
+  liked: true;
+}
+
 export class GetLikedStillagesResponseDto {
   @ApiProperty({ default: 10 })
   count: number;
 
-  @ApiProperty({ isArray: true, type: StillagesResponseDto })
-  likedStillages: Stillage[];
+  @ApiProperty({
+    isArray: true,
+    type: LikedStillageDto,
+  })
+  likedStillages: LikedStillageDto[];
 }
 
 export class UpdateStillageResponseDto {
