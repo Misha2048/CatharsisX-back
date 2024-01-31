@@ -155,7 +155,7 @@ export class StillagesService {
       getLikedStillagesRequestDTO,
       blackListKeys,
     );
-    const likedStillages = await client.stillage.findMany({
+    let likedStillages = await client.stillage.findMany({
       where: {
         id: {
           in: user.liked || [],
@@ -168,6 +168,12 @@ export class StillagesService {
       take: Number(getLikedStillagesRequestDTO.limit) || undefined,
       skip: Number(getLikedStillagesRequestDTO.offset) || undefined,
     });
+
+    likedStillages = likedStillages.map((stillage) => ({
+      ...stillage,
+      liked: true,
+    }));
+
     return { count, likedStillages };
   }
 }
