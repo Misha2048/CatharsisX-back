@@ -96,7 +96,7 @@ export class GetShelvesResponseDto {
       'List of all shelves is possible to get which are belong to the current user',
     isArray: true,
   })
-  FindShelfsResponse: FindShelfsResponseDto[];
+  findShelfsResponse: FindShelfsResponseDto[];
 }
 
 export class UpdateShelfResponseDto {
