@@ -46,10 +46,17 @@ export class ShelfsController {
     @Query() findShelfsRequestDto: FindShelfsRequestDto,
     @Request() req,
   ) {
+    if (!findShelfsRequestDto.stillage) {
+      throw new BadRequestException('Stillage is required in the query.');
+    }
     const stillage = await this.stillageService.findStillageById(
       findShelfsRequestDto.stillage,
       req.user['id'],
     );
+
+    if (!stillage) {
+      throw new NotFoundException('Stillage not found');
+    }
 
     const stillageName = stillage ? stillage.name : undefined;
 
