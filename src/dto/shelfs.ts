@@ -4,41 +4,42 @@ import { Shelf } from '@prisma/client';
 export class FindShelfsRequestDto {
   @ApiProperty({
     description: 'Stillage id (string) of the shelves we want to get',
-    example: "'1', '2', '3', '12'...",
   })
   stillage: string;
 
   @ApiProperty({
     required: false,
     description: "Shelf's name",
-    example: "'Shelf - 1', 'shelf_2', 'Shelf for the Math'",
   })
   name?: string;
 
   @ApiProperty({
     required: false,
-    description: 'Last upload date for the filters',
-    example: "'2024-02-01', '2024-01-31', '2024-02-29'",
+    description:
+      'List of last upload dates for the filters ' +
+      '(the first element is the start date and the second element is the end date for the search interval)',
+    example: ['2024-01-01', '2099-12-31'],
   })
   last_upload_at?: Date[];
 
   @ApiProperty({
     required: false,
-    description: 'Created at date for the filters',
-    example: "'2024-02-01', '2024-01-31', '2024-02-29'",
+    description:
+      'List of Created at dates for the filters ' +
+      '(the first element is the start date and the second element is the end date for the search interval)',
+    example: ['2024-01-01', '2099-12-31'],
   })
   created_at?: Date[];
 }
 
 export class UpdateShelfRequestDto {
   @ApiProperty({
-    example:
-      "'firstShelf' or 'secondShelf' or 'test shelf' or 'test' (string) (optional parameter)",
+    required: false,
   })
   name?: string;
 
   @ApiProperty({
-    example: "'1' or '2' or '3' or '4' etc. (string) (optional parameter)",
+    required: false,
   })
   stillage?: string;
 }
@@ -54,31 +55,28 @@ export class FindShelfsResponseDto {
 
   @ApiProperty({
     description: "Shelf's id",
-    example: "'1', '2', '3', '12'...",
   })
   id: string;
 
   @ApiProperty({
     description: "Stillage's id",
-    example: "'1', '2', '3', '12'...",
   })
   stillageId: string;
 
   @ApiProperty({
     description: "Shelf's name",
-    example: "'First shelf', 'Shelf 2', 'Shelf for the Math'",
   })
   name: string;
 
   @ApiProperty({
     description: 'Last upload date after the filtering',
-    example: "'2024-02-01', '2024-01-31', '2024-02-29'",
+    example: '2024-01-01T00:00:00.000Z',
   })
   last_upload_at: Date;
 
   @ApiProperty({
     description: 'Created at date after the filtering',
-    example: "'2024-02-01', '2024-01-31', '2024-02-29'",
+    example: '2024-01-01T00:00:00.000Z',
   })
   created_at: Date;
 }
@@ -86,7 +84,6 @@ export class FindShelfsResponseDto {
 export class GetShelvesResponseDto {
   @ApiProperty({
     description: 'Stillage name you are getting by id',
-    example: "'Stillage', 'Stillage 2', 'Stillage 3', 'Math'",
   })
   stillageName: string;
 
@@ -96,7 +93,7 @@ export class GetShelvesResponseDto {
       'List of all shelves is possible to get which are belong to the current user',
     isArray: true,
   })
-  FindShelfsResponse: FindShelfsResponseDto[];
+  findShelfsResponse: FindShelfsResponseDto[];
 }
 
 export class UpdateShelfResponseDto {
