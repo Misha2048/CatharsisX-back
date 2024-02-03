@@ -2,28 +2,44 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Shelf } from '@prisma/client';
 
 export class FindShelfsRequestDto {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Stillage id (string) of the shelves we want to get',
+  })
   stillage: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+    description: "Shelf's name",
+  })
   name?: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+    description:
+      'List of last upload dates for the filters ' +
+      '(the first element is the start date and the second element is the end date for the search interval)',
+    example: ['2024-01-01', '2099-12-31'],
+  })
   last_upload_at?: Date[];
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+    description:
+      'List of Created at dates for the filters ' +
+      '(the first element is the start date and the second element is the end date for the search interval)',
+    example: ['2024-01-01', '2099-12-31'],
+  })
   created_at?: Date[];
 }
 
 export class UpdateShelfRequestDto {
   @ApiProperty({
-    example:
-      "'firstShelf' or 'secondShelf' or 'test shelf' or 'test' (string) (optional parameter)",
+    required: false,
   })
   name?: string;
 
   @ApiProperty({
-    example: "'1' or '2' or '3' or '4' etc. (string) (optional parameter)",
+    required: false,
   })
   stillage?: string;
 }
@@ -31,38 +47,53 @@ export class UpdateShelfRequestDto {
 export class FindShelfsResponseDto {
   constructor(shelf: Shelf) {
     this.id = shelf.id;
-    this.userId = shelf.userId;
     this.name = shelf.name;
     this.stillageId = shelf.stillageId;
     this.last_upload_at = shelf.last_upload_at;
     this.created_at = shelf.created_at;
   }
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Shelf's id",
+  })
   id: string;
 
-  @ApiProperty()
-  userId: string;
-
-  @ApiProperty()
+  @ApiProperty({
+    description: "Stillage's id",
+  })
   stillageId: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: "Shelf's name",
+  })
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Last upload date after the filtering',
+    example: '2024-01-01T00:00:00.000Z',
+  })
   last_upload_at: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Created at date after the filtering',
+    example: '2024-01-01T00:00:00.000Z',
+  })
   created_at: Date;
 }
 
 export class GetShelvesResponseDto {
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Stillage name you are getting by id',
+  })
   stillageName: string;
 
-  @ApiProperty({ isArray: true, type: FindShelfsResponseDto })
-  shelves: FindShelfsResponseDto[];
+  @ApiProperty({
+    type: FindShelfsResponseDto,
+    description:
+      'List of all shelves is possible to get which are belong to the current user',
+    isArray: true,
+  })
+  findShelfsResponse: FindShelfsResponseDto[];
 }
 
 export class UpdateShelfResponseDto {
