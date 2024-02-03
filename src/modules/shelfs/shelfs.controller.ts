@@ -58,7 +58,7 @@ export class ShelfsController {
       throw new NotFoundException('Stillage not found');
     }
 
-    const stillageName = stillage ? stillage.name : undefined;
+    const stillageName = stillage.name;
 
     const shelfs = await this.shelfsService.findShelfs(
       findShelfsRequestDto,
