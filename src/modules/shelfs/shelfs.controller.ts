@@ -51,7 +51,6 @@ export class ShelfsController {
     }
     const stillage = await this.stillageService.findStillageById(
       findShelfsRequestDto.stillage,
-      req.user['id'],
     );
 
     if (!stillage) {
@@ -60,10 +59,7 @@ export class ShelfsController {
 
     const stillageName = stillage.name;
 
-    const shelfs = await this.shelfsService.findShelfs(
-      findShelfsRequestDto,
-      req.user['id'],
-    );
+    const shelfs = await this.shelfsService.findShelfs(findShelfsRequestDto);
 
     const findShelfsResponse: FindShelfsResponseDto[] = [];
 

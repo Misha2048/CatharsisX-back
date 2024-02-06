@@ -8,7 +8,6 @@ import { IShelfUpdateError } from '../../interfaces/IShelf';
 export class ShelfsService {
   async findShelfs(
     findShelfsRequestDto: FindShelfsRequestDto,
-    userId: string,
   ): Promise<Shelf[]> {
     const filter = Object.entries(findShelfsRequestDto).reduce(
       (filters, [key, value]) => {
@@ -38,7 +37,6 @@ export class ShelfsService {
 
     return await client.shelf.findMany({
       where: {
-        user: { id: userId },
         ...filter,
       },
       orderBy: {
