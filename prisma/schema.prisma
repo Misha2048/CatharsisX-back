@@ -25,8 +25,8 @@ model User {
   university     University? @relation(fields: [university_id], references: [id])
   university_id  String?
   liked          String[]    @default([])
-  Forum          Forum[]
-  Answer         Answer[]
+  forum          Forum[]
+  answer         Answer[]
 }
 
 model EmailVerify {
