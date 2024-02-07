@@ -38,7 +38,7 @@ export class ForumController {
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
   @Post()
-  async create(
+  async createForum(
     @Body() createForumRequestDto: CreateForumRequestDto,
     @Request() req,
   ) {
