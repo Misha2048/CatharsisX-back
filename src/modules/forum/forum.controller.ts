@@ -13,6 +13,7 @@ import { ForumService } from './forum.service';
 import {
   CreateForumRequestDto,
   CreateForumSuccesResponseDto,
+  FindForumsDto,
   FindForumsRequestDto,
   FindForumsResponseDto,
   HTTPError,
@@ -68,7 +69,7 @@ export class ForumController {
   @Get()
   async findForums(
     @Query() findForumRequestDto: FindForumsRequestDto,
-  ): Promise<FindForumsResponseDto[]> {
+  ): Promise<{ count: number; forums: FindForumsDto[] }> {
     try {
       return await this.forumService.findForums(findForumRequestDto);
     } catch (error) {

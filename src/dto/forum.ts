@@ -38,9 +38,12 @@ export class HTTPError {
 export class FindForumsRequestDto {
   @ApiProperty()
   title?: string;
+
+  @ApiProperty()
+  limit: number;
 }
 
-export class FindForumsResponseDto {
+export class FindForumsDto {
   constructor(forum: Forum) {
     this.title = forum.title;
     this.tags = forum.tags;
@@ -55,4 +58,14 @@ export class FindForumsResponseDto {
 
   @ApiProperty()
   body: string;
+}
+export class FindForumsResponseDto {
+  @ApiProperty()
+  count: number;
+
+  @ApiProperty({
+    isArray: true,
+    type: FindForumsDto,
+  })
+  forums: FindForumsDto[];
 }

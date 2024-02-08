@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CreateForumRequestDto,
   FindForumsRequestDto,
-  FindForumsResponseDto,
+  FindForumsDto,
 } from 'src/dto/forum';
 import client from 'src/db/prismaClient';
 import { CommonService } from '../common/common.service';
@@ -26,12 +26,23 @@ export class ForumService {
 
   async findForums(
     findForumsRequestDto: FindForumsRequestDto,
-  ): Promise<FindForumsResponseDto[]> {
-    const filters = await this.commonService.getFilters(findForumsRequestDto);
+  ): Promise<{ count: number; forums: FindForumsDto[] }> {
+    const blackListKeys = ['limit'];
+    const filters = await this.commonService.getFilters(
+      findForumsRequestDto,
+      blackListKeys,
+    );
     const forums = await client.forum.findMany({
+      where: filters,
+      take: Number(findForumsRequestDto.limit) || undefined,
+    });
+    const count = await client.forum.count({
       where: filters,
     });
 
-    return forums.map((forum) => new FindForumsResponseDto(forum));
+    return {
+      count: count,
+      forums: forums.map((forum) => new FindForumsDto(forum)),
+    };
   }
 }
