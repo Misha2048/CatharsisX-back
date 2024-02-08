@@ -6,12 +6,17 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { ForumService } from './forum.service';
 import {
-  CreateForumErrorResponseDto,
   CreateForumRequestDto,
   CreateForumSuccesResponseDto,
+  FindForumsDto,
+  FindForumsRequestDto,
+  FindForumsResponseDto,
+  HTTPError,
 } from 'src/dto/forum';
 import {
   ApiBadRequestResponse,
@@ -21,11 +26,11 @@ import {
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
 
+@ApiTags('Forum')
 @Controller('forum')
 export class ForumController {
   constructor(private readonly forumService: ForumService) {}
 
-  @ApiTags('Forum')
   @ApiOkResponse({
     description: 'Create Forum',
     type: CreateForumSuccesResponseDto,
@@ -33,7 +38,7 @@ export class ForumController {
   })
   @ApiBadRequestResponse({
     description: 'Failed create forum',
-    type: CreateForumErrorResponseDto,
+    type: HTTPError,
   })
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
@@ -50,7 +55,26 @@ export class ForumController {
       return new CreateForumSuccesResponseDto('forum successfully created');
     } catch (error) {
       throw new HttpException(
-        new CreateForumErrorResponseDto('Error creating forum'),
+        new HTTPError('Error creating forum'),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiOkResponse({
+    description: 'Find Forums',
+    type: FindForumsResponseDto,
+    isArray: true,
+  })
+  @Get()
+  async findForums(
+    @Query() findForumRequestDto: FindForumsRequestDto,
+  ): Promise<{ count: number; forums: FindForumsDto[] }> {
+    try {
+      return await this.forumService.findForums(findForumRequestDto);
+    } catch (error) {
+      throw new HttpException(
+        new HTTPError('Error find forums'),
         HttpStatus.BAD_REQUEST,
       );
     }
