@@ -13,6 +13,7 @@ import { FilesModule } from '../files/files.module';
 import { UniversitiesModule } from '../universities/universities.module';
 import { CatalogModule } from '../catalog/catalog.module';
 import { CommonModule } from '../common/common.module';
+import { ForumModule } from '../forum/forum.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CommonModule } from '../common/common.module';
     UniversitiesModule,
     CatalogModule,
     CommonModule,
+    ForumModule,
   ],
   controllers: [AppController],
   providers: [AppService],
