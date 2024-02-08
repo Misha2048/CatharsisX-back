@@ -6,12 +6,16 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { ForumService } from './forum.service';
 import {
   CreateForumErrorResponseDto,
   CreateForumRequestDto,
   CreateForumSuccesResponseDto,
+  FindForumsRequestDto,
+  FindForumsResponseDto,
 } from 'src/dto/forum';
 import {
   ApiBadRequestResponse,
@@ -21,11 +25,11 @@ import {
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
 
+@ApiTags('Forum')
 @Controller('forum')
 export class ForumController {
   constructor(private readonly forumService: ForumService) {}
 
-  @ApiTags('Forum')
   @ApiOkResponse({
     description: 'Create Forum',
     type: CreateForumSuccesResponseDto,
@@ -54,5 +58,17 @@ export class ForumController {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  @ApiOkResponse({
+    description: 'Find Forums',
+    type: FindForumsResponseDto,
+    isArray: true,
+  })
+  @Get()
+  async findForums(
+    @Query() findForumRequestDto: FindForumsRequestDto,
+  ): Promise<FindForumsResponseDto[]> {
+    return await this.forumService.findForums(findForumRequestDto);
   }
 }
