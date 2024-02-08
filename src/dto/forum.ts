@@ -22,7 +22,7 @@ export class CreateForumSuccesResponseDto {
   }
 }
 
-export class CreateForumErrorResponseDto {
+export class HTTPError {
   @ApiProperty()
   error: string;
 

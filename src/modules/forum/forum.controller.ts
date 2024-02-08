@@ -11,11 +11,11 @@ import {
 } from '@nestjs/common';
 import { ForumService } from './forum.service';
 import {
-  CreateForumErrorResponseDto,
   CreateForumRequestDto,
   CreateForumSuccesResponseDto,
   FindForumsRequestDto,
   FindForumsResponseDto,
+  HTTPError,
 } from 'src/dto/forum';
 import {
   ApiBadRequestResponse,
@@ -37,7 +37,7 @@ export class ForumController {
   })
   @ApiBadRequestResponse({
     description: 'Failed create forum',
-    type: CreateForumErrorResponseDto,
+    type: HTTPError,
   })
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
@@ -54,7 +54,7 @@ export class ForumController {
       return new CreateForumSuccesResponseDto('forum successfully created');
     } catch (error) {
       throw new HttpException(
-        new CreateForumErrorResponseDto('Error creating forum'),
+        new HTTPError('Error creating forum'),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -69,6 +69,13 @@ export class ForumController {
   async findForums(
     @Query() findForumRequestDto: FindForumsRequestDto,
   ): Promise<FindForumsResponseDto[]> {
-    return await this.forumService.findForums(findForumRequestDto);
+    try {
+      return await this.forumService.findForums(findForumRequestDto);
+    } catch (error) {
+      throw new HttpException(
+        new HTTPError('Error find forums'),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
