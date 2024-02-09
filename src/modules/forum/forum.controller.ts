@@ -74,7 +74,7 @@ export class ForumController {
       return await this.forumService.findForums(findForumRequestDto);
     } catch (error) {
       throw new HttpException(
-        new HTTPError('Error find forums'),
+        new HTTPError('Error find forums' + error.message),
         HttpStatus.BAD_REQUEST,
       );
     }

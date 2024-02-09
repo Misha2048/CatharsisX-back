@@ -14,6 +14,7 @@ import { UniversitiesModule } from '../universities/universities.module';
 import { CatalogModule } from '../catalog/catalog.module';
 import { CommonModule } from '../common/common.module';
 import { ForumModule } from '../forum/forum.module';
+import { CommentModule } from '../comment/comment.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ForumModule } from '../forum/forum.module';
     CatalogModule,
     CommonModule,
     ForumModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
