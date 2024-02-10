@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   CreateForumRequestDto,
   FindForumsRequestDto,
   FindForumsDto,
+  UpdateForumResponseDto,
 } from 'src/dto/forum';
 import client from 'src/db/prismaClient';
 import { CommonService } from '../common/common.service';
@@ -44,5 +45,31 @@ export class ForumService {
       count: count,
       forums: forums.map((forum) => new FindForumsDto(forum)),
     };
+  }
+
+  async updateForum(
+    id: string,
+    userId: string,
+    opts: any,
+  ): Promise<UpdateForumResponseDto> {
+    const existingForum = await client.forum.findUnique({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!existingForum) {
+      throw new NotFoundException('Forum not found');
+    }
+
+    const updatedForum = await client.forum.update({
+      where: {
+        id,
+        userId,
+      },
+      data: opts,
+    });
+    return new UpdateForumResponseDto(updatedForum);
   }
 }

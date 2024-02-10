@@ -69,3 +69,28 @@ export class FindForumsResponseDto {
   })
   forums: FindForumsDto[];
 }
+
+export class UpdateForumRequestDto {
+  @ApiProperty()
+  title?: string;
+
+  @ApiProperty()
+  body?: string;
+}
+
+export class UpdateForumResponseDto {
+  constructor(forum: Forum) {
+    this.title = forum.title;
+    this.tags = forum.tags;
+    this.body = forum.body;
+  }
+
+  @ApiProperty()
+  title: string;
+
+  @ApiProperty({ type: [String] })
+  tags: string[];
+
+  @ApiProperty()
+  body: string;
+}
