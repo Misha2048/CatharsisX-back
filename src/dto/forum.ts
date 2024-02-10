@@ -22,19 +22,6 @@ export class CreateForumSuccesResponseDto {
   }
 }
 
-export class HTTPError {
-  @ApiProperty()
-  error: string;
-
-  @ApiProperty()
-  statusCode: number;
-
-  constructor(error: string, statusCode: number = HttpStatus.BAD_REQUEST) {
-    this.error = error;
-    this.statusCode = statusCode;
-  }
-}
-
 export class FindForumsRequestDto {
   @ApiProperty()
   title?: string;

@@ -11,7 +11,6 @@ import { AnswerService } from './answer.service';
 import {
   CreateAnswerRequestDto,
   CreateAnswerResponseDto,
-  HTTPError,
 } from 'src/dto/answer';
 import {
   ApiBadRequestResponse,
@@ -20,6 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
+import { HTTPError } from 'src/dto/common';
 
 @ApiTags('Answer')
 @Controller('answer')
