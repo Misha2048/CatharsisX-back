@@ -1,16 +1,32 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { UploadFileRequest } from 'src/dto/file';
+import {
+  GetFilesRequestDto,
+  GetFilesResponseDto,
+  UploadFileRequest,
+} from 'src/dto/file';
 import client from 'src/db/prismaClient';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import * as officeParser from 'officeparser';
 import * as parseRTF from 'rtf-parser';
+import { StillagesService } from 'src/modules/stillages/stillages.service';
 
 @Injectable()
 export class FilesService {
   private readonly logger = new Logger(FilesService.name);
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly stillageService: StillagesService,
+  ) {}
 
   async validateFile(parsedText: string): Promise<boolean> {
     try {
@@ -144,5 +160,30 @@ export class FilesService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getFilesFromShelf(
+    getFilesDto: GetFilesRequestDto,
+    userId: string,
+  ): Promise<GetFilesResponseDto[]> {
+    if (!getFilesDto.shelf || !getFilesDto.stillage) {
+      throw new UnprocessableEntityException(
+        'The shelf id and the stillage id are required in the query',
+      );
+    }
+
+    const stillage = await this.stillageService.findStillageById(
+      getFilesDto.stillage,
+    );
+    if (!stillage) throw new NotFoundException('Stillage not found');
+    if (stillage.private && stillage.userId !== userId) {
+      throw new BadRequestException('Stillage is private');
+    }
+
+    const files = await client.file.findMany({
+      where: { shelf_id: getFilesDto.shelf },
+    });
+
+    return files.map((file) => new GetFilesResponseDto(file));
   }
 }

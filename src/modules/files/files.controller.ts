@@ -5,9 +5,15 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Get,
+  UseGuards,
+  Query,
+  Req,
 } from '@nestjs/common';
-import { FilesService } from './files.service';
+import { FilesService } from 'src/modules/files/files.service';
 import {
+  GetFilesRequestDto,
+  GetFilesResponseDto,
   UploadFileErrorResponseDto,
   UploadFileRequest,
   UploadFileSuccessResponseDto,
@@ -20,6 +26,8 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { AccessTokenGuard } from 'src/guards';
+import { Request } from 'express';
 
 @ApiTags('Files')
 @Controller('files')
@@ -50,5 +58,20 @@ export class FilesController {
         new UploadFileErrorResponseDto(error.message),
       );
     }
+  }
+
+  @ApiOkResponse({
+    description:
+      'A list of files on a certain shelf (see GetFilesResponseDto for more details)',
+    type: GetFilesResponseDto,
+    isArray: true,
+  })
+  @UseGuards(AccessTokenGuard)
+  @Get()
+  async getFiles(
+    @Query() getFilesDto: GetFilesRequestDto,
+    @Req() req: Request,
+  ) {
+    return this.filesService.getFilesFromShelf(getFilesDto, req.user['id']);
   }
 }
