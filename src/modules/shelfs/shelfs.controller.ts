@@ -63,12 +63,8 @@ export class ShelfsController {
       findShelfsRequestDto.owned_by_user === 'true',
     );
 
-    if (!stillage) {
+    if (!stillage || (stillage.private && stillage.userId != req.user['id'])) {
       throw new NotFoundException('Stillage not found');
-    }
-
-    if (stillage.private && stillage.userId != req.user['id']) {
-      throw new BadRequestException('Stillage is private');
     }
 
     const stillageName = stillage.name;
