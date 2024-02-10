@@ -12,6 +12,7 @@ import {
   BadRequestException,
   NotFoundException,
   Delete,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { ShelfsService } from './shelfs.service';
 import {
@@ -47,19 +48,35 @@ export class ShelfsController {
     @Request() req,
   ) {
     if (!findShelfsRequestDto.stillage) {
-      throw new BadRequestException('Stillage is required in the query.');
+      throw new UnprocessableEntityException(
+        'Stillage is required in the query.',
+      );
     }
+
+    if (!findShelfsRequestDto.owned_by_user) {
+      findShelfsRequestDto.owned_by_user = 'true';
+    }
+
     const stillage = await this.stillageService.findStillageById(
       findShelfsRequestDto.stillage,
+      req.user['id'],
+      findShelfsRequestDto.owned_by_user === 'true',
     );
 
     if (!stillage) {
       throw new NotFoundException('Stillage not found');
     }
 
+    if (stillage.private && stillage.userId != req.user['id']) {
+      throw new BadRequestException('Stillage is private');
+    }
+
     const stillageName = stillage.name;
 
-    const shelfs = await this.shelfsService.findShelfs(findShelfsRequestDto);
+    const shelfs = await this.shelfsService.findShelfs(
+      findShelfsRequestDto,
+      req.user['id'],
+    );
 
     const findShelfsResponse: FindShelfsResponseDto[] = [];
 
