@@ -47,6 +47,7 @@ model Stillage {
   university     University @relation(fields: [university_id], references: [id])
   university_id  String
   private        Boolean    @default(true)
+  color          String     @default("#019C56")
 
   @@index([university_id])
 }
