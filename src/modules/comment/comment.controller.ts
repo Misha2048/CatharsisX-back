@@ -11,6 +11,7 @@ import { CommentService } from './comment.service';
 import {
   CreateCommentRequestDto,
   CreateCommentResponseDto,
+  HTTPError,
 } from 'src/dto/comment';
 import {
   ApiBadRequestResponse,
@@ -19,7 +20,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
-import { HTTPError } from 'src/dto/common';
 
 @ApiTags('Comment')
 @Controller('comment')

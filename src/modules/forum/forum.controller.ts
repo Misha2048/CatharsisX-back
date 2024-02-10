@@ -16,6 +16,7 @@ import {
   FindForumsDto,
   FindForumsRequestDto,
   FindForumsResponseDto,
+  HTTPError,
 } from 'src/dto/forum';
 import {
   ApiBadRequestResponse,
@@ -24,7 +25,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
-import { HTTPError } from 'src/dto/common';
 
 @ApiTags('Forum')
 @Controller('forum')
