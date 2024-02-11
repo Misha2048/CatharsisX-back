@@ -12,6 +12,7 @@ import {
   GetFilesRequestDto,
   GetFilesResponseDto,
   UploadFileRequest,
+  UploadFileResponseDto,
 } from 'src/dto/file';
 import client from 'src/db/prismaClient';
 import { catchError, firstValueFrom } from 'rxjs';
@@ -73,7 +74,7 @@ export class FilesService {
   async uploadFileToShelf(
     uploadFileRequest: UploadFileRequest,
     file: Express.Multer.File,
-  ): Promise<void> {
+  ): Promise<UploadFileResponseDto> {
     try {
       const fileType = file.originalname.split('.').pop().toLowerCase();
 
@@ -128,7 +129,7 @@ export class FilesService {
         where: { id: uploadFileRequest.shelf_id },
       });
 
-      await client.file.create({
+      const uploadFiles = await client.file.create({
         data: {
           filename: uploadFileRequest.filename,
           text_content: parsedText,
@@ -149,6 +150,7 @@ export class FilesService {
       });
 
       this.logger.log('File uploaded successfully.');
+      return new UploadFileResponseDto(uploadFiles);
     } catch (error) {
       this.logger.error(`Failed to upload file to shelf: ${error.message}`);
       throw new HttpException(

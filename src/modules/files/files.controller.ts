@@ -16,7 +16,7 @@ import {
   GetFilesResponseDto,
   UploadFileErrorResponseDto,
   UploadFileRequest,
-  UploadFileSuccessResponseDto,
+  UploadFileResponseDto,
 } from 'src/dto/file';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -39,7 +39,7 @@ export class FilesController {
   @UseInterceptors(FileInterceptor('file'))
   @ApiOkResponse({
     description: 'File uploaded',
-    type: UploadFileSuccessResponseDto,
+    type: UploadFileResponseDto,
   })
   @ApiBadRequestResponse({
     description: 'Failed to upload file',
@@ -51,8 +51,7 @@ export class FilesController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
-      await this.filesService.uploadFileToShelf(uploadFileRequest, file);
-      return new UploadFileSuccessResponseDto('File uploaded ');
+      return await this.filesService.uploadFileToShelf(uploadFileRequest, file);
     } catch (error) {
       throw new BadRequestException(
         new UploadFileErrorResponseDto(error.message),
