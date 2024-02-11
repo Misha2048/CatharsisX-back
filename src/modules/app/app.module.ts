@@ -15,6 +15,7 @@ import { CatalogModule } from '../catalog/catalog.module';
 import { CommonModule } from '../common/common.module';
 import { ForumModule } from '../forum/forum.module';
 import { CommentModule } from '../comment/comment.module';
+import { AnswerModule } from '../answer/answer.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CommentModule } from '../comment/comment.module';
     CommonModule,
     ForumModule,
     CommentModule,
+    AnswerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
