@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { File } from '@prisma/client';
+import { IFile } from 'src/interfaces/IFile';
 
 export class UploadFileRequest {
   @ApiProperty()
@@ -33,13 +33,10 @@ export class UploadFileSuccessResponseDto {
 export class GetFilesRequestDto {
   @ApiProperty({ description: 'The shelf ID' })
   shelf: string;
-
-  @ApiProperty({ description: 'The stillage ID' })
-  stillage: string;
 }
 
 export class GetFilesResponseDto {
-  constructor(file: File) {
+  constructor(file: IFile) {
     this.id = file.id;
     this.name = file.filename;
     this.size = file.size;

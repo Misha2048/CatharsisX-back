@@ -18,15 +18,11 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import * as officeParser from 'officeparser';
 import * as parseRTF from 'rtf-parser';
-import { StillagesService } from 'src/modules/stillages/stillages.service';
 
 @Injectable()
 export class FilesService {
   private readonly logger = new Logger(FilesService.name);
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly stillageService: StillagesService,
-  ) {}
+  constructor(private readonly httpService: HttpService) {}
 
   async validateFile(parsedText: string): Promise<boolean> {
     try {
@@ -172,18 +168,23 @@ export class FilesService {
       );
     }
 
-    const stillage = await this.stillageService.findStillageById(
-      getFilesDto.stillage,
-    );
+    const shelf = await client.shelf.findUnique({
+      select: {
+        file: {
+          select: { id: true, filename: true, size: true, uploaded_at: true },
+        },
+        stillage: true,
+      },
+      where: { id: getFilesDto.shelf },
+    });
+
+    const stillage = shelf.stillage;
+
     if (!stillage) throw new NotFoundException('Stillage not found');
     if (stillage.private && stillage.userId !== userId) {
       throw new BadRequestException('Stillage is private');
     }
 
-    const files = await client.file.findMany({
-      where: { shelf_id: getFilesDto.shelf },
-    });
-
-    return files.map((file) => new GetFilesResponseDto(file));
+    return shelf.file.map((file) => new GetFilesResponseDto(file));
   }
 }
