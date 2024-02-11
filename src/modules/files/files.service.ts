@@ -1,6 +1,18 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { UploadFileRequest } from 'src/dto/file';
+import {
+  GetFilesRequestDto,
+  GetFilesResponseDto,
+  UploadFileRequest,
+} from 'src/dto/file';
 import client from 'src/db/prismaClient';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
@@ -144,5 +156,35 @@ export class FilesService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getFilesFromShelf(
+    getFilesDto: GetFilesRequestDto,
+    userId: string,
+  ): Promise<GetFilesResponseDto[]> {
+    if (!getFilesDto.shelf) {
+      throw new UnprocessableEntityException(
+        'The shelf id and the stillage id are required in the query',
+      );
+    }
+
+    const shelf = await client.shelf.findUnique({
+      select: {
+        file: {
+          select: { id: true, filename: true, size: true, uploaded_at: true },
+        },
+        stillage: true,
+      },
+      where: { id: getFilesDto.shelf },
+    });
+
+    const stillage = shelf.stillage;
+
+    if (!stillage) throw new NotFoundException('Stillage not found');
+    if (stillage.private && stillage.userId !== userId) {
+      throw new BadRequestException('Stillage is private');
+    }
+
+    return shelf.file.map((file) => new GetFilesResponseDto(file));
   }
 }
