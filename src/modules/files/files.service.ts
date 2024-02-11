@@ -182,7 +182,6 @@ export class FilesService {
 
     const stillage = shelf.stillage;
 
-    if (!stillage) throw new NotFoundException('Stillage not found');
     if (stillage.private && stillage.userId !== userId) {
       throw new BadRequestException('Stillage is private');
     }
