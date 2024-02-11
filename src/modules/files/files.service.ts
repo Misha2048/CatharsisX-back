@@ -164,7 +164,7 @@ export class FilesService {
   ): Promise<GetFilesResponseDto[]> {
     if (!getFilesDto.shelf) {
       throw new UnprocessableEntityException(
-        'The shelf id and the stillage id are required in the query',
+        'The shelf id is required in the query',
       );
     }
 
@@ -178,9 +178,10 @@ export class FilesService {
       where: { id: getFilesDto.shelf },
     });
 
+    if (!shelf) throw new NotFoundException('Shelf not found');
+
     const stillage = shelf.stillage;
 
-    if (!stillage) throw new NotFoundException('Stillage not found');
     if (stillage.private && stillage.userId !== userId) {
       throw new BadRequestException('Stillage is private');
     }
