@@ -162,7 +162,7 @@ export class FilesService {
     getFilesDto: GetFilesRequestDto,
     userId: string,
   ): Promise<GetFilesResponseDto[]> {
-    if (!getFilesDto.shelf || !getFilesDto.stillage) {
+    if (!getFilesDto.shelf) {
       throw new UnprocessableEntityException(
         'The shelf id and the stillage id are required in the query',
       );
