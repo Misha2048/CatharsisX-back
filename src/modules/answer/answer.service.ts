@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   CreateAnswerRequestDto,
-  UpdateAnswerRequestDto,
   UpdateAnswerResponseDto,
 } from 'src/dto/answer';
 import client from 'src/db/prismaClient';

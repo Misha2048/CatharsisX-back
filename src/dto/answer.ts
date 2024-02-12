@@ -17,7 +17,7 @@ export class CreateAnswerResponseDto {
 
 export class UpdateAnswerRequestDto {
   @ApiProperty()
-  body: string;
+  public body?: string = '';
 }
 
 export class UpdateAnswerResponseDto {

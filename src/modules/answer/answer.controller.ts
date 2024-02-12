@@ -79,9 +79,11 @@ export class AnswerController {
   ) {
     const opts = {};
 
-    for (const [key, value] of Object.entries(updateAnswerRequestDto)) {
-      if (value !== undefined) {
-        opts[key] = value;
+    const validKeys = Object.keys(new UpdateAnswerRequestDto());
+
+    for (const key of validKeys) {
+      if (updateAnswerRequestDto[key] !== undefined) {
+        opts[key] = updateAnswerRequestDto[key];
       }
     }
     try {
