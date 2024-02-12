@@ -1,6 +1,19 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { UploadFileRequest } from 'src/dto/file';
+import {
+  GetFilesRequestDto,
+  GetFilesResponseDto,
+  UploadFileRequest,
+  UploadFileResponseDto,
+} from 'src/dto/file';
 import client from 'src/db/prismaClient';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
@@ -61,7 +74,7 @@ export class FilesService {
   async uploadFileToShelf(
     uploadFileRequest: UploadFileRequest,
     file: Express.Multer.File,
-  ): Promise<void> {
+  ): Promise<UploadFileResponseDto> {
     try {
       const fileType = file.originalname.split('.').pop().toLowerCase();
 
@@ -116,7 +129,7 @@ export class FilesService {
         where: { id: uploadFileRequest.shelf_id },
       });
 
-      await client.file.create({
+      const uploadFiles = await client.file.create({
         data: {
           filename: uploadFileRequest.filename,
           text_content: parsedText,
@@ -137,6 +150,7 @@ export class FilesService {
       });
 
       this.logger.log('File uploaded successfully.');
+      return new UploadFileResponseDto(uploadFiles);
     } catch (error) {
       this.logger.error(`Failed to upload file to shelf: ${error.message}`);
       throw new HttpException(
@@ -144,5 +158,36 @@ export class FilesService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getFilesFromShelf(
+    getFilesDto: GetFilesRequestDto,
+    userId: string,
+  ): Promise<GetFilesResponseDto[]> {
+    if (!getFilesDto.shelf) {
+      throw new UnprocessableEntityException(
+        'The shelf id is required in the query',
+      );
+    }
+
+    const shelf = await client.shelf.findUnique({
+      select: {
+        file: {
+          select: { id: true, filename: true, size: true, uploaded_at: true },
+        },
+        stillage: true,
+      },
+      where: { id: getFilesDto.shelf },
+    });
+
+    if (!shelf) throw new NotFoundException('Shelf not found');
+
+    const stillage = shelf.stillage;
+
+    if (stillage.private && stillage.userId !== userId) {
+      throw new BadRequestException('Stillage is private');
+    }
+
+    return shelf.file.map((file) => new GetFilesResponseDto(file));
   }
 }
