@@ -8,6 +8,8 @@ import {
   HttpStatus,
   Get,
   Query,
+  Patch,
+  Param,
 } from '@nestjs/common';
 import { ForumService } from './forum.service';
 import {
@@ -17,6 +19,8 @@ import {
   FindForumsRequestDto,
   FindForumsResponseDto,
   HTTPError,
+  UpdateForumRequestDto,
+  UpdateForumResponseDto,
 } from 'src/dto/forum';
 import {
   ApiBadRequestResponse,
@@ -66,6 +70,10 @@ export class ForumController {
     type: FindForumsResponseDto,
     isArray: true,
   })
+  @ApiBadRequestResponse({
+    description: 'Failed find forum',
+    type: HTTPError,
+  })
   @Get()
   async findForums(
     @Query() findForumRequestDto: FindForumsRequestDto,
@@ -75,6 +83,40 @@ export class ForumController {
     } catch (error) {
       throw new HttpException(
         new HTTPError('Error find forums' + error.message),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiOkResponse({
+    description: 'Update Forum',
+    type: UpdateForumResponseDto,
+    isArray: false,
+  })
+  @ApiBadRequestResponse({
+    description: 'Failed update forum',
+    type: HTTPError,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Patch(':id')
+  async updateForum(
+    @Param('id') id: string,
+    @Body() updateForumRequestDto: UpdateForumRequestDto,
+    @Request() req,
+  ) {
+    const opts = {};
+
+    for (const [key, value] of Object.entries(updateForumRequestDto)) {
+      if (value !== undefined) {
+        opts[key] = value;
+      }
+    }
+    try {
+      return await this.forumService.updateForum(id, req.user['id'], opts);
+    } catch (error) {
+      throw new HttpException(
+        new HTTPError('Error update forums'),
         HttpStatus.BAD_REQUEST,
       );
     }

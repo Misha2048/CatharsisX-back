@@ -47,6 +47,9 @@ export class StillagesResponseDto {
 
   @ApiProperty()
   private: boolean;
+
+  @ApiProperty()
+  color: string;
 }
 
 export class FindStillagesResponseDto {
@@ -58,6 +61,7 @@ export class FindStillagesResponseDto {
     this.university_id = stillage.university_id;
     this.private = stillage.private;
     this.liked = liked;
+    this.color = stillage.color;
   }
 
   @ApiProperty()
@@ -80,6 +84,9 @@ export class FindStillagesResponseDto {
 
   @ApiProperty()
   liked: boolean;
+
+  @ApiProperty()
+  color: string;
 }
 
 export class GetLikedStillagesRequestDTO {
@@ -123,6 +130,9 @@ export class LikedStillageDto {
 
   @ApiProperty({ default: true })
   liked: true;
+
+  @ApiProperty()
+  color: string;
 }
 
 export class GetLikedStillagesResponseDto {
@@ -143,6 +153,7 @@ export class UpdateStillageResponseDto {
     this.created_at = stillage.created_at;
     this.last_upload_at = stillage.last_upload_at;
     this.private = stillage.private;
+    this.color = stillage.color;
   }
 
   @ApiProperty()
@@ -161,6 +172,9 @@ export class UpdateStillageResponseDto {
     example: 'true (boolean)(private) / false (boolean)(public)',
   })
   private: boolean;
+
+  @ApiProperty()
+  color: string;
 }
 
 export class DeleteStillageResponseDto {

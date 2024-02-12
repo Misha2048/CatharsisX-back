@@ -8,8 +8,11 @@ import { IShelfUpdateError } from '../../interfaces/IShelf';
 export class ShelfsService {
   async findShelfs(
     findShelfsRequestDto: FindShelfsRequestDto,
-    userId: string,
+    userId?: string,
   ): Promise<Shelf[]> {
+    const ownedByUser = findShelfsRequestDto.owned_by_user === 'true';
+    delete findShelfsRequestDto.owned_by_user;
+
     const filter = Object.entries(findShelfsRequestDto).reduce(
       (filters, [key, value]) => {
         if (value !== undefined && value !== '') {
@@ -36,10 +39,17 @@ export class ShelfsService {
       {},
     );
 
+    const opts = {
+      ...filter,
+    };
+
+    if (ownedByUser) {
+      opts['userId'] = userId;
+    }
+
     return await client.shelf.findMany({
       where: {
-        user: { id: userId },
-        ...filter,
+        ...opts,
       },
       orderBy: {
         name: 'asc',

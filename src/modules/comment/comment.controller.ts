@@ -6,12 +6,16 @@ import {
   Request,
   HttpException,
   HttpStatus,
+  Patch,
+  Param,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import {
   CreateCommentRequestDto,
   CreateCommentResponseDto,
   HTTPError,
+  UpdateCommentRequestDto,
+  UpdateCommentResponseDto,
 } from 'src/dto/comment';
 import {
   ApiBadRequestResponse,
@@ -51,6 +55,40 @@ export class CommentController {
     } catch (error) {
       throw new HttpException(
         new HTTPError('Error creating comment: ' + error.message),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiOkResponse({
+    description: 'Update Comment',
+    type: UpdateCommentResponseDto,
+    isArray: false,
+  })
+  @ApiBadRequestResponse({
+    description: 'Failed update comment',
+    type: HTTPError,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Patch(':id')
+  async updateComment(
+    @Param('id') id: string,
+    @Body() updateCommentRequestDto: UpdateCommentRequestDto,
+    @Request() req,
+  ) {
+    const opts = {};
+
+    for (const [key, value] of Object.entries(updateCommentRequestDto)) {
+      if (value !== undefined) {
+        opts[key] = value;
+      }
+    }
+    try {
+      return await this.commentService.updateComment(id, req.user['id'], opts);
+    } catch (error) {
+      throw new HttpException(
+        new HTTPError('Error update forums: ' + error.message),
         HttpStatus.BAD_REQUEST,
       );
     }

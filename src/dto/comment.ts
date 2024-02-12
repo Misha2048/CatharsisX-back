@@ -1,5 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
+import { Comment } from '@prisma/client';
 
 export class CreateCommentRequestDto {
   @ApiProperty()
@@ -29,4 +30,22 @@ export class HTTPError {
     this.error = error;
     this.statusCode = statusCode;
   }
+}
+
+export class UpdateCommentRequestDto {
+  @ApiProperty()
+  body?: string;
+}
+
+export class UpdateCommentResponseDto {
+  constructor(comment: Comment) {
+    this.body = comment.body;
+    this.updated = comment.updated;
+  }
+
+  @ApiProperty()
+  body: string;
+
+  @ApiProperty()
+  updated: boolean;
 }
