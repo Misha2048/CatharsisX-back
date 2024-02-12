@@ -1,5 +1,5 @@
-import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
+import { Answer } from '@prisma/client';
 
 export class CreateAnswerRequestDto {
   @ApiProperty()
@@ -13,4 +13,26 @@ export class CreateAnswerResponseDto {
   constructor(message: string) {
     this.message = message;
   }
+}
+
+export class UpdateAnswerRequestDto {
+  @ApiProperty()
+  body: string;
+}
+
+export class UpdateAnswerResponseDto {
+  constructor(answer: Answer) {
+    this.body = answer.body;
+    this.upvotes = answer.upvotes;
+    this.updated = answer.updated;
+  }
+
+  @ApiProperty()
+  body: string;
+
+  @ApiProperty()
+  upvotes: number;
+
+  @ApiProperty()
+  updated: boolean;
 }
