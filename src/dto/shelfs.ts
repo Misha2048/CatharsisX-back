@@ -9,6 +9,15 @@ export class FindShelfsRequestDto {
 
   @ApiProperty({
     required: false,
+    description:
+      "A parameter for showing a content to user which doesn't belong to him (public other users' shelves).\n\n" +
+      "Set 'true' if you want to get them, 'false' in case you don't.",
+    default: 'true',
+  })
+  owned_by_user?: string;
+
+  @ApiProperty({
+    required: false,
     description: "Shelf's name",
   })
   name?: string;

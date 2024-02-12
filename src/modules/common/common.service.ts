@@ -17,7 +17,7 @@ export class CommonService {
         } else if (key === 'name') {
           filters[key] = { contains: value, mode: 'insensitive' };
         } else {
-          filters[key] = { contains: value };
+          filters[key] = { contains: value, mode: 'insensitive' };
         }
       }
       return filters;
