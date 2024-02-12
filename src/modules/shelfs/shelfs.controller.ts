@@ -53,14 +53,8 @@ export class ShelfsController {
       );
     }
 
-    if (!findShelfsRequestDto.owned_by_user) {
-      findShelfsRequestDto.owned_by_user = 'true';
-    }
-
     const stillage = await this.stillageService.findStillageById(
       findShelfsRequestDto.stillage,
-      req.user['id'],
-      findShelfsRequestDto.owned_by_user === 'true',
     );
 
     if (!stillage || (stillage.private && stillage.userId != req.user['id'])) {
@@ -69,10 +63,7 @@ export class ShelfsController {
 
     const stillageName = stillage.name;
 
-    const shelfs = await this.shelfsService.findShelfs(
-      findShelfsRequestDto,
-      req.user['id'],
-    );
+    const shelfs = await this.shelfsService.findShelfs(findShelfsRequestDto);
 
     const findShelfsResponse: FindShelfsResponseDto[] = [];
 
