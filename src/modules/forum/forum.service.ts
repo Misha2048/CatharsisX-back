@@ -35,8 +35,8 @@ export class ForumService {
     const blackListKeys = ['limit'];
     const limit = Number(findForumsRequestDto.limit);
 
-    if (limit < 0) {
-      throw new BadRequestException('Limit cannot be negative');
+    if (limit < 0 || isNaN(limit)) {
+      throw new BadRequestException('Limit must be a non-negative number');
     }
 
     const filters = await this.commonService.getFilters(
