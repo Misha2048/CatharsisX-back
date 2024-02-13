@@ -107,9 +107,11 @@ export class ForumController {
   ) {
     const opts = {};
 
-    for (const [key, value] of Object.entries(updateForumRequestDto)) {
-      if (value !== undefined) {
-        opts[key] = value;
+    const validKeys = Object.keys(new UpdateForumRequestDto());
+
+    for (const key of validKeys) {
+      if (updateForumRequestDto[key] !== undefined) {
+        opts[key] = updateForumRequestDto[key];
       }
     }
     try {

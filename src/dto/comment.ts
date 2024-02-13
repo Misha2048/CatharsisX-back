@@ -34,7 +34,7 @@ export class HTTPError {
 
 export class UpdateCommentRequestDto {
   @ApiProperty()
-  body?: string;
+  public body?: string = '';
 }
 
 export class UpdateCommentResponseDto {
