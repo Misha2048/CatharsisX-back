@@ -29,6 +29,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
+import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
 
 @ApiTags('Forum')
 @Controller('forum')
@@ -76,7 +77,8 @@ export class ForumController {
   })
   @Get()
   async findForums(
-    @Query() findForumRequestDto: FindForumsRequestDto,
+    @Query(queryValidationPipeline)
+    findForumRequestDto: FindForumsRequestDto,
   ): Promise<{ count: number; forums: FindForumsDto[] }> {
     try {
       return await this.forumService.findForums(findForumRequestDto);
