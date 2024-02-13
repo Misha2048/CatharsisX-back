@@ -16,7 +16,7 @@ export class CreateAnswerResponseDto {
 }
 
 export class UpdateAnswerRequestDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   public body?: string = '';
 }
 
@@ -35,4 +35,21 @@ export class UpdateAnswerResponseDto {
 
   @ApiProperty()
   updated: boolean;
+}
+
+export class UpvoteAnswerRequestDto {
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty({ description: 'The score (-1 for downvote, 1 for upvote)' })
+  score: number;
+}
+
+export class UpvoteAnswerResponsetDto {
+  @ApiProperty()
+  message: string;
+
+  constructor(message: string) {
+    this.message = message;
+  }
 }
