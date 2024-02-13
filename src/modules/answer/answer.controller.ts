@@ -16,7 +16,7 @@ import {
   UpdateAnswerRequestDto,
   UpdateAnswerResponseDto,
   UpvoteAnswerRequestDto,
-  UpvoteAnswerResponsetDto,
+  UpvoteAnswerResponseDto,
 } from 'src/dto/answer';
 import {
   ApiBadRequestResponse,
@@ -64,7 +64,7 @@ export class AnswerController {
 
   @ApiOkResponse({
     description: 'Upvote or downvote Answer',
-    type: UpvoteAnswerResponsetDto,
+    type: UpvoteAnswerResponseDto,
     isArray: false,
   })
   @ApiBadRequestResponse({
@@ -89,7 +89,7 @@ export class AnswerController {
     }
     try {
       await this.answerService.upvoteAnswer(req.user['id'], opts);
-      return new UpvoteAnswerResponsetDto(
+      return new UpvoteAnswerResponseDto(
         'Answer successfully upvoted or downvoted',
       );
     } catch (error) {

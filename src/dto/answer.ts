@@ -45,7 +45,7 @@ export class UpvoteAnswerRequestDto {
   public score = 0;
 }
 
-export class UpvoteAnswerResponsetDto {
+export class UpvoteAnswerResponseDto {
   @ApiProperty()
   message: string;
 

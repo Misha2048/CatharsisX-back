@@ -86,13 +86,11 @@ export class AnswerService {
       );
     }
 
-    const incrementValue = opts.score === 1 ? 1 : -1;
-
     await client.answer.update({
       where: { id: opts.id },
       data: {
         upvotes: {
-          increment: incrementValue,
+          increment: opts.score,
         },
         votes: {
           push: userId,
