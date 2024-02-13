@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   CreateForumRequestDto,
   FindForumsRequestDto,
@@ -29,6 +33,12 @@ export class ForumService {
     findForumsRequestDto: FindForumsRequestDto,
   ): Promise<{ count: number; forums: FindForumsDto[] }> {
     const blackListKeys = ['limit'];
+    const limit = Number(findForumsRequestDto.limit);
+
+    if (limit < 0) {
+      throw new BadRequestException('Limit cannot be negative');
+    }
+
     const filters = await this.commonService.getFilters(
       findForumsRequestDto,
       blackListKeys,

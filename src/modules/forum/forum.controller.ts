@@ -82,7 +82,7 @@ export class ForumController {
       return await this.forumService.findForums(findForumRequestDto);
     } catch (error) {
       throw new HttpException(
-        new HTTPError('Error find forums' + error.message),
+        new HTTPError('Error find forums: ' + error.message),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -116,7 +116,7 @@ export class ForumController {
       return await this.forumService.updateForum(id, req.user['id'], opts);
     } catch (error) {
       throw new HttpException(
-        new HTTPError('Error update forums'),
+        new HTTPError('Error update forums: ' + error.message),
         HttpStatus.BAD_REQUEST,
       );
     }
