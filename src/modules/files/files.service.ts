@@ -172,7 +172,7 @@ export class FilesService {
 
     const shelf = await client.shelf.findUnique({
       select: {
-        file: {
+        files: {
           select: { id: true, filename: true, size: true, uploaded_at: true },
         },
         stillage: true,
@@ -188,6 +188,6 @@ export class FilesService {
       throw new BadRequestException('Stillage is private');
     }
 
-    return shelf.file.map((file) => new GetFilesResponseDto(file));
+    return shelf.files.map((file) => new GetFilesResponseDto(file));
   }
 }
