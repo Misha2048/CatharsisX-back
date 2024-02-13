@@ -15,6 +15,8 @@ import {
   CreateAnswerResponseDto,
   UpdateAnswerRequestDto,
   UpdateAnswerResponseDto,
+  UpvoteAnswerRequestDto,
+  UpvoteAnswerResponseDto,
 } from 'src/dto/answer';
 import {
   ApiBadRequestResponse,
@@ -55,6 +57,44 @@ export class AnswerController {
     } catch (error) {
       throw new HttpException(
         new HTTPError('Error creating forum: ' + error.message),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiOkResponse({
+    description: 'Upvote or downvote Answer',
+    type: UpvoteAnswerResponseDto,
+    isArray: false,
+  })
+  @ApiBadRequestResponse({
+    description: 'Failed to upvote or downvote Answer',
+    type: HTTPError,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Patch('upvote')
+  async upvoteAnswer(
+    @Body() upvoteAnswerRequestDto: UpvoteAnswerRequestDto,
+    @Request() req,
+  ) {
+    const opts = {};
+
+    const validKeys = Object.keys(new UpvoteAnswerRequestDto());
+
+    for (const key of validKeys) {
+      if (upvoteAnswerRequestDto[key] !== undefined) {
+        opts[key] = upvoteAnswerRequestDto[key];
+      }
+    }
+    try {
+      await this.answerService.upvoteAnswer(req.user['id'], opts);
+      return new UpvoteAnswerResponseDto(
+        'Answer successfully upvoted or downvoted',
+      );
+    } catch (error) {
+      throw new HttpException(
+        new HTTPError('Error upvote answer: ' + error.message),
         HttpStatus.BAD_REQUEST,
       );
     }
