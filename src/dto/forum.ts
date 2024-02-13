@@ -38,7 +38,7 @@ export class HTTPError {
 
 export class FindForumsRequestDto {
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   title?: string;
 
   @IsNotEmpty()
@@ -74,10 +74,10 @@ export class FindForumsResponseDto {
 }
 
 export class UpdateForumRequestDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   title?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   body?: string;
 }
 
