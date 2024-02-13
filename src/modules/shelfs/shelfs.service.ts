@@ -10,9 +10,6 @@ export class ShelfsService {
     findShelfsRequestDto: FindShelfsRequestDto,
     userId?: string,
   ): Promise<Shelf[]> {
-    const ownedByUser = findShelfsRequestDto.owned_by_user === 'true';
-    delete findShelfsRequestDto.owned_by_user;
-
     const filter = Object.entries(findShelfsRequestDto).reduce(
       (filters, [key, value]) => {
         if (value !== undefined && value !== '') {
@@ -39,17 +36,10 @@ export class ShelfsService {
       {},
     );
 
-    const opts = {
-      ...filter,
-    };
-
-    if (ownedByUser) {
-      opts['userId'] = userId;
-    }
-
     return await client.shelf.findMany({
       where: {
-        ...opts,
+        userId,
+        ...filter,
       },
       orderBy: {
         name: 'asc',
