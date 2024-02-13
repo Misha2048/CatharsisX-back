@@ -39,10 +39,10 @@ export class UpdateAnswerResponseDto {
 
 export class UpvoteAnswerRequestDto {
   @ApiProperty()
-  id: string;
+  public id = '';
 
   @ApiProperty({ description: 'The score (-1 for downvote, 1 for upvote)' })
-  score: number;
+  public score = 0;
 }
 
 export class UpvoteAnswerResponsetDto {

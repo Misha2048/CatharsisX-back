@@ -55,12 +55,9 @@ export class AnswerService {
     return new UpdateAnswerResponseDto(updatedAnswer);
   }
 
-  async upvoteAnswer(
-    userId: string,
-    upvoteAnswerRequestDto: UpvoteAnswerRequestDto,
-  ) {
+  async upvoteAnswer(userId: string, opts) {
     const answer = await client.answer.findUnique({
-      where: { id: upvoteAnswerRequestDto.id },
+      where: { id: opts.id },
     });
 
     if (answer.userId === userId) {
@@ -83,19 +80,16 @@ export class AnswerService {
       throw new BadRequestException('User already voted');
     }
 
-    if (
-      upvoteAnswerRequestDto.score !== 1 &&
-      upvoteAnswerRequestDto.score !== -1
-    ) {
+    if (opts.score !== 1 && opts.score !== -1) {
       throw new BadRequestException(
         'Invalid score value. It should be either 1 or -1',
       );
     }
 
-    const incrementValue = upvoteAnswerRequestDto.score === 1 ? 1 : -1;
+    const incrementValue = opts.score === 1 ? 1 : -1;
 
     await client.answer.update({
-      where: { id: upvoteAnswerRequestDto.id },
+      where: { id: opts.id },
       data: {
         upvotes: {
           increment: incrementValue,

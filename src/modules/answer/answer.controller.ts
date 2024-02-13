@@ -78,11 +78,17 @@ export class AnswerController {
     @Body() upvoteAnswerRequestDto: UpvoteAnswerRequestDto,
     @Request() req,
   ) {
+    const opts = {};
+
+    const validKeys = Object.keys(new UpvoteAnswerRequestDto());
+
+    for (const key of validKeys) {
+      if (upvoteAnswerRequestDto[key] !== undefined) {
+        opts[key] = upvoteAnswerRequestDto[key];
+      }
+    }
     try {
-      await this.answerService.upvoteAnswer(
-        req.user['id'],
-        upvoteAnswerRequestDto,
-      );
+      await this.answerService.upvoteAnswer(req.user['id'], opts);
       return new UpvoteAnswerResponsetDto(
         'Answer successfully upvoted or downvoted',
       );
