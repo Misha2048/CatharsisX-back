@@ -60,12 +60,12 @@ export class AnswerService {
       where: { id: opts.id },
     });
 
-    if (answer.userId === userId) {
-      throw new BadRequestException('Users cannot vote for their own answers');
-    }
-
     if (!answer) {
       throw new NotFoundException('Answer not found');
+    }
+
+    if (answer.userId === userId) {
+      throw new BadRequestException('Users cannot vote for their own answers');
     }
 
     const user = await client.user.findUnique({
