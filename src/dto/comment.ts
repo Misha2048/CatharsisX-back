@@ -33,7 +33,7 @@ export class HTTPError {
 }
 
 export class UpdateCommentRequestDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   public body?: string = '';
 }
 

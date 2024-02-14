@@ -1,7 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   CreateAnswerRequestDto,
   UpdateAnswerResponseDto,
+  UpvoteAnswerRequestDto,
 } from 'src/dto/answer';
 import client from 'src/db/prismaClient';
 
@@ -26,14 +31,14 @@ export class AnswerService {
     userId: string,
     opts: any,
   ): Promise<UpdateAnswerResponseDto> {
-    const existingAnsdwer = await client.answer.findUnique({
+    const existingAnswer = await client.answer.findUnique({
       where: {
         id,
         userId,
       },
     });
 
-    if (!existingAnsdwer) {
+    if (!existingAnswer) {
       throw new NotFoundException('Answer not found');
     }
 
@@ -48,5 +53,49 @@ export class AnswerService {
     });
 
     return new UpdateAnswerResponseDto(updatedAnswer);
+  }
+
+  async upvoteAnswer(userId: string, opts) {
+    const answer = await client.answer.findUnique({
+      where: { id: opts.id },
+    });
+
+    if (!answer) {
+      throw new NotFoundException('Answer not found');
+    }
+
+    if (answer.userId === userId) {
+      throw new BadRequestException('Users cannot vote for their own answers');
+    }
+
+    const user = await client.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (answer.votes.includes(userId)) {
+      throw new BadRequestException('User already voted');
+    }
+
+    if (opts.score !== 1 && opts.score !== -1) {
+      throw new BadRequestException(
+        'Invalid score value. It should be either 1 or -1',
+      );
+    }
+
+    await client.answer.update({
+      where: { id: opts.id },
+      data: {
+        upvotes: {
+          increment: opts.score,
+        },
+        votes: {
+          push: userId,
+        },
+      },
+    });
   }
 }
