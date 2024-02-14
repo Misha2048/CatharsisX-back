@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Forum } from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsNumber, Min } from 'class-validator';
 
 export class CreateForumRequestDto {
   @ApiProperty()
@@ -38,12 +38,14 @@ export class HTTPError {
 }
 
 export class FindForumsRequestDto {
-  @IsOptional()
   @ApiProperty({ required: false })
+  @IsOptional()
   title?: string;
 
-  @IsNotEmpty()
   @ApiProperty()
+  @IsNumber()
+  @Min(1, { message: 'Limit must be a non-negative number' })
+  @IsNotEmpty()
   limit: number;
 }
 
@@ -79,13 +81,13 @@ export class UpdateForumRequestDto {
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({ required: false })
-  title?: string;
+  public title?: string = '';
 
   @IsOptional()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({ required: false })
-  body?: string;
+  public body?: string = '';
 }
 
 export class UpdateForumResponseDto {
