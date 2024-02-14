@@ -47,6 +47,7 @@ export class UpdateShelfRequestDto {
 export class FindShelfsResponseDto {
   constructor(shelf: Shelf) {
     this.id = shelf.id;
+    this.userId = shelf.userId;
     this.name = shelf.name;
     this.stillageId = shelf.stillageId;
     this.last_upload_at = shelf.last_upload_at;
@@ -57,6 +58,11 @@ export class FindShelfsResponseDto {
     description: "Shelf's id",
   })
   id: string;
+
+  @ApiProperty({
+    description: "User's id",
+  })
+  userId: string;
 
   @ApiProperty({
     description: "Stillage's id",
