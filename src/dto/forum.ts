@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Forum } from '@prisma/client';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, Min } from 'class-validator';
 
 export class CreateForumRequestDto {
   @ApiProperty()
@@ -37,12 +37,14 @@ export class HTTPError {
 }
 
 export class FindForumsRequestDto {
-  @IsOptional()
   @ApiProperty({ required: false })
+  @IsOptional()
   title?: string;
 
-  @IsNotEmpty()
   @ApiProperty()
+  @IsNumber()
+  @Min(1, { message: 'Limit must be a non-negative number' })
+  @IsNotEmpty()
   limit: number;
 }
 
@@ -75,10 +77,10 @@ export class FindForumsResponseDto {
 
 export class UpdateForumRequestDto {
   @ApiProperty({ required: false })
-  title?: string;
+  public title?: string = '';
 
   @ApiProperty({ required: false })
-  body?: string;
+  public body?: string = '';
 }
 
 export class UpdateForumResponseDto {
