@@ -104,7 +104,7 @@ export class ForumController {
   @Patch(':id')
   async updateForum(
     @Param('id') id: string,
-    @Body() updateForumRequestDto: UpdateForumRequestDto,
+    @Body(queryValidationPipeline) updateForumRequestDto: UpdateForumRequestDto,
     @Request() req,
   ) {
     const opts = {};
