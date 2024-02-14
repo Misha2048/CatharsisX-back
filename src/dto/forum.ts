@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Forum } from '@prisma/client';
+import { Transform, TransformFnParams } from 'class-transformer';
 import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateForumRequestDto {
@@ -74,9 +75,15 @@ export class FindForumsResponseDto {
 }
 
 export class UpdateForumRequestDto {
+  @IsOptional()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({ required: false })
   title?: string;
 
+  @IsOptional()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({ required: false })
   body?: string;
 }
