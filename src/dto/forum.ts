@@ -2,16 +2,41 @@ import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Forum } from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsNumber, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  Min,
+  ArrayNotEmpty,
+  ArrayUnique,
+  Length,
+  ArrayMaxSize,
+} from 'class-validator';
 
 export class CreateForumRequestDto {
   @ApiProperty()
+  @IsNotEmpty({ message: 'Title should not be empty' })
+  @Length(1, 150, {
+    each: true,
+    message: 'Tag length should be between 1 and 150 characters',
+  })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   title: string;
 
   @ApiProperty({ type: [String] })
+  @ArrayNotEmpty({ message: 'Tags should not be empty' })
+  @ArrayUnique({ message: 'Tags should be unique' })
+  @ArrayMaxSize(50, { message: 'Maximum 5 tags allowed' })
+  @Length(1, 50, {
+    each: true,
+    message: 'Tag length should be between 1 and 50 characters',
+  })
+  @Transform(({ value }: TransformFnParams) => value?.map((tag) => tag.trim()))
   tags: string[];
 
   @ApiProperty()
+  @IsNotEmpty({ message: 'Body should not be empty' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   body: string;
 }
 
@@ -78,7 +103,10 @@ export class FindForumsResponseDto {
 
 export class UpdateForumRequestDto {
   @IsOptional()
-  @IsNotEmpty()
+  @Length(1, 150, {
+    each: true,
+    message: 'Tag length should be between 1 and 150 characters',
+  })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({ required: false })
   public title?: string = '';

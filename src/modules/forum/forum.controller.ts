@@ -49,7 +49,7 @@ export class ForumController {
   @UseGuards(AccessTokenGuard)
   @Post()
   async createForum(
-    @Body() createForumRequestDto: CreateForumRequestDto,
+    @Body(queryValidationPipeline) createForumRequestDto: CreateForumRequestDto,
     @Request() req,
   ) {
     try {
@@ -60,7 +60,7 @@ export class ForumController {
       return new CreateForumSuccesResponseDto('forum successfully created');
     } catch (error) {
       throw new HttpException(
-        new HTTPError('Error creating forum'),
+        new HTTPError('Error creating forum: ' + error.message),
         HttpStatus.BAD_REQUEST,
       );
     }
