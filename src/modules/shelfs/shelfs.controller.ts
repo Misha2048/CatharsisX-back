@@ -61,17 +61,9 @@ export class ShelfsController {
       throw new NotFoundException('Stillage not found');
     }
 
-    const stillageName = stillage.name;
-
     const shelfs = await this.shelfsService.findShelfs(findShelfsRequestDto);
 
-    const findShelfsResponse: FindShelfsResponseDto[] = [];
-
-    for (const shelf of shelfs) {
-      findShelfsResponse.push(new FindShelfsResponseDto(shelf));
-    }
-
-    return { stillageName, findShelfsResponse };
+    return { stillageName: stillage.name, findShelfsResponse: shelfs };
   }
 
   @ApiOkResponse({
