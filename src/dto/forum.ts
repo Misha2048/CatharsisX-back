@@ -75,10 +75,10 @@ export class FindForumsResponseDto {
 
 export class UpdateForumRequestDto {
   @ApiProperty({ required: false })
-  title?: string;
+  public title?: string = '';
 
   @ApiProperty({ required: false })
-  body?: string;
+  public body?: string = '';
 }
 
 export class UpdateForumResponseDto {

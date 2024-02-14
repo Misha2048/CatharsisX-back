@@ -79,9 +79,11 @@ export class CommentController {
   ) {
     const opts = {};
 
-    for (const [key, value] of Object.entries(updateCommentRequestDto)) {
-      if (value !== undefined) {
-        opts[key] = value;
+    const validKeys = Object.keys(new UpdateCommentRequestDto());
+
+    for (const key of validKeys) {
+      if (updateCommentRequestDto[key] !== undefined) {
+        opts[key] = updateCommentRequestDto[key];
       }
     }
     try {
