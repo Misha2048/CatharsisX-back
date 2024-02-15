@@ -103,10 +103,11 @@ export class FindForumsResponseDto {
 }
 export class UpdateForumRequestDto {
   @IsOptional()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @Length(1, 150, {
     message: 'Title length should be between 1 and 150 characters',
   })
-  @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({ required: false })
   title?: string;
 

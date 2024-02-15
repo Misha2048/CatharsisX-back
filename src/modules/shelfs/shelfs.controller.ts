@@ -18,7 +18,6 @@ import { ShelfsService } from './shelfs.service';
 import {
   DeleteShelfResponseDto,
   FindShelfsRequestDto,
-  FindShelfsResponseDto,
   GetShelvesResponseDto,
   UpdateShelfRequestDto,
   UpdateShelfResponseDto,
@@ -26,6 +25,7 @@ import {
 import { AccessTokenGuard } from 'src/guards';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { StillagesService } from '../stillages/stillages.service';
+import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
 
 @ApiTags('Shelfs')
 @Controller('shelfs')
@@ -75,7 +75,7 @@ export class ShelfsController {
   @UseGuards(AccessTokenGuard)
   async updateShelf(
     @Param('id') id: string,
-    @Body() updateShelfRequest: UpdateShelfRequestDto,
+    @Body(queryValidationPipeline) updateShelfRequest: UpdateShelfRequestDto,
     @Request() req,
     @Res() res,
   ) {
