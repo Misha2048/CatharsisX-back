@@ -43,7 +43,7 @@ model Stillage {
   created_at     DateTime   @default(now())
   last_upload_at DateTime   @default(now())
   shelf          Shelf[]
-  files           File[]
+  files          File[]
   university     University @relation(fields: [university_id], references: [id])
   university_id  String
   private        Boolean    @default(true)
@@ -61,7 +61,7 @@ model Shelf {
   name           String
   last_upload_at DateTime @default(now())
   created_at     DateTime @default(now())
-  files           File[]
+  files          File[]
 
   @@unique([name, stillageId], name: "uniqueNameInStillage")
 }
@@ -91,7 +91,7 @@ model Forum {
   title  String
   user   User     @relation(fields: [userId], references: [id])
   userId String
-  tags   String[]
+  tags   String[] @default([])
   body   String
 }
 

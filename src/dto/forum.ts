@@ -24,6 +24,7 @@ export class CreateForumRequestDto {
   title: string;
 
   @ApiProperty({ type: [String] })
+  @IsOptional()
   @ArrayNotEmpty({ message: 'Tags should not be empty' })
   @ArrayUnique({ message: 'Tags should be unique' })
   @ArrayMaxSize(50, { message: 'Maximum 50 tags allowed' })
@@ -32,7 +33,7 @@ export class CreateForumRequestDto {
     message: 'Tag length should be between 1 and 50 characters',
   })
   @Transform(({ value }: TransformFnParams) => value?.map((tag) => tag.trim()))
-  tags: string[];
+  tags?: string[];
 
   @ApiProperty()
   @IsNotEmpty({ message: 'Body should not be empty' })
@@ -100,22 +101,20 @@ export class FindForumsResponseDto {
   })
   forums: FindForumsDto[];
 }
-
 export class UpdateForumRequestDto {
   @IsOptional()
   @Length(1, 150, {
-    each: true,
     message: 'Title length should be between 1 and 150 characters',
   })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({ required: false })
-  public title?: string = '';
+  title?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({ required: false })
-  public body?: string = '';
+  body?: string;
 }
 
 export class UpdateForumResponseDto {

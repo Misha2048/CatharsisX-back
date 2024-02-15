@@ -4,6 +4,7 @@ import {
   FindForumsRequestDto,
   FindForumsDto,
   UpdateForumResponseDto,
+  UpdateForumRequestDto,
 } from 'src/dto/forum';
 import client from 'src/db/prismaClient';
 import { CommonService } from '../common/common.service';
@@ -50,7 +51,7 @@ export class ForumService {
   async updateForum(
     id: string,
     userId: string,
-    opts: any,
+    updateForumRequestDto: UpdateForumRequestDto,
   ): Promise<UpdateForumResponseDto> {
     const existingForum = await client.forum.findUnique({
       where: {
@@ -68,7 +69,7 @@ export class ForumService {
         id,
         userId,
       },
-      data: opts,
+      data: updateForumRequestDto,
     });
     return new UpdateForumResponseDto(updatedForum);
   }
