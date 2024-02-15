@@ -23,6 +23,7 @@ import { AccessTokenGuard } from 'src/guards';
 import { StillagesService } from './stillages.service';
 import { Request } from 'express';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
 
 @ApiTags('Stillages')
 @Controller('stillages')
@@ -56,7 +57,8 @@ export class StillagesController {
   @UseGuards(AccessTokenGuard)
   async update(
     @Param('id') id: string,
-    @Body() updateStillageRequest: UpdateStillageRequestDto,
+    @Body(queryValidationPipeline)
+    updateStillageRequest: UpdateStillageRequestDto,
     @Req() req: Request,
   ) {
     const opts = {};

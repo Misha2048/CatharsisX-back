@@ -1,13 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Stillage } from '@prisma/client';
+import { Transform, TransformFnParams } from 'class-transformer';
+import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class UpdateStillageRequestDto {
+  @IsOptional()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({
     example:
       "'firstStillage' or 'secondStillage' or 'thirdStillage' or 'Test_stillage' or 'test stillage' etc. (string) (optional parameter)",
   })
   name?: string;
 
+  @IsOptional()
+  @IsNotEmpty()
+  @IsBoolean()
   @ApiProperty({
     example:
       'true (boolean)(private), false (boolean)(public) or nothing (this parameter is optional)',
