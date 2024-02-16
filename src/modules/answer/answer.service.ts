@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
   CreateAnswerRequestDto,
+  UpdateAnswerRequestDto,
   UpdateAnswerResponseDto,
   UpvoteAnswerRequestDto,
 } from 'src/dto/answer';
@@ -29,7 +30,7 @@ export class AnswerService {
   async updateAnswer(
     id: string,
     userId: string,
-    opts: any,
+    updateAnswerRequestDto: UpdateAnswerRequestDto,
   ): Promise<UpdateAnswerResponseDto> {
     const existingAnswer = await client.answer.findUnique({
       where: {
@@ -42,22 +43,23 @@ export class AnswerService {
       throw new NotFoundException('Answer not found');
     }
 
-    opts.updated = true;
-
     const updatedAnswer = await client.answer.update({
       where: {
         id,
         userId,
       },
-      data: opts,
+      data: { ...updateAnswerRequestDto, updated: true },
     });
 
     return new UpdateAnswerResponseDto(updatedAnswer);
   }
 
-  async upvoteAnswer(userId: string, opts) {
+  async upvoteAnswer(
+    userId: string,
+    upvoteAnswerRequestDto: UpvoteAnswerRequestDto,
+  ) {
     const answer = await client.answer.findUnique({
-      where: { id: opts.id },
+      where: { id: upvoteAnswerRequestDto.id },
     });
 
     if (!answer) {
@@ -80,17 +82,20 @@ export class AnswerService {
       throw new BadRequestException('User already voted');
     }
 
-    if (opts.score !== 1 && opts.score !== -1) {
+    if (
+      upvoteAnswerRequestDto.score !== 1 &&
+      upvoteAnswerRequestDto.score !== -1
+    ) {
       throw new BadRequestException(
         'Invalid score value. It should be either 1 or -1',
       );
     }
 
     await client.answer.update({
-      where: { id: opts.id },
+      where: { id: upvoteAnswerRequestDto.id },
       data: {
         upvotes: {
-          increment: opts.score,
+          increment: upvoteAnswerRequestDto.score,
         },
         votes: {
           push: userId,

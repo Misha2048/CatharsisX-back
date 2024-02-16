@@ -13,7 +13,6 @@ import { CommentService } from './comment.service';
 import {
   CreateCommentRequestDto,
   CreateCommentResponseDto,
-  HTTPError,
   UpdateCommentRequestDto,
   UpdateCommentResponseDto,
 } from 'src/dto/comment';
@@ -24,6 +23,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
+import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
+import { HTTPError } from 'src/dto/common';
 
 @ApiTags('Comment')
 @Controller('comment')
@@ -43,7 +44,8 @@ export class CommentController {
   @UseGuards(AccessTokenGuard)
   @Post()
   async createComment(
-    @Body() createCommentRequestDto: CreateCommentRequestDto,
+    @Body(queryValidationPipeline)
+    createCommentRequestDto: CreateCommentRequestDto,
     @Request() req,
   ) {
     try {
@@ -74,20 +76,16 @@ export class CommentController {
   @Patch(':id')
   async updateComment(
     @Param('id') id: string,
-    @Body() updateCommentRequestDto: UpdateCommentRequestDto,
+    @Body(queryValidationPipeline)
+    updateCommentRequestDto: UpdateCommentRequestDto,
     @Request() req,
   ) {
-    const opts = {};
-
-    const validKeys = Object.keys(new UpdateCommentRequestDto());
-
-    for (const key of validKeys) {
-      if (updateCommentRequestDto[key] !== undefined) {
-        opts[key] = updateCommentRequestDto[key];
-      }
-    }
     try {
-      return await this.commentService.updateComment(id, req.user['id'], opts);
+      return await this.commentService.updateComment(
+        id,
+        req.user['id'],
+        updateCommentRequestDto,
+      );
     } catch (error) {
       throw new HttpException(
         new HTTPError('Error update forums: ' + error.message),

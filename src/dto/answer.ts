@@ -1,8 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Answer } from '@prisma/client';
+import { Transform, TransformFnParams } from 'class-transformer';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateAnswerRequestDto {
   @ApiProperty()
+  @IsNotEmpty({ message: 'Body should not be empty' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   body: string;
 }
 
@@ -16,8 +20,10 @@ export class CreateAnswerResponseDto {
 }
 
 export class UpdateAnswerRequestDto {
-  @ApiProperty({ required: false })
-  public body?: string = '';
+  @ApiProperty()
+  @IsNotEmpty({ message: 'Body should not be empty' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  body: string;
 }
 
 export class UpdateAnswerResponseDto {
@@ -39,10 +45,13 @@ export class UpdateAnswerResponseDto {
 
 export class UpvoteAnswerRequestDto {
   @ApiProperty()
-  public id = '';
+  @IsNotEmpty({ message: 'Id should not be empty' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  id: string;
 
   @ApiProperty({ description: 'The score (-1 for downvote, 1 for upvote)' })
-  public score = 0;
+  @IsNotEmpty()
+  score: number;
 }
 
 export class UpvoteAnswerResponseDto {

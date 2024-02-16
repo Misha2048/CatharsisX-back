@@ -1,12 +1,17 @@
-import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '@prisma/client';
+import { Transform, TransformFnParams } from 'class-transformer';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateCommentRequestDto {
   @ApiProperty()
+  @IsNotEmpty({ message: 'AnswerId should not be empty' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   answerId: string;
 
   @ApiProperty()
+  @IsNotEmpty({ message: 'Body should not be empty' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   body: string;
 }
 
@@ -19,22 +24,11 @@ export class CreateCommentResponseDto {
   }
 }
 
-export class HTTPError {
-  @ApiProperty()
-  error: string;
-
-  @ApiProperty()
-  statusCode: number;
-
-  constructor(error: string, statusCode: number = HttpStatus.BAD_REQUEST) {
-    this.error = error;
-    this.statusCode = statusCode;
-  }
-}
-
 export class UpdateCommentRequestDto {
-  @ApiProperty({ required: false })
-  public body?: string = '';
+  @ApiProperty()
+  @IsNotEmpty({ message: 'Body should not be empty' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  body: string;
 }
 
 export class UpdateCommentResponseDto {
