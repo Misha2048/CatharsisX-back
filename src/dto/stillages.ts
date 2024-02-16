@@ -69,6 +69,7 @@ export class StillagesResponseDto {
 export class FindStillagesResponseDto {
   constructor(stillage: Stillage, liked: boolean) {
     this.id = stillage.id;
+    this.userId = stillage.userId;
     this.name = stillage.name;
     this.created_at = stillage.created_at;
     this.last_upload_at = stillage.last_upload_at;
@@ -80,6 +81,9 @@ export class FindStillagesResponseDto {
 
   @ApiProperty()
   id: string;
+
+  @ApiProperty()
+  userId: string;
 
   @ApiProperty()
   name: string;
