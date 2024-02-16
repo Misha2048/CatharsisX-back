@@ -1,17 +1,31 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Stillage } from '@prisma/client';
+import { Transform, TransformFnParams } from 'class-transformer';
+import { IsOptional, Length, IsBoolean, IsNotEmpty } from 'class-validator';
 
 export class UpdateStillageRequestDto {
+  @IsOptional()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({
     example:
       "'firstStillage' or 'secondStillage' or 'thirdStillage' or 'Test_stillage' or 'test stillage' etc. (string) (optional parameter)",
   })
+  @IsOptional()
+  @Length(1, 150, {
+    message: 'Name length should be between 1 and 150 characters',
+  })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   name?: string;
 
+  @IsOptional()
+  @IsNotEmpty()
+  @IsBoolean()
   @ApiProperty({
     example:
       'true (boolean)(private), false (boolean)(public) or nothing (this parameter is optional)',
   })
+  @IsOptional()
   private?: boolean;
 }
 
