@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   CreateCommentRequestDto,
+  UpdateCommentRequestDto,
   UpdateCommentResponseDto,
 } from 'src/dto/comment';
 import client from 'src/db/prismaClient';
@@ -35,7 +36,7 @@ export class CommentService {
   async updateComment(
     id: string,
     userId: string,
-    opts: any,
+    updateCommentRequestDto: UpdateCommentRequestDto,
   ): Promise<UpdateCommentResponseDto> {
     const existingComment = await client.comment.findUnique({
       where: {
@@ -48,14 +49,12 @@ export class CommentService {
       throw new NotFoundException('Comment not found');
     }
 
-    opts.updated = true;
-
     const updatedComment = await client.comment.update({
       where: {
         id,
         userId,
       },
-      data: opts,
+      data: { ...updateCommentRequestDto, updated: true },
     });
     return new UpdateCommentResponseDto(updatedComment);
   }
