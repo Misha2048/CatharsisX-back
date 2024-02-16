@@ -102,6 +102,9 @@ export class GetShelvesResponseDto {
   })
   stillageName: string;
 
+  @ApiProperty({ description: "Stillage's user id" })
+  stillageUserId: string;
+
   @ApiProperty({
     type: FindShelfsResponseDto,
     description:

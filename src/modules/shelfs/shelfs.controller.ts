@@ -63,7 +63,11 @@ export class ShelfsController {
 
     const shelfs = await this.shelfsService.findShelfs(findShelfsRequestDto);
 
-    return { stillageName: stillage.name, findShelfsResponse: shelfs };
+    return {
+      stillageName: stillage.name,
+      stillageUserId: stillage.userId,
+      findShelfsResponse: shelfs,
+    };
   }
 
   @ApiOkResponse({
