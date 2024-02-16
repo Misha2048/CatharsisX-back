@@ -26,6 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
 import { HTTPError } from 'src/dto/forum';
+import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
 
 @ApiTags('Answer')
 @Controller('answer')
@@ -45,7 +46,8 @@ export class AnswerController {
   @UseGuards(AccessTokenGuard)
   @Post()
   async createAnswer(
-    @Body() createAnswerRequestDto: CreateAnswerRequestDto,
+    @Body(queryValidationPipeline)
+    createAnswerRequestDto: CreateAnswerRequestDto,
     @Request() req,
   ) {
     try {
@@ -75,20 +77,15 @@ export class AnswerController {
   @UseGuards(AccessTokenGuard)
   @Patch('upvote')
   async upvoteAnswer(
-    @Body() upvoteAnswerRequestDto: UpvoteAnswerRequestDto,
+    @Body(queryValidationPipeline)
+    upvoteAnswerRequestDto: UpvoteAnswerRequestDto,
     @Request() req,
   ) {
-    const opts = {};
-
-    const validKeys = Object.keys(new UpvoteAnswerRequestDto());
-
-    for (const key of validKeys) {
-      if (upvoteAnswerRequestDto[key] !== undefined) {
-        opts[key] = upvoteAnswerRequestDto[key];
-      }
-    }
     try {
-      await this.answerService.upvoteAnswer(req.user['id'], opts);
+      await this.answerService.upvoteAnswer(
+        req.user['id'],
+        upvoteAnswerRequestDto,
+      );
       return new UpvoteAnswerResponseDto(
         'Answer successfully upvoted or downvoted',
       );
@@ -114,20 +111,16 @@ export class AnswerController {
   @Patch(':id')
   async updateAnswer(
     @Param('id') id: string,
-    @Body() updateAnswerRequestDto: UpdateAnswerRequestDto,
+    @Body(queryValidationPipeline)
+    updateAnswerRequestDto: UpdateAnswerRequestDto,
     @Request() req,
   ) {
-    const opts = {};
-
-    const validKeys = Object.keys(new UpdateAnswerRequestDto());
-
-    for (const key of validKeys) {
-      if (updateAnswerRequestDto[key] !== undefined) {
-        opts[key] = updateAnswerRequestDto[key];
-      }
-    }
     try {
-      return await this.answerService.updateAnswer(id, req.user['id'], opts);
+      return await this.answerService.updateAnswer(
+        id,
+        req.user['id'],
+        updateAnswerRequestDto,
+      );
     } catch (error) {
       throw new HttpException(
         new HTTPError('Error update answer: ' + error.message),
