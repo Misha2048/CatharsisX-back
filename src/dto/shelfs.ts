@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Shelf } from '@prisma/client';
+import { Transform, TransformFnParams } from 'class-transformer';
+import { IsNotEmpty, IsNumberString, IsOptional } from 'class-validator';
 
 export class FindShelfsRequestDto {
   @ApiProperty({
@@ -33,11 +35,18 @@ export class FindShelfsRequestDto {
 }
 
 export class UpdateShelfRequestDto {
+  @IsOptional()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({
     required: false,
   })
   name?: string;
 
+  @IsOptional()
+  @IsNotEmpty()
+  @IsNumberString()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
   @ApiProperty({
     required: false,
   })

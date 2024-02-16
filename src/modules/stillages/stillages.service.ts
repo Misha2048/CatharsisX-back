@@ -72,20 +72,12 @@ export class StillagesService {
   async findStillageById(
     id: string,
     userId?: string,
-    ownedByUser?: boolean,
   ): Promise<Stillage | undefined> {
-    const opts = {
-      id: id,
-    };
-
-    if (ownedByUser) {
-      opts['userId'] = userId;
-    }
-
     try {
       return await client.stillage.findFirstOrThrow({
         where: {
-          ...opts,
+          id,
+          userId,
         },
       });
     } catch (error) {
