@@ -107,17 +107,12 @@ export class ForumController {
     @Body(queryValidationPipeline) updateForumRequestDto: UpdateForumRequestDto,
     @Request() req,
   ) {
-    const opts = {};
-
-    const validKeys = Object.keys(new UpdateForumRequestDto());
-
-    for (const key of validKeys) {
-      if (updateForumRequestDto[key] !== undefined) {
-        opts[key] = updateForumRequestDto[key];
-      }
-    }
     try {
-      return await this.forumService.updateForum(id, req.user['id'], opts);
+      return await this.forumService.updateForum(
+        id,
+        req.user['id'],
+        updateForumRequestDto,
+      );
     } catch (error) {
       throw new HttpException(
         new HTTPError('Error update forums'),
