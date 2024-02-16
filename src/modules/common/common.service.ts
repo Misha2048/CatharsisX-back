@@ -23,4 +23,25 @@ export class CommonService {
       return filters;
     }, {});
   }
+
+  getContentType(filename: string): string {
+    const extension = filename
+      .substring(filename.lastIndexOf('.'))
+      .toLowerCase();
+    if (extension === '.txt') {
+      return 'text/plain';
+    } else if (extension === '.rtf') {
+      return 'application/rtf';
+    } else if (extension === '.pdf') {
+      return 'application/pdf';
+    } else if (extension === '.docx') {
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    } else if (extension === '.pptx') {
+      return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+    } else if (extension === '.xlsx') {
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    } else {
+      return 'application/octet-stream';
+    }
+  }
 }

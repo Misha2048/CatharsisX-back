@@ -9,6 +9,10 @@ import {
   UseGuards,
   Query,
   Req,
+  Param,
+  Res,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { FilesService } from 'src/modules/files/files.service';
 import {
@@ -21,13 +25,16 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
-import { Request } from 'express';
+import { Request, Response } from 'express';
+import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
+import { HTTPError } from 'src/dto/common';
 
 @ApiTags('Files')
 @Controller('files')
@@ -72,5 +79,23 @@ export class FilesController {
     @Req() req: Request,
   ) {
     return this.filesService.getFilesFromShelf(getFilesDto, req.user['id']);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Get('download/:fileId')
+  async downloadFile(
+    @Param('fileId') fileId: string,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    try {
+      return this.filesService.downloadFile(fileId, req.user['id'], res);
+    } catch (error) {
+      throw new HttpException(
+        new HTTPError('Error download file: ' + error.message),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

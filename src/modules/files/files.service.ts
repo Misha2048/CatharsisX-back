@@ -19,11 +19,16 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import * as officeParser from 'officeparser';
 import * as parseRTF from 'rtf-parser';
+import { Response } from 'express';
+import { CommonService } from '../common/common.service';
 
 @Injectable()
 export class FilesService {
   private readonly logger = new Logger(FilesService.name);
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly commonService: CommonService,
+  ) {}
 
   async validateFile(parsedText: string): Promise<boolean> {
     try {
@@ -77,6 +82,7 @@ export class FilesService {
   ): Promise<UploadFileResponseDto> {
     try {
       const fileType = file.originalname.split('.').pop().toLowerCase();
+      const filenameWithExtension = `${uploadFileRequest.filename}.${fileType}`;
 
       let parsedText;
 
@@ -131,7 +137,7 @@ export class FilesService {
 
       const uploadFiles = await client.file.create({
         data: {
-          filename: uploadFileRequest.filename,
+          filename: filenameWithExtension,
           text_content: parsedText,
           content: file.buffer,
           size: file.size,
@@ -189,5 +195,30 @@ export class FilesService {
     }
 
     return shelf.files.map((file) => new GetFilesResponseDto(file));
+  }
+
+  async downloadFile(fileId: string, userId: string, res: Response) {
+    try {
+      const file = await client.file.findUnique({
+        where: { id: fileId },
+        include: { shelf: { select: { stillage: true } } },
+      });
+
+      if (!file || !file.content) {
+        throw new NotFoundException('File not found');
+      }
+
+      const stillage = file.shelf.stillage;
+      if (stillage.private && stillage.userId !== userId) {
+        throw new HttpException('Access forbidden', HttpStatus.FORBIDDEN);
+      }
+
+      const contentType = this.commonService.getContentType(file.filename);
+      res.set('Content-Type', contentType);
+      res.set('Content-Disposition', `attachment; filename=${file.filename}`);
+      res.send(file.content);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
