@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Comment } from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, Length } from 'class-validator';
 
 export class CreateCommentRequestDto {
   @ApiProperty()
@@ -11,6 +11,9 @@ export class CreateCommentRequestDto {
 
   @ApiProperty()
   @IsNotEmpty({ message: 'Body should not be empty' })
+  @Length(1, 1000, {
+    message: 'Body length should be between 1 and 1000 characters',
+  })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   body: string;
 }
@@ -27,6 +30,9 @@ export class CreateCommentResponseDto {
 export class UpdateCommentRequestDto {
   @ApiProperty()
   @IsNotEmpty({ message: 'Body should not be empty' })
+  @Length(1, 1000, {
+    message: 'Body length should be between 1 and 1000 characters',
+  })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   body: string;
 }
