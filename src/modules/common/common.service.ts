@@ -24,7 +24,7 @@ export class CommonService {
     }, {});
   }
 
-  getContentType(filename: string): string {
+  async getContentType(filename: string) {
     const extension = filename
       .substring(filename.lastIndexOf('.'))
       .toLowerCase();
@@ -40,8 +40,6 @@ export class CommonService {
       return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
     } else if (extension === '.xlsx') {
       return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    } else {
-      return 'application/octet-stream';
     }
   }
 }

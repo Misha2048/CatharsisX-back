@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -21,6 +22,7 @@ import * as officeParser from 'officeparser';
 import * as parseRTF from 'rtf-parser';
 import { Response } from 'express';
 import { CommonService } from '../common/common.service';
+import { HTTPError } from 'src/dto/common';
 
 @Injectable()
 export class FilesService {
@@ -210,15 +212,27 @@ export class FilesService {
 
       const stillage = file.shelf.stillage;
       if (stillage.private && stillage.userId !== userId) {
-        throw new HttpException('Access forbidden', HttpStatus.FORBIDDEN);
+        throw new ForbiddenException('Access forbidden');
       }
 
-      const contentType = this.commonService.getContentType(file.filename);
+      const contentType = await this.commonService.getContentType(
+        file.filename,
+      );
       res.set('Content-Type', contentType);
       res.set('Content-Disposition', `attachment; filename=${file.filename}`);
       res.send(file.content);
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      if (error instanceof NotFoundException) {
+        throw new HttpException(
+          new HTTPError(error.message, HttpStatus.NOT_FOUND),
+          HttpStatus.NOT_FOUND,
+        );
+      } else if (error instanceof ForbiddenException) {
+        throw new HttpException(
+          new HTTPError(error.message, HttpStatus.FORBIDDEN),
+          HttpStatus.FORBIDDEN,
+        );
+      }
     }
   }
 }
