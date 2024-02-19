@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from '../users/users.module';
@@ -16,6 +16,8 @@ import { CommonModule } from '../common/common.module';
 import { ForumModule } from '../forum/forum.module';
 import { CommentModule } from '../comment/comment.module';
 import { AnswerModule } from '../answer/answer.module';
+import { ErrorHandlingMiddleware } from 'src/middleware/error-handling/error-handling.middleware';
+import { FilesController } from '../files/files.controller';
 
 @Module({
   imports: [
@@ -40,4 +42,8 @@ import { AnswerModule } from '../answer/answer.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ErrorHandlingMiddleware).forRoutes(FilesController);
+  }
+}
