@@ -17,6 +17,8 @@ import {
 } from '@nestjs/common';
 import { ShelfsService } from './shelfs.service';
 import {
+  CreateShelfBadRequestError,
+  CreateShelfNotFoundError,
   CreateShelfRequestDto,
   DeleteShelfResponseDto,
   FindShelfsRequestDto,
@@ -26,7 +28,13 @@ import {
   UpdateShelfResponseDto,
 } from 'src/dto/shelfs';
 import { AccessTokenGuard } from 'src/guards';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { StillagesService } from '../stillages/stillages.service';
 import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
 
@@ -152,6 +160,14 @@ export class ShelfsController {
   @ApiOkResponse({
     description: 'A new shelf',
     type: FindShelfsResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request response',
+    type: CreateShelfBadRequestError,
+  })
+  @ApiNotFoundResponse({
+    description: 'Not found response',
+    type: CreateShelfNotFoundError,
   })
   @UseGuards(AccessTokenGuard)
   @Post()
