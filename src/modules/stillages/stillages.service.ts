@@ -144,7 +144,7 @@ export class StillagesService {
   async getLikedStillages(
     getLikedStillagesRequestDTO: GetLikedStillagesRequestDTO,
     userId: string,
-  ): Promise<{ count: number; likedStillages: Stillage[] }> {
+  ): Promise<{ count: number; likedStillages: FindStillagesResponseDto[] }> {
     const user = await client.user.findUnique({
       where: { id: userId },
       select: { liked: true },
@@ -163,7 +163,6 @@ export class StillagesService {
         id: {
           in: user.liked || [],
         },
-        private: false,
         ...filter,
       },
       orderBy: {
@@ -173,11 +172,21 @@ export class StillagesService {
       skip: Number(getLikedStillagesRequestDTO.offset) || undefined,
     });
 
-    likedStillages = likedStillages.map((stillage) => ({
-      ...stillage,
-      liked: true,
-    }));
+    // likedStillages = likedStillages.map((stillage) => ({
+    //   ...stillage,
+    //   liked: true,
+    // }));
 
-    return { count, likedStillages };
+    likedStillages = likedStillages.reduce((result, stillage) => {
+      if (!stillage.private || stillage.userId === userId) {
+        result.push(new FindStillagesResponseDto(stillage, true));
+      }
+      return result;
+    }, []);
+
+    return {
+      count,
+      likedStillages: likedStillages as FindStillagesResponseDto[],
+    };
   }
 }
