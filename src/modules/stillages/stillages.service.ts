@@ -27,6 +27,7 @@ export class StillagesService {
     const likedStillages: Stillage[] = await client.stillage.findMany({
       where: {
         id: { in: likedStillageIDs },
+        OR: [{ private: false }, { private: true, userId }],
         ...filter,
       },
       orderBy: { name: 'asc' },
@@ -42,12 +43,9 @@ export class StillagesService {
     });
 
     return [
-      ...likedStillages.reduce((result, stillage) => {
-        if (!stillage.private || stillage.userId === userId) {
-          result.push(new FindStillagesResponseDto(stillage, true));
-        }
-        return result;
-      }, []),
+      ...likedStillages.map(
+        (stillage) => new FindStillagesResponseDto(stillage, true),
+      ),
       ...notLikedStillages.map(
         (stillage) => new FindStillagesResponseDto(stillage, false),
       ),
@@ -163,6 +161,7 @@ export class StillagesService {
         id: {
           in: user.liked || [],
         },
+        OR: [{ private: false }, { private: true, userId }],
         ...filter,
       },
       orderBy: {
@@ -172,12 +171,10 @@ export class StillagesService {
       skip: Number(getLikedStillagesRequestDTO.offset) || undefined,
     });
 
-    likedStillages = likedStillages.reduce((result, stillage) => {
-      if (!stillage.private || stillage.userId === userId) {
-        result.push(new FindStillagesResponseDto(stillage, true));
-      }
-      return result;
-    }, []);
+    likedStillages = likedStillages.map((stillage) => ({
+      ...stillage,
+      liked: true,
+    }));
 
     return {
       count,
