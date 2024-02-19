@@ -9,8 +9,11 @@ import {
   Get,
   Query,
   Delete,
+  Post,
 } from '@nestjs/common';
 import {
+  CreateStillageRequestDto,
+  CreateStillageResponseDto,
   DeleteStillageResponseDto,
   FindStillagesRequestDto,
   FindStillagesResponseDto,
@@ -22,8 +25,14 @@ import {
 import { AccessTokenGuard } from 'src/guards';
 import { StillagesService } from './stillages.service';
 import { Request } from 'express';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
+import { HTTPError } from 'src/dto/common';
 
 @ApiTags('Stillages')
 @Controller('stillages')
@@ -116,6 +125,29 @@ export class StillagesController {
   ) {
     return await this.stillagesService.getLikedStillages(
       getLikedStillagesRequestDTO,
+      req.user['id'],
+    );
+  }
+
+  @ApiOkResponse({
+    description: 'Create stillage ',
+    type: CreateStillageResponseDto,
+    isArray: false,
+  })
+  @ApiBadRequestResponse({
+    description: 'Failed create stillage',
+    type: HTTPError,
+  })
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Post()
+  async createStillage(
+    @Body(queryValidationPipeline)
+    createStillageRequestDto: CreateStillageRequestDto,
+    @Req() req: Request,
+  ) {
+    return await this.stillagesService.createStillage(
+      createStillageRequestDto,
       req.user['id'],
     );
   }

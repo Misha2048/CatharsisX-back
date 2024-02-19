@@ -201,3 +201,62 @@ export class DeleteStillageResponseDto {
   })
   message: string;
 }
+
+export class CreateStillageRequestDto {
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @ApiProperty({ description: 'Stillage name', example: 'stillageName' })
+  stillage_name: string;
+
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @ApiProperty({ description: 'Color stillage' })
+  color: string;
+
+  @IsNotEmpty()
+  @ApiProperty({
+    example: 'true (boolean)(private) / false (boolean)(public)',
+  })
+  private: boolean;
+}
+
+export class CreateStillageResponseDto {
+  constructor(stillage: Stillage, liked: boolean) {
+    this.id = stillage.id;
+    this.userId = stillage.userId;
+    this.name = stillage.name;
+    this.created_at = stillage.created_at;
+    this.last_upload_at = stillage.last_upload_at;
+    this.university_id = stillage.university_id;
+    this.private = stillage.private;
+    this.liked = liked;
+    this.color = stillage.color;
+  }
+
+  @ApiProperty()
+  id: string;
+
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  created_at: Date;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  last_upload_at: Date;
+
+  @ApiProperty()
+  university_id: string;
+
+  @ApiProperty({ default: false })
+  private: boolean;
+
+  @ApiProperty()
+  liked: boolean;
+
+  @ApiProperty()
+  color: string;
+}
