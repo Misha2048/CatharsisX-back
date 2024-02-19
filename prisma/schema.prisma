@@ -50,6 +50,7 @@ model Stillage {
   color          String     @default("#019C56")
 
   @@index([university_id])
+  @@unique([name, userId], name: "uniqueStillageNameForUser")
 }
 
 model Shelf {
