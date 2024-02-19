@@ -172,11 +172,6 @@ export class StillagesService {
       skip: Number(getLikedStillagesRequestDTO.offset) || undefined,
     });
 
-    // likedStillages = likedStillages.map((stillage) => ({
-    //   ...stillage,
-    //   liked: true,
-    // }));
-
     likedStillages = likedStillages.reduce((result, stillage) => {
       if (!stillage.private || stillage.userId === userId) {
         result.push(new FindStillagesResponseDto(stillage, true));
