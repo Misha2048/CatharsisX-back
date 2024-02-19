@@ -13,11 +13,14 @@ import {
   NotFoundException,
   Delete,
   UnprocessableEntityException,
+  Post,
 } from '@nestjs/common';
 import { ShelfsService } from './shelfs.service';
 import {
+  CreateShelfRequestDto,
   DeleteShelfResponseDto,
   FindShelfsRequestDto,
+  FindShelfsResponseDto,
   GetShelvesResponseDto,
   UpdateShelfRequestDto,
   UpdateShelfResponseDto,
@@ -143,6 +146,22 @@ export class ShelfsController {
     await this.shelfsService.deleteShelfs(id, req.user['id']);
     return new DeleteShelfResponseDto(
       'Shelf and related files deleted successfully',
+    );
+  }
+
+  @ApiOkResponse({
+    description: 'A new shelf',
+    type: FindShelfsResponseDto,
+  })
+  @UseGuards(AccessTokenGuard)
+  @Post()
+  async createShelf(
+    @Body(queryValidationPipeline) createShelfRequest: CreateShelfRequestDto,
+    @Request() req,
+  ) {
+    return await this.shelfsService.createShelf(
+      createShelfRequest,
+      req.user['id'],
     );
   }
 }

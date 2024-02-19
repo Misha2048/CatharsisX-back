@@ -147,3 +147,15 @@ export class DeleteShelfResponseDto {
   @ApiProperty()
   message: string;
 }
+
+export class CreateShelfRequestDto {
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @ApiProperty({ description: "Stillage's ID", example: 'stillageId' })
+  stillage: string;
+
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @ApiProperty({ description: "Shelf's name", example: 'shelfName' })
+  name: string;
+}

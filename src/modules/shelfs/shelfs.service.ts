@@ -1,5 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { FindShelfsRequestDto } from 'src/dto/shelfs';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  CreateShelfRequestDto,
+  FindShelfsRequestDto,
+  FindShelfsResponseDto,
+} from 'src/dto/shelfs';
 import client from 'src/db/prismaClient';
 import { Shelf } from '@prisma/client';
 import { IShelfUpdateError } from '../../interfaces/IShelf';
@@ -117,5 +125,28 @@ export class ShelfsService {
         userId,
       },
     });
+  }
+
+  async createShelf(
+    createShelfDto: CreateShelfRequestDto,
+    userId: string,
+  ): Promise<FindShelfsResponseDto> {
+    try {
+      return await client.shelf.create({
+        data: {
+          userId,
+          stillageId: createShelfDto.stillage,
+          name: createShelfDto.name,
+        },
+      });
+    } catch (error) {
+      if (error.code == 'P2002') {
+        throw new BadRequestException(
+          'A shelf with the same name already exists. Specify another name.',
+        );
+      } else if (error.code == 'P2003') {
+        throw new NotFoundException('User or stillage not found');
+      } else throw new BadRequestException('Failed to create a new shelf');
+    }
   }
 }
