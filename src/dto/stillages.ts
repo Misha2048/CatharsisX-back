@@ -214,9 +214,7 @@ export class CreateStillageRequestDto {
   color: string;
 
   @IsNotEmpty()
-  @ApiProperty({
-    example: 'true (boolean)(private) / false (boolean)(public)',
-  })
+  @ApiProperty()
   private: boolean;
 }
 
