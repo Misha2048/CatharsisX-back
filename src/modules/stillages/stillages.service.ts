@@ -42,9 +42,12 @@ export class StillagesService {
     });
 
     return [
-      ...likedStillages.map(
-        (stillage) => new FindStillagesResponseDto(stillage, true),
-      ),
+      ...likedStillages.reduce((result, stillage) => {
+        if (!stillage.private || stillage.userId === userId) {
+          result.push(new FindStillagesResponseDto(stillage, true));
+        }
+        return result;
+      }, []),
       ...notLikedStillages.map(
         (stillage) => new FindStillagesResponseDto(stillage, false),
       ),
@@ -160,6 +163,7 @@ export class StillagesService {
         id: {
           in: user.liked || [],
         },
+        private: false,
         ...filter,
       },
       orderBy: {
