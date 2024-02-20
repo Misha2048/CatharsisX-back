@@ -23,4 +23,22 @@ export class CommonService {
       return filters;
     }, {});
   }
+
+  async getContentType(filename: string) {
+    const extension = filename
+      .substring(filename.lastIndexOf('.'))
+      .toLowerCase();
+    const filesExtensions: { [key: string]: string } = {
+      '.txt': 'text/plain',
+      '.rtf': 'application/rtf',
+      '.pdf': 'application/pdf',
+      '.docx':
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      '.pptx':
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      '.xlsx':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    };
+    return filesExtensions[extension];
+  }
 }

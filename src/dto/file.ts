@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IFile } from 'src/interfaces/IFile';
+import { File } from '@prisma/client';
 
 export class UploadFileRequest {
   @ApiProperty()
@@ -66,4 +67,15 @@ export class GetFilesResponseDto {
 
   @ApiProperty({ example: '2024-01-01T12:30:00.000' })
   uploadedAt: Date;
+}
+
+export class DownloadFileResponseDto {
+  constructor(file: File) {
+    this.content = file.content;
+  }
+
+  @ApiProperty({
+    description: 'The content of the file ',
+  })
+  content: Buffer;
 }
