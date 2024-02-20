@@ -147,3 +147,41 @@ export class DeleteShelfResponseDto {
   @ApiProperty()
   message: string;
 }
+
+export class CreateShelfRequestDto {
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @ApiProperty({ description: "Stillage's ID", example: 'stillageId' })
+  stillage: string;
+
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  @ApiProperty({ description: "Shelf's name", example: 'shelfName' })
+  name: string;
+}
+
+export class CreateShelfNotFoundError {
+  @ApiProperty({ example: 404 })
+  statusCode: number;
+
+  @ApiProperty({
+    example: 'User or stillage not found',
+  })
+  message: string;
+
+  @ApiProperty({ example: 'Not Found' })
+  error: string;
+}
+
+export class CreateShelfBadRequestError {
+  @ApiProperty({ example: 400 })
+  statusCode: number;
+
+  @ApiProperty({
+    example: 'A shelf with the same name already exists. Specify another name.',
+  })
+  message: string;
+
+  @ApiProperty({ example: 'Bad Request' })
+  error: string;
+}

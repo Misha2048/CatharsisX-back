@@ -13,17 +13,28 @@ import {
   NotFoundException,
   Delete,
   UnprocessableEntityException,
+  Post,
 } from '@nestjs/common';
 import { ShelfsService } from './shelfs.service';
 import {
+  CreateShelfBadRequestError,
+  CreateShelfNotFoundError,
+  CreateShelfRequestDto,
   DeleteShelfResponseDto,
   FindShelfsRequestDto,
+  FindShelfsResponseDto,
   GetShelvesResponseDto,
   UpdateShelfRequestDto,
   UpdateShelfResponseDto,
 } from 'src/dto/shelfs';
 import { AccessTokenGuard } from 'src/guards';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { StillagesService } from '../stillages/stillages.service';
 import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
 
@@ -143,6 +154,30 @@ export class ShelfsController {
     await this.shelfsService.deleteShelfs(id, req.user['id']);
     return new DeleteShelfResponseDto(
       'Shelf and related files deleted successfully',
+    );
+  }
+
+  @ApiOkResponse({
+    description: 'A new shelf',
+    type: FindShelfsResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request response',
+    type: CreateShelfBadRequestError,
+  })
+  @ApiNotFoundResponse({
+    description: 'Not found response',
+    type: CreateShelfNotFoundError,
+  })
+  @UseGuards(AccessTokenGuard)
+  @Post()
+  async createShelf(
+    @Body(queryValidationPipeline) createShelfRequest: CreateShelfRequestDto,
+    @Request() req,
+  ) {
+    return await this.shelfsService.createShelf(
+      createShelfRequest,
+      req.user['id'],
     );
   }
 }
