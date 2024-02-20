@@ -84,7 +84,7 @@ export class FilesService {
   ): Promise<UploadFileResponseDto> {
     try {
       const fileType = file.originalname.split('.').pop().toLowerCase();
-      const filenameWithExtension = `${uploadFileRequest.filename}.${fileType}`;
+      const filenameWithExtension = `${uploadFileRequest.filename}`;
 
       let parsedText;
 
