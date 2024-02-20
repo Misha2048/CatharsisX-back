@@ -35,6 +35,7 @@ export class StillagesService {
     const likedStillages: Stillage[] = await client.stillage.findMany({
       where: {
         id: { in: likedStillageIDs },
+        OR: [{ private: false }, { private: true, userId }],
         ...filter,
       },
       orderBy: { name: 'asc' },
@@ -149,7 +150,7 @@ export class StillagesService {
   async getLikedStillages(
     getLikedStillagesRequestDTO: GetLikedStillagesRequestDTO,
     userId: string,
-  ): Promise<{ count: number; likedStillages: Stillage[] }> {
+  ): Promise<{ count: number; likedStillages: FindStillagesResponseDto[] }> {
     const user = await client.user.findUnique({
       where: { id: userId },
       select: { liked: true },
@@ -168,6 +169,7 @@ export class StillagesService {
         id: {
           in: user.liked || [],
         },
+        OR: [{ private: false }, { private: true, userId }],
         ...filter,
       },
       orderBy: {
@@ -182,7 +184,10 @@ export class StillagesService {
       liked: true,
     }));
 
-    return { count, likedStillages };
+    return {
+      count,
+      likedStillages: likedStillages as FindStillagesResponseDto[],
+    };
   }
 
   async createStillage(
