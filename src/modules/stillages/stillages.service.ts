@@ -1,12 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import client from '../../db/prismaClient';
 import { Stillage } from '@prisma/client';
 import {
   FindStillagesRequestDto,
   GetLikedStillagesRequestDTO,
   FindStillagesResponseDto,
+  CreateStillageRequestDto,
 } from 'src/dto/stillages';
 import { CommonService } from '../common/common.service';
+import { HTTPError } from 'src/dto/common';
 
 @Injectable()
 export class StillagesService {
@@ -27,6 +35,7 @@ export class StillagesService {
     const likedStillages: Stillage[] = await client.stillage.findMany({
       where: {
         id: { in: likedStillageIDs },
+        OR: [{ private: false }, { private: true, userId }],
         ...filter,
       },
       orderBy: { name: 'asc' },
@@ -141,7 +150,7 @@ export class StillagesService {
   async getLikedStillages(
     getLikedStillagesRequestDTO: GetLikedStillagesRequestDTO,
     userId: string,
-  ): Promise<{ count: number; likedStillages: Stillage[] }> {
+  ): Promise<{ count: number; likedStillages: FindStillagesResponseDto[] }> {
     const user = await client.user.findUnique({
       where: { id: userId },
       select: { liked: true },
@@ -160,6 +169,7 @@ export class StillagesService {
         id: {
           in: user.liked || [],
         },
+        OR: [{ private: false }, { private: true, userId }],
         ...filter,
       },
       orderBy: {
@@ -174,6 +184,45 @@ export class StillagesService {
       liked: true,
     }));
 
-    return { count, likedStillages };
+    return {
+      count,
+      likedStillages: likedStillages as FindStillagesResponseDto[],
+    };
+  }
+
+  async createStillage(
+    createStillageRequestDto: CreateStillageRequestDto,
+    userId: string,
+  ): Promise<Stillage> {
+    try {
+      const user = await client.user.findUnique({
+        where: { id: userId },
+      });
+
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+
+      if (!user.university_id) {
+        throw new BadRequestException('User does not belong to any university');
+      }
+
+      const newStillage = await client.stillage.create({
+        data: {
+          name: createStillageRequestDto.stillage_name,
+          color: createStillageRequestDto.color,
+          private: createStillageRequestDto.private,
+          userId,
+          university_id: user.university_id,
+        },
+      });
+
+      return newStillage;
+    } catch (error) {
+      throw new HttpException(
+        new HTTPError('Error creating stillage: ' + error.message),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

@@ -9,9 +9,14 @@ import {
   UseGuards,
   Query,
   Req,
+  Param,
+  Res,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { FilesService } from 'src/modules/files/files.service';
 import {
+  DownloadFileResponseDto,
   GetFilesRequestDto,
   GetFilesResponseDto,
   UploadFileErrorResponseDto,
@@ -21,13 +26,19 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConsumes,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
-import { Request } from 'express';
+import { Request, Response } from 'express';
+import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
+import { HTTPError } from 'src/dto/common';
 
 @ApiTags('Files')
 @Controller('files')
@@ -72,5 +83,30 @@ export class FilesController {
     @Req() req: Request,
   ) {
     return this.filesService.getFilesFromShelf(getFilesDto, req.user['id']);
+  }
+
+  @ApiOkResponse({
+    description: 'Download file',
+    type: DownloadFileResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'File not found',
+    type: HTTPError,
+  })
+  @ApiForbiddenResponse({
+    description: 'Access forbidden',
+    type: HTTPError,
+  })
+  @ApiOperation({ summary: 'Download File by ID' })
+  @ApiParam({ name: 'id', description: 'File ID' })
+  @ApiBearerAuth()
+  @UseGuards(AccessTokenGuard)
+  @Get('download/:fileId')
+  async downloadFile(
+    @Param('fileId') fileId: string,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    return await this.filesService.downloadFile(fileId, req.user['id'], res);
   }
 }
