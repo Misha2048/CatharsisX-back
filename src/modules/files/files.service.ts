@@ -84,7 +84,6 @@ export class FilesService {
   ): Promise<UploadFileResponseDto> {
     try {
       const fileType = file.originalname.split('.').pop().toLowerCase();
-      const filenameWithExtension = `${uploadFileRequest.filename}.${fileType}`;
 
       let parsedText;
 
@@ -139,7 +138,7 @@ export class FilesService {
 
       const uploadFiles = await client.file.create({
         data: {
-          filename: filenameWithExtension,
+          filename: uploadFileRequest.filename,
           text_content: parsedText,
           content: file.buffer,
           size: file.size,
