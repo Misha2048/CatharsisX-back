@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Answer } from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsNotEmpty, IsOptional, Length } from 'class-validator';
+import { IsNotEmpty, Length } from 'class-validator';
 
 export class CreateAnswerRequestDto {
   @ApiProperty()
   @IsNotEmpty({ message: 'Body should not be empty' })
-  @Length(1, 1000, {
-    message: 'Body length should be between 1 and 1000 characters',
+  @Length(1, 5000, {
+    message: 'Body length should be between 1 and 5000 characters',
   })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   body: string;
@@ -25,8 +25,8 @@ export class CreateAnswerResponseDto {
 export class UpdateAnswerRequestDto {
   @ApiProperty()
   @IsNotEmpty({ message: 'Body should not be empty' })
-  @Length(1, 1000, {
-    message: 'Body length should be between 1 and 1000 characters',
+  @Length(1, 5000, {
+    message: 'Body length should be between 1 and 5000 characters',
   })
   @Transform(({ value }: TransformFnParams) => value?.trim())
   body: string;
