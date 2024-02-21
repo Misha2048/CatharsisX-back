@@ -11,8 +11,6 @@ import {
   Req,
   Param,
   Res,
-  HttpException,
-  HttpStatus,
 } from '@nestjs/common';
 import { FilesService } from 'src/modules/files/files.service';
 import {
@@ -37,7 +35,6 @@ import {
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/guards';
 import { Request, Response } from 'express';
-import { queryValidationPipeline } from 'src/pipelines/queryValidationPipeline';
 import { HTTPError } from 'src/dto/common';
 
 @ApiTags('Files')

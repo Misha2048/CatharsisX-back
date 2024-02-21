@@ -215,6 +215,7 @@ export class FilesService {
       if (!file || !file.content) {
         throw new NotFoundException('File not found');
       }
+
       const stillage = file.shelf.stillage;
       if (stillage.private && stillage.userId !== userId) {
         throw new ForbiddenException('Access forbidden');
@@ -223,8 +224,10 @@ export class FilesService {
       const contentType = await this.commonService.getContentType(
         file.filename,
       );
+
       res.set('Content-Type', contentType);
-      res.set('Content-Disposition', `attachment; filename=${file.filename}`);
+      res.set('Content-Disposition', `attachment`);
+      console.log(res.getHeaders());
       res.send(file.content);
     } catch (error) {
       if (error instanceof NotFoundException) {
