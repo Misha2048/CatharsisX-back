@@ -175,9 +175,22 @@ export class ShelfsController {
     @Body(queryValidationPipeline) createShelfRequest: CreateShelfRequestDto,
     @Request() req,
   ) {
-    return await this.shelfsService.createShelf(
+    const stillage = await this.stillageService.findStillageById(
+      createShelfRequest.stillage,
+      req.user['id'],
+    );
+
+    if (!stillage || createShelfRequest.stillage !== stillage.userId) {
+      throw new NotFoundException(
+        "Stillage not found or doesn't belong to user",
+      );
+    }
+
+    const shelf = await this.shelfsService.createShelf(
       createShelfRequest,
       req.user['id'],
     );
+
+    return new FindShelfsResponseDto(shelf);
   }
 }
