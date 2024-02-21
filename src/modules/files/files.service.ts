@@ -227,7 +227,6 @@ export class FilesService {
 
       res.set('Content-Type', contentType);
       res.set('Content-Disposition', `attachment`);
-      console.log(res.getHeaders());
       res.send(file.content);
     } catch (error) {
       if (error instanceof NotFoundException) {
