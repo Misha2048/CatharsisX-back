@@ -88,36 +88,40 @@ export class FilesService {
       let parsedText;
 
       try {
-        if (
-          fileType === 'pdf' ||
-          fileType === 'docx' ||
-          fileType === 'xlsx' ||
-          fileType === 'pptx'
-        ) {
-          parsedText = (
-            await officeParser.parseOfficeAsync(file.buffer)
-          ).trim();
-        } else if (fileType === 'rtf') {
-          parsedText = await new Promise((resolve, reject) => {
-            parseRTF.string(file.buffer, function (err, doc) {
-              if (err) reject(err);
-              let text = '';
-              doc.content.forEach(function (element) {
-                if (element.content && element.content.length > 0) {
-                  element.content.forEach(function (innerElement) {
-                    if (innerElement.value) {
-                      text += innerElement.value;
-                    }
-                  });
-                }
-              });
-              resolve(text);
-            });
-          });
-        } else if (fileType === 'txt') {
-          parsedText = file.buffer.toString('utf-8');
+        if (file.size === 0) {
+          parsedText = '';
         } else {
-          throw new Error(`Unsupported file type: ${fileType}`);
+          if (
+            fileType === 'pdf' ||
+            fileType === 'docx' ||
+            fileType === 'xlsx' ||
+            fileType === 'pptx'
+          ) {
+            parsedText = (
+              await officeParser.parseOfficeAsync(file.buffer)
+            ).trim();
+          } else if (fileType === 'rtf') {
+            parsedText = await new Promise((resolve, reject) => {
+              parseRTF.string(file.buffer, function (err, doc) {
+                if (err) reject(err);
+                let text = '';
+                doc.content.forEach(function (element) {
+                  if (element.content && element.content.length > 0) {
+                    element.content.forEach(function (innerElement) {
+                      if (innerElement.value) {
+                        text += innerElement.value;
+                      }
+                    });
+                  }
+                });
+                resolve(text);
+              });
+            });
+          } else if (fileType === 'txt') {
+            parsedText = file.buffer.toString('utf-8');
+          } else {
+            throw new Error(`Unsupported file type: ${fileType}`);
+          }
         }
       } catch (error) {
         const errorMessage = `Failed to parse ${fileType} file: ${error.message}`;
@@ -125,7 +129,10 @@ export class FilesService {
         throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
-      const isValid = await this.validateFile(parsedText);
+      let isValid = true;
+      if (file.size !== 0) {
+        isValid = await this.validateFile(parsedText);
+      }
 
       if (!isValid) {
         this.logger.error('Validation failed. File not uploaded.');
