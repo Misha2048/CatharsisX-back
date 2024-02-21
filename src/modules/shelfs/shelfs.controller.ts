@@ -180,7 +180,7 @@ export class ShelfsController {
       req.user['id'],
     );
 
-    if (!stillage || createShelfRequest.stillage !== stillage.userId) {
+    if (!stillage || req.user['id'] !== stillage.userId) {
       throw new NotFoundException(
         "Stillage not found or doesn't belong to user",
       );
