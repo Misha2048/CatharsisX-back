@@ -49,8 +49,8 @@ model Stillage {
   private        Boolean    @default(true)
   color          String     @default("#019C56")
 
-  @@index([university_id])
   @@unique([name, userId], name: "uniqueStillageNameForUser")
+  @@index([university_id])
 }
 
 model Shelf {
@@ -94,6 +94,7 @@ model Forum {
   userId String
   tags   String[] @default([])
   body   String
+  answer Answer[]
 }
 
 model Answer {
@@ -105,6 +106,8 @@ model Answer {
   votes   String[]  @default([])
   updated Boolean   @default(false)
   comment Comment[]
+  forum   Forum     @relation(fields: [forumId], references: [id])
+  forumId String
 }
 
 model Comment {

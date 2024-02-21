@@ -23,6 +23,9 @@ export class AnswerService {
         user: {
           connect: { id: userId },
         },
+        forum: {
+          connect: { id: createAnswerRequestDto.forumId },
+        },
       },
     });
   }

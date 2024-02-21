@@ -5,6 +5,11 @@ import { IsNotEmpty, Length } from 'class-validator';
 
 export class CreateAnswerRequestDto {
   @ApiProperty()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  forumId: string;
+
+  @ApiProperty()
   @IsNotEmpty({ message: 'Body should not be empty' })
   @Length(1, 5000, {
     message: 'Body length should be between 1 and 5000 characters',
