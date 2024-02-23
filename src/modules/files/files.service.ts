@@ -129,7 +129,7 @@ export class FilesService {
         throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
-      const cleanedText = await this.commonService.sanitizeText(parsedText);
+      const cleanedText = this.commonService.sanitizeText(parsedText);
 
       let isValid = true;
       if (file.size !== 0) {
