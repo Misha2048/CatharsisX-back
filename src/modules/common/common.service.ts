@@ -41,4 +41,8 @@ export class CommonService {
     };
     return filesExtensions[extension];
   }
+
+  async sanitizeText(text: string) {
+    return text.replace(/[^\p{L}\d\s-]/gu, '');
+  }
 }
