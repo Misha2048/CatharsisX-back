@@ -129,6 +129,8 @@ export class FilesService {
         throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
+      const cleanedText = this.commonService.sanitizeText(parsedText);
+
       let isValid = true;
       if (file.size !== 0) {
         isValid = await this.validateFile(parsedText);
@@ -146,7 +148,7 @@ export class FilesService {
       const uploadFiles = await client.file.create({
         data: {
           filename: uploadFileRequest.filename,
-          text_content: parsedText,
+          text_content: cleanedText,
           content: file.buffer,
           size: file.size,
           uploaded_at: new Date(),
