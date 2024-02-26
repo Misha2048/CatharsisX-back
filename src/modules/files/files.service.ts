@@ -23,6 +23,7 @@ import * as parseRTF from 'rtf-parser';
 import { Response } from 'express';
 import { CommonService } from '../common/common.service';
 import { HTTPError } from 'src/dto/common';
+import * as xlsx from 'xlsx';
 
 @Injectable()
 export class FilesService {
@@ -94,7 +95,6 @@ export class FilesService {
           if (
             fileType === 'pdf' ||
             fileType === 'docx' ||
-            fileType === 'xlsx' ||
             fileType === 'pptx'
           ) {
             parsedText = (
@@ -117,6 +117,17 @@ export class FilesService {
                 resolve(text);
               });
             });
+          } else if (fileType === 'xlsx') {
+            const workbook = xlsx.read(file.buffer, { type: 'buffer' });
+            const sheetNames = workbook.SheetNames;
+            if (sheetNames.length === 0) {
+              parsedText = '';
+            } else {
+              const firstSheetName = sheetNames[0];
+              const worksheet = workbook.Sheets[firstSheetName];
+              const dataXlsx = xlsx.utils.sheet_to_json(worksheet);
+              parsedText = JSON.stringify(dataXlsx).replace(/EMPTY/g, ' ');
+            }
           } else if (fileType === 'txt') {
             parsedText = file.buffer.toString('utf-8');
           } else {
