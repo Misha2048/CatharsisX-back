@@ -17,6 +17,14 @@ export class AnswerService {
     createAnswerRequestDto: CreateAnswerRequestDto,
     userId: string,
   ) {
+    const forum = await client.forum.findUnique({
+      where: { id: createAnswerRequestDto.forumId },
+    });
+
+    if (!forum) {
+      throw new NotFoundException('Forum id is not found');
+    }
+
     return await client.answer.create({
       data: {
         body: createAnswerRequestDto.body,

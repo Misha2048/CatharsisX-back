@@ -29,7 +29,7 @@ export class ForumService {
   async findForums(
     findForumsRequestDto: FindForumsRequestDto,
   ): Promise<{ count: number; forums: FindForumsDto[] }> {
-    const blackListKeys = ['limit'];
+    const blackListKeys = ['limit', 'offset'];
     const filters = await this.commonService.getFilters(
       findForumsRequestDto,
       blackListKeys,
@@ -37,6 +37,7 @@ export class ForumService {
     const forums = await client.forum.findMany({
       where: filters,
       take: Number(findForumsRequestDto.limit) || undefined,
+      skip: Number(findForumsRequestDto.offset) || undefined,
     });
     const count = await client.forum.count({
       where: filters,
