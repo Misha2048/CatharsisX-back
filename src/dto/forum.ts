@@ -73,6 +73,14 @@ export class FindForumsRequestDto {
   @Min(1, { message: 'Limit must be a positive number greater than zero' })
   @IsNotEmpty()
   limit: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @Min(0, {
+    message: 'Offset must be a positive number or equal to zero',
+  })
+  @IsNotEmpty()
+  offset: number;
 }
 
 export class FindForumsDto {
@@ -80,6 +88,7 @@ export class FindForumsDto {
     this.title = forum.title;
     this.tags = forum.tags;
     this.body = forum.body;
+    this.forumId = forum.id;
   }
 
   @ApiProperty()
@@ -90,6 +99,9 @@ export class FindForumsDto {
 
   @ApiProperty()
   body: string;
+
+  @ApiProperty()
+  forumId: string;
 }
 export class FindForumsResponseDto {
   @ApiProperty()
@@ -122,6 +134,7 @@ export class UpdateForumResponseDto {
     this.title = forum.title;
     this.tags = forum.tags;
     this.body = forum.body;
+    this.forumId = forum.id;
   }
 
   @ApiProperty()
@@ -132,4 +145,7 @@ export class UpdateForumResponseDto {
 
   @ApiProperty()
   body: string;
+
+  @ApiProperty()
+  forumId: string;
 }
