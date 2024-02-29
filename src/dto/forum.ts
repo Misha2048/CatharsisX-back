@@ -42,12 +42,28 @@ export class CreateForumRequestDto {
 }
 
 export class CreateForumSuccesResponseDto {
-  @ApiProperty()
-  message: string;
-
-  constructor(message: string) {
-    this.message = message;
+  constructor(forum: Forum) {
+    this.title = forum.title;
+    this.tags = forum.tags;
+    this.body = forum.body;
+    this.forumId = forum.id;
+    this.userId = forum.userId;
   }
+
+  @ApiProperty()
+  title: string;
+
+  @ApiProperty({ type: [String] })
+  tags: string[];
+
+  @ApiProperty()
+  body: string;
+
+  @ApiProperty()
+  forumId: string;
+
+  @ApiProperty()
+  userId: string;
 }
 
 export class HTTPError {

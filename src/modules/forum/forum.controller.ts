@@ -53,11 +53,12 @@ export class ForumController {
     @Request() req,
   ) {
     try {
-      await this.forumService.createForum(
+      const createdForum = await this.forumService.createForum(
         createForumRequestDto,
         req.user['id'],
       );
-      return new CreateForumSuccesResponseDto('forum successfully created');
+
+      return new CreateForumSuccesResponseDto(createdForum);
     } catch (error) {
       throw new HttpException(
         new HTTPError('Error creating forum: ' + error.message),
