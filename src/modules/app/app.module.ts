@@ -18,6 +18,7 @@ import { CommentModule } from '../comment/comment.module';
 import { AnswerModule } from '../answer/answer.module';
 import { ErrorHandlingMiddleware } from 'src/middleware/error-handling/error-handling.middleware';
 import { FilesController } from '../files/files.controller';
+import { SocketModule } from '../socket/socket.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { FilesController } from '../files/files.controller';
     ForumModule,
     CommentModule,
     AnswerModule,
+    SocketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
