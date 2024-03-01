@@ -5,6 +5,7 @@ import {
   FindForumsDto,
   UpdateForumResponseDto,
   UpdateForumRequestDto,
+  FindForumTopicResponseDto,
 } from 'src/dto/forum';
 import client from 'src/db/prismaClient';
 import { CommonService } from '../common/common.service';
@@ -38,6 +39,9 @@ export class ForumService {
       where: filters,
       take: Number(findForumsRequestDto.limit) || undefined,
       skip: Number(findForumsRequestDto.offset) || undefined,
+      orderBy: {
+        created_at: 'desc',
+      },
     });
     const count = await client.forum.count({
       where: filters,
@@ -70,7 +74,7 @@ export class ForumService {
         id,
         userId,
       },
-      data: updateForumRequestDto,
+      data: { ...updateForumRequestDto, last_modified_at: new Date() },
     });
     return new UpdateForumResponseDto(updatedForum);
   }

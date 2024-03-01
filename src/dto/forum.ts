@@ -48,6 +48,8 @@ export class CreateForumSuccesResponseDto {
     this.body = forum.body;
     this.forumId = forum.id;
     this.userId = forum.userId;
+    this.created_ad = forum.created_at;
+    this.last_modified_at = forum.last_modified_at;
   }
 
   @ApiProperty()
@@ -64,6 +66,12 @@ export class CreateForumSuccesResponseDto {
 
   @ApiProperty()
   userId: string;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  created_ad: Date;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  last_modified_at: Date;
 }
 
 export class HTTPError {
@@ -105,6 +113,9 @@ export class FindForumsDto {
     this.tags = forum.tags;
     this.body = forum.body;
     this.forumId = forum.id;
+    this.userId = forum.userId;
+    this.created_ad = forum.created_at;
+    this.last_modified_at = forum.last_modified_at;
   }
 
   @ApiProperty()
@@ -118,6 +129,15 @@ export class FindForumsDto {
 
   @ApiProperty()
   forumId: string;
+
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  created_ad: Date;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  last_modified_at: Date;
 }
 export class FindForumsResponseDto {
   @ApiProperty()
@@ -151,6 +171,9 @@ export class UpdateForumResponseDto {
     this.tags = forum.tags;
     this.body = forum.body;
     this.forumId = forum.id;
+    this.userId = forum.userId;
+    this.created_ad = forum.created_at;
+    this.last_modified_at = forum.last_modified_at;
   }
 
   @ApiProperty()
@@ -164,4 +187,45 @@ export class UpdateForumResponseDto {
 
   @ApiProperty()
   forumId: string;
+
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  created_ad: Date;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  last_modified_at: Date;
+}
+
+export class FindForumTopicResponseDto {
+  userId: string;
+  userFirstName: string;
+  userLastName: string;
+  title: string;
+  body: string;
+  tags: string[];
+  created_at: Date;
+  last_modified_at: Date;
+  answers: AnswerDto[];
+}
+
+class AnswerDto {
+  id: string;
+  userId: string;
+  userFirstName: string;
+  userLastName: string;
+  body: string;
+  upvotes: number;
+  created_at: Date;
+  comments: CommentDto[];
+}
+
+class CommentDto {
+  id: string;
+  userId: string;
+  userFirstName: string;
+  userLastName: string;
+  body: string;
+  created_at: Date;
 }
