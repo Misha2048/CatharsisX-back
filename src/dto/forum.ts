@@ -48,7 +48,7 @@ export class CreateForumSuccesResponseDto {
     this.body = forum.body;
     this.forumId = forum.id;
     this.userId = forum.userId;
-    this.created_ad = forum.created_at;
+    this.created_at = forum.created_at;
     this.last_modified_at = forum.last_modified_at;
   }
 
@@ -68,7 +68,7 @@ export class CreateForumSuccesResponseDto {
   userId: string;
 
   @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
-  created_ad: Date;
+  created_at: Date;
 
   @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
   last_modified_at: Date;
@@ -114,7 +114,7 @@ export class FindForumsDto {
     this.body = forum.body;
     this.forumId = forum.id;
     this.userId = forum.userId;
-    this.created_ad = forum.created_at;
+    this.created_at = forum.created_at;
     this.last_modified_at = forum.last_modified_at;
   }
 
@@ -134,7 +134,7 @@ export class FindForumsDto {
   userId: string;
 
   @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
-  created_ad: Date;
+  created_at: Date;
 
   @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
   last_modified_at: Date;
@@ -172,7 +172,7 @@ export class UpdateForumResponseDto {
     this.body = forum.body;
     this.forumId = forum.id;
     this.userId = forum.userId;
-    this.created_ad = forum.created_at;
+    this.created_at = forum.created_at;
     this.last_modified_at = forum.last_modified_at;
   }
 
@@ -192,40 +192,8 @@ export class UpdateForumResponseDto {
   userId: string;
 
   @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
-  created_ad: Date;
+  created_at: Date;
 
   @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
   last_modified_at: Date;
-}
-
-export class FindForumTopicResponseDto {
-  userId: string;
-  userFirstName: string;
-  userLastName: string;
-  title: string;
-  body: string;
-  tags: string[];
-  created_at: Date;
-  last_modified_at: Date;
-  answers: AnswerDto[];
-}
-
-class AnswerDto {
-  id: string;
-  userId: string;
-  userFirstName: string;
-  userLastName: string;
-  body: string;
-  upvotes: number;
-  created_at: Date;
-  comments: CommentDto[];
-}
-
-class CommentDto {
-  id: string;
-  userId: string;
-  userFirstName: string;
-  userLastName: string;
-  body: string;
-  created_at: Date;
 }

@@ -41,6 +41,7 @@ export class UpdateCommentResponseDto {
   constructor(comment: Comment) {
     this.body = comment.body;
     this.updated = comment.updated;
+    this.created_at = comment.created_at;
   }
 
   @ApiProperty()
@@ -48,4 +49,7 @@ export class UpdateCommentResponseDto {
 
   @ApiProperty()
   updated: boolean;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  created_at: Date;
 }

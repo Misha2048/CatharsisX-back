@@ -5,7 +5,6 @@ import {
   FindForumsDto,
   UpdateForumResponseDto,
   UpdateForumRequestDto,
-  FindForumTopicResponseDto,
 } from 'src/dto/forum';
 import client from 'src/db/prismaClient';
 import { CommonService } from '../common/common.service';

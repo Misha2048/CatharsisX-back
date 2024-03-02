@@ -42,6 +42,8 @@ export class UpdateAnswerResponseDto {
     this.body = answer.body;
     this.upvotes = answer.upvotes;
     this.updated = answer.updated;
+    this.created_at = answer.created_at;
+    this.last_modified_at = answer.last_modified_at;
   }
 
   @ApiProperty()
@@ -52,6 +54,12 @@ export class UpdateAnswerResponseDto {
 
   @ApiProperty()
   updated: boolean;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  created_at: Date;
+
+  @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
+  last_modified_at: Date;
 }
 
 export class UpvoteAnswerRequestDto {
