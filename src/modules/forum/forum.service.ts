@@ -5,6 +5,7 @@ import {
   FindForumsDto,
   UpdateForumResponseDto,
   UpdateForumRequestDto,
+  FindForumTopicResponseDto,
 } from 'src/dto/forum';
 import client from 'src/db/prismaClient';
 import { CommonService } from '../common/common.service';
@@ -76,5 +77,36 @@ export class ForumService {
       data: { ...updateForumRequestDto, last_modified_at: new Date() },
     });
     return new UpdateForumResponseDto(updatedForum);
+  }
+
+  async findForumTopic(id: string): Promise<FindForumTopicResponseDto> {
+    const forumTopic = await client.forum.findUnique({
+      where: { id },
+      include: {
+        user: true,
+        answer: {
+          include: {
+            user: true,
+            comment: {
+              include: {
+                user: true,
+              },
+              orderBy: {
+                created_at: 'asc',
+              },
+            },
+          },
+          orderBy: {
+            created_at: 'asc',
+          },
+        },
+      },
+    });
+
+    if (!forumTopic) {
+      throw new NotFoundException('Forum topic not found');
+    }
+
+    return new FindForumTopicResponseDto(forumTopic);
   }
 }
