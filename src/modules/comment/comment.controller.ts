@@ -49,11 +49,10 @@ export class CommentController {
     @Request() req,
   ) {
     try {
-      await this.commentService.createComment(
+      return await this.commentService.createComment(
         createCommentRequestDto,
         req.user['id'],
       );
-      return new CreateCommentResponseDto('Comment successfully created');
     } catch (error) {
       throw new HttpException(
         new HTTPError('Error creating comment: ' + error.message),

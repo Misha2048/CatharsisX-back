@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Answer } from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
 import { IsNotEmpty, Length } from 'class-validator';
+import { CreateCommentResponseDto } from './comment';
 
 export class CreateAnswerRequestDto {
   @ApiProperty()
@@ -20,10 +21,61 @@ export class CreateAnswerRequestDto {
 
 export class CreateAnswerResponseDto {
   @ApiProperty()
-  message: string;
+  id: string;
 
-  constructor(message: string) {
-    this.message = message;
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  userFirstName: string;
+
+  @ApiProperty()
+  userLastName: string;
+
+  @ApiProperty()
+  body: string;
+
+  @ApiProperty()
+  upvotes: number;
+
+  @ApiProperty({ type: [CreateCommentResponseDto] })
+  comments: CreateCommentResponseDto[] | undefined;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  last_modified_at: Date;
+
+  constructor(answer: {
+    id: string;
+    userId: string;
+    user: { id: string; first_name: string; last_name: string };
+    body: string;
+    upvotes: number;
+    comment: {
+      id: string;
+      userId: string;
+      user: { id: string; first_name: string; last_name: string };
+      body: string;
+      answerId: string;
+      created_at: Date;
+      last_modified_at: Date;
+    }[];
+    created_at: Date;
+    last_modified_at: Date;
+  }) {
+    this.id = answer.id;
+    this.userId = answer.userId;
+    this.userFirstName = answer.user.first_name;
+    this.userLastName = answer.user.last_name;
+    this.body = answer.body;
+    this.upvotes = answer.upvotes;
+    this.comments = answer.comment.map(
+      (comment) => new CreateCommentResponseDto(comment),
+    );
+    this.createdAt = answer.created_at;
+    this.last_modified_at = answer.last_modified_at;
   }
 }
 

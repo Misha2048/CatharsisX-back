@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   CreateCommentRequestDto,
+  CreateCommentResponseDto,
   UpdateCommentRequestDto,
   UpdateCommentResponseDto,
 } from 'src/dto/comment';
@@ -11,7 +12,7 @@ export class CommentService {
   async createComment(
     createCommentRequestDto: CreateCommentRequestDto,
     userId: string,
-  ) {
+  ): Promise<CreateCommentResponseDto> {
     const answer = await client.answer.findUnique({
       where: { id: createCommentRequestDto.answerId },
     });
@@ -20,7 +21,7 @@ export class CommentService {
       throw new NotFoundException('Answer not found');
     }
 
-    return await client.comment.create({
+    const createdComment = await client.comment.create({
       data: {
         body: createCommentRequestDto.body,
         user: {
@@ -30,7 +31,10 @@ export class CommentService {
           connect: { id: createCommentRequestDto.answerId },
         },
       },
+      include: { user: true },
     });
+
+    return new CreateCommentResponseDto(createdComment);
   }
 
   async updateComment(
