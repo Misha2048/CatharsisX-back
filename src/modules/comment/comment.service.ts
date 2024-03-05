@@ -54,7 +54,11 @@ export class CommentService {
         id,
         userId,
       },
-      data: { ...updateCommentRequestDto, updated: true },
+      data: {
+        ...updateCommentRequestDto,
+        updated: true,
+        last_modified_at: new Date(),
+      },
     });
     return new UpdateCommentResponseDto(updatedComment);
   }

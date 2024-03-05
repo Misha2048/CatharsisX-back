@@ -15,6 +15,7 @@ import { ForumService } from './forum.service';
 import {
   CreateForumRequestDto,
   CreateForumSuccesResponseDto,
+  FindForumTopicResponseDto,
   FindForumsDto,
   FindForumsRequestDto,
   FindForumsResponseDto,
@@ -85,7 +86,7 @@ export class ForumController {
       return await this.forumService.findForums(findForumRequestDto);
     } catch (error) {
       throw new HttpException(
-        new HTTPError('Error find forums' + error.message),
+        new HTTPError('Error find forums: ' + error.message),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -116,7 +117,28 @@ export class ForumController {
       );
     } catch (error) {
       throw new HttpException(
-        new HTTPError('Error update forums'),
+        new HTTPError('Error update forums: ' + error.message),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  @ApiOkResponse({
+    description: 'Find forum topic',
+    type: FindForumTopicResponseDto,
+    isArray: false,
+  })
+  @ApiBadRequestResponse({
+    description: 'Failed find forum topic',
+    type: HTTPError,
+  })
+  @Get('topic/:id')
+  async getForumTopic(@Param('id') id: string) {
+    try {
+      return await this.forumService.findForumTopic(id);
+    } catch (error) {
+      throw new HttpException(
+        new HTTPError('Error find forum topic: ' + error.message),
         HttpStatus.BAD_REQUEST,
       );
     }

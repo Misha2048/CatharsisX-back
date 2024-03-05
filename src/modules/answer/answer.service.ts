@@ -59,7 +59,11 @@ export class AnswerService {
         id,
         userId,
       },
-      data: { ...updateAnswerRequestDto, updated: true },
+      data: {
+        ...updateAnswerRequestDto,
+        updated: true,
+        last_modified_at: new Date(),
+      },
     });
 
     return new UpdateAnswerResponseDto(updatedAnswer);
