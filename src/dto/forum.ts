@@ -93,18 +93,20 @@ export class FindForumsRequestDto {
   title?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsNumber()
   @Min(1, { message: 'Limit must be a positive number greater than zero' })
   @IsNotEmpty()
-  limit: number;
+  limit?: number;
 
   @ApiProperty()
+  @IsOptional()
   @IsNumber()
   @Min(0, {
     message: 'Offset must be a positive number or equal to zero',
   })
   @IsNotEmpty()
-  offset: number;
+  offset?: number;
 }
 
 export class FindForumsDto {
