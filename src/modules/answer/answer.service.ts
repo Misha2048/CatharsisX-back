@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
   CreateAnswerRequestDto,
+  CreateAnswerResponseDto,
   UpdateAnswerRequestDto,
   UpdateAnswerResponseDto,
   UpvoteAnswerRequestDto,
@@ -16,7 +17,7 @@ export class AnswerService {
   async createAnswer(
     createAnswerRequestDto: CreateAnswerRequestDto,
     userId: string,
-  ) {
+  ): Promise<CreateAnswerResponseDto> {
     const forum = await client.forum.findUnique({
       where: { id: createAnswerRequestDto.forumId },
     });
@@ -25,7 +26,7 @@ export class AnswerService {
       throw new NotFoundException('Forum id is not found');
     }
 
-    return await client.answer.create({
+    const createdAnswer = await client.answer.create({
       data: {
         body: createAnswerRequestDto.body,
         user: {
@@ -35,7 +36,17 @@ export class AnswerService {
           connect: { id: createAnswerRequestDto.forumId },
         },
       },
+      include: {
+        user: true,
+        comment: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
+
+    return new CreateAnswerResponseDto(createdAnswer);
   }
 
   async updateAnswer(

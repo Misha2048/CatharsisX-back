@@ -220,6 +220,9 @@ class CommentDto {
   @ApiProperty()
   createdAt: Date;
 
+  @ApiProperty()
+  last_modified_at: Date;
+
   constructor(comment: {
     id: string;
     userId: string;
@@ -227,6 +230,7 @@ class CommentDto {
     body: string;
     answerId: string;
     created_at: Date;
+    last_modified_at: Date;
   }) {
     this.id = comment.id;
     this.userId = comment.userId;
@@ -235,6 +239,7 @@ class CommentDto {
     this.body = comment.body;
     this.answerId = comment.answerId;
     this.createdAt = comment.created_at;
+    this.last_modified_at = comment.last_modified_at;
   }
 }
 
@@ -263,6 +268,9 @@ class AnswerDto {
   @ApiProperty()
   createdAt: Date;
 
+  @ApiProperty()
+  last_modified_at: Date;
+
   constructor(answer: {
     id: string;
     userId: string;
@@ -276,8 +284,10 @@ class AnswerDto {
       body: string;
       answerId: string;
       created_at: Date;
+      last_modified_at: Date;
     }[];
     created_at: Date;
+    last_modified_at: Date;
   }) {
     this.id = answer.id;
     this.userId = answer.userId;
@@ -287,6 +297,7 @@ class AnswerDto {
     this.upvotes = answer.upvotes;
     this.comments = answer.comment.map((comment) => new CommentDto(comment));
     this.createdAt = answer.created_at;
+    this.last_modified_at = answer.last_modified_at;
   }
 }
 

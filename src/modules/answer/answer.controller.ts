@@ -51,11 +51,10 @@ export class AnswerController {
     @Request() req,
   ) {
     try {
-      await this.answerService.createAnswer(
+      return await this.answerService.createAnswer(
         createAnswerRequestDto,
         req.user['id'],
       );
-      return new CreateAnswerResponseDto('Answer successfully created');
     } catch (error) {
       throw new HttpException(
         new HTTPError('Error creating forum: ' + error.message),

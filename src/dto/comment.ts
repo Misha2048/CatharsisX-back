@@ -20,10 +20,46 @@ export class CreateCommentRequestDto {
 
 export class CreateCommentResponseDto {
   @ApiProperty()
-  message: string;
+  id: string;
 
-  constructor(message: string) {
-    this.message = message;
+  @ApiProperty()
+  userId: string;
+
+  @ApiProperty()
+  userFirstName: string;
+
+  @ApiProperty()
+  userLastName: string;
+
+  @ApiProperty()
+  body: string;
+
+  @ApiProperty()
+  answerId: string;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  last_modified_at: Date;
+
+  constructor(comment: {
+    id: string;
+    userId: string;
+    user: { id: string; first_name: string; last_name: string };
+    body: string;
+    answerId: string;
+    created_at: Date;
+    last_modified_at: Date;
+  }) {
+    this.id = comment.id;
+    this.userId = comment.userId;
+    this.userFirstName = comment.user.first_name;
+    this.userLastName = comment.user.last_name;
+    this.body = comment.body;
+    this.answerId = comment.answerId;
+    this.createdAt = comment.created_at;
+    this.last_modified_at = comment.last_modified_at;
   }
 }
 
