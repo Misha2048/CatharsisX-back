@@ -28,9 +28,9 @@ model User {
   forum          Forum[]
   answer         Answer[]
   comment        Comment[]
-  chat           Chat?       @relation(fields: [chatId], references: [id])
+  chats          Chat[]
   chatId         String?
-  message        Message[]
+  messages       Message[]
 }
 
 model EmailVerify {
@@ -133,7 +133,7 @@ model Chat {
   id               String    @id @default(uuid())
   last_modified_at DateTime  @default(now())
   users            User[]
-  message          Message[]
+  messages         Message[]
 }
 
 model Message {
