@@ -29,7 +29,6 @@ model User {
   answer         Answer[]
   comment        Comment[]
   chats          Chat[]
-  chatId         String?
   messages       Message[]
 }
 
