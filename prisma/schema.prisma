@@ -28,6 +28,8 @@ model User {
   forum          Forum[]
   answer         Answer[]
   comment        Comment[]
+  chats          Chat[]
+  messages       Message[]
 }
 
 model EmailVerify {
@@ -124,4 +126,22 @@ model Comment {
   updated          Boolean  @default(false)
   created_at       DateTime @default(now())
   last_modified_at DateTime @default(now())
+}
+
+model Chat {
+  id               String    @id @default(uuid())
+  last_modified_at DateTime  @default(now())
+  users            User[]
+  messages         Message[]
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  chat       Chat     @relation(fields: [chatId], references: [id])
+  chatId     String
+  created_at DateTime @default(now())
+  content    String
+  read       Boolean  @default(false)
 }
