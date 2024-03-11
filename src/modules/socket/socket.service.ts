@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { MessageSentResponseDto, SendMessageRequestDto } from 'src/dto/socket';
 import client from '../../db/prismaClient';
+import { measureMemory } from 'vm';
 
 @Injectable()
 export class SocketService {
@@ -21,10 +22,14 @@ export class SocketService {
     socket: Socket,
     sendMessageRequestDto: SendMessageRequestDto,
   ): Promise<MessageSentResponseDto> {
-    let chat = await client.chat.findUnique({
-      where: { id: sendMessageRequestDto.chatId },
-      include: { users: true },
-    });
+    let chat;
+
+    if (sendMessageRequestDto.chatId) {
+      chat = await client.chat.findUnique({
+        where: { id: sendMessageRequestDto.chatId },
+        include: { users: true },
+      });
+    }
 
     if (!chat) {
       chat = await client.chat.create({
@@ -57,7 +62,7 @@ export class SocketService {
           );
         }
       });
-
+    console.log(new MessageSentResponseDto(message));
     return new MessageSentResponseDto(message);
   }
 }
