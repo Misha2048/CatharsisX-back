@@ -22,14 +22,14 @@ export class SocketService {
     sendMessageRequestDto: SendMessageRequestDto,
   ): Promise<MessageSentResponseDto> {
     let chat = await client.chat.findUnique({
-      where: { id: sendMessageRequestDto.target },
+      where: { id: sendMessageRequestDto.chatId },
       include: { users: true },
     });
 
     if (!chat) {
       chat = await client.chat.create({
         data: {
-          id: sendMessageRequestDto.target,
+          id: sendMessageRequestDto.chatId,
           users: {
             connect: [{ id: socket.id }],
           },
@@ -40,7 +40,7 @@ export class SocketService {
 
     const message = await client.message.create({
       data: {
-        userId: socket.id,
+        userId: sendMessageRequestDto.userId,
         chatId: chat.id,
         content: sendMessageRequestDto.content,
         read: false,

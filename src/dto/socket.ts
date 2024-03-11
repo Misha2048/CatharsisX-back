@@ -15,7 +15,12 @@ export class SendMessageRequestDto {
   @ApiProperty()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  target: string;
+  chatId: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  userId: string;
 }
 
 export class MessageSentResponseDto {
