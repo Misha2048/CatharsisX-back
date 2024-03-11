@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Message } from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsNotEmpty, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, Length } from 'class-validator';
 
 export class SendMessageRequestDto {
   @ApiProperty()
@@ -13,9 +13,10 @@ export class SendMessageRequestDto {
   content: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsNotEmpty()
   @Transform(({ value }: TransformFnParams) => value?.trim())
-  chatId: string;
+  chatId?: string;
 
   @ApiProperty()
   @IsNotEmpty()

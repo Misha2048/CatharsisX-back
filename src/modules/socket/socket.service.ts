@@ -10,7 +10,7 @@ export class SocketService {
   handleConnection(socket: Socket): void {
     const clientId = socket.id;
 
-    console.log(this.connectedClients.set(clientId, socket));
+    this.connectedClients.set(clientId, socket);
 
     socket.on('disconnect', () => {
       this.connectedClients.delete(clientId);
