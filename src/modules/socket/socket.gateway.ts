@@ -2,9 +2,11 @@ import {
   WebSocketGateway,
   OnGatewayConnection,
   WebSocketServer,
+  SubscribeMessage,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { SocketService } from './socket.service';
+import { SendMessageRequestDto } from 'src/dto/socket';
 
 @WebSocketGateway()
 export class SocketGateway implements OnGatewayConnection {
@@ -17,5 +19,11 @@ export class SocketGateway implements OnGatewayConnection {
     this.socketService.handleConnection(socket);
   }
 
-  // Implement other Socket.IO event handlers and message handlers
+  @SubscribeMessage('send_message')
+  handleSendMessage(
+    socket: Socket,
+    sendMessageRequestDto: SendMessageRequestDto,
+  ): void {
+    this.socketService.handleSendMessage(socket, sendMessageRequestDto);
+  }
 }
