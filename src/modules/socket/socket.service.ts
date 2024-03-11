@@ -29,9 +29,8 @@ export class SocketService {
     if (!chat) {
       chat = await client.chat.create({
         data: {
-          id: sendMessageRequestDto.chatId,
           users: {
-            connect: [{ id: socket.id }],
+            connect: [{ id: sendMessageRequestDto.userId }],
           },
         },
         include: { users: true },
