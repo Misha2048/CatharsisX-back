@@ -4,7 +4,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { MessageSentResponseDto, SendMessageRequestDto } from 'src/dto/socket';
+import {
+  GetHistoryRequestDto,
+  MessageSentResponseDto,
+  SendMessageRequestDto,
+} from 'src/dto/socket';
 import client from '../../db/prismaClient';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
@@ -101,5 +105,32 @@ export class SocketService {
       });
 
     return new MessageSentResponseDto(message);
+  }
+
+  async handleGetHistory(
+    socket: Socket,
+    getHistoryRequestDto: GetHistoryRequestDto,
+  ): Promise<void> {
+    const history = await client.message.findMany({
+      where: { chatId: getHistoryRequestDto.chatId },
+      orderBy: {
+        created_at: 'asc',
+      },
+    });
+
+    for (const message of history) {
+      await client.message.update({
+        where: { id: message.id },
+        data: { read: true },
+      });
+    }
+
+    const messages = history.reduce((acc, obj) => {
+      const date = obj.created_at.toISOString();
+      acc[date] = obj.content;
+      return acc;
+    }, {});
+
+    socket.emit('response_history', messages);
   }
 }

@@ -30,3 +30,13 @@ export class MessageSentResponseDto {
   @ApiProperty()
   chatId: string;
 }
+
+export class GetHistoryRequestDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  chatId: string;
+}
+
+export class GetHistoryResponseDto {
+  [date: string]: Message[];
+}
