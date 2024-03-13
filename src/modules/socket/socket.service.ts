@@ -46,11 +46,10 @@ export class SocketService {
     const userId = user.id;
     let chat = await client.chat.findFirst({
       where: {
-        users: {
-          some: {
-            id: sendMessageRequestDto.target,
-          },
-        },
+        OR: [
+          { id: sendMessageRequestDto.target },
+          { users: { some: { id: sendMessageRequestDto.target } } },
+        ],
       },
       include: { users: true },
     });
@@ -84,9 +83,9 @@ export class SocketService {
     });
 
     chat.users
-      .filter((user) => user.id !== userId)
-      .forEach((user) => {
-        const clientSocket = this.connectedClients.get(user.id);
+      .filter((chatUser) => chatUser.id !== userId)
+      .forEach((chatUser) => {
+        const clientSocket = this.connectedClients.get(chatUser.id);
         if (clientSocket) {
           clientSocket.emit(
             'message_sent',
