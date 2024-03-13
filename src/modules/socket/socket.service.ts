@@ -28,7 +28,7 @@ export class SocketService {
 
       socket['user'] = user;
       const clientId = socket.id;
-      await this.connectedClients.set(clientId, socket);
+      this.connectedClients.set(clientId, socket);
 
       socket.on('disconnect', () => {
         this.connectedClients.delete(clientId);
