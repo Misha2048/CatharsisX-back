@@ -9,7 +9,6 @@ export class SocketService {
 
   handleConnection(socket: Socket): void {
     const clientId = socket.id;
-
     this.connectedClients.set(clientId, socket);
 
     socket.on('disconnect', () => {
@@ -20,9 +19,16 @@ export class SocketService {
   async handleSendMessage(
     socket: Socket,
     sendMessageRequestDto: SendMessageRequestDto,
+    userId: string,
   ): Promise<MessageSentResponseDto> {
-    let chat = await client.chat.findUnique({
-      where: { id: sendMessageRequestDto.target },
+    let chat = await client.chat.findFirst({
+      where: {
+        users: {
+          some: {
+            id: sendMessageRequestDto.target,
+          },
+        },
+      },
       include: { users: true },
     });
 
@@ -31,23 +37,23 @@ export class SocketService {
         where: { id: sendMessageRequestDto.target },
       });
 
-      if (user) {
-        chat = await client.chat.create({
-          data: {
-            users: {
-              connect: [{ id: sendMessageRequestDto.target }],
-            },
-          },
-          include: { users: true },
-        });
-      } else {
+      if (!user) {
         throw new NotFoundException('User not found');
       }
+
+      chat = await client.chat.create({
+        data: {
+          users: {
+            connect: [{ id: sendMessageRequestDto.target }],
+          },
+        },
+        include: { users: true },
+      });
     }
 
     const message = await client.message.create({
       data: {
-        userId: sendMessageRequestDto.target,
+        userId: userId,
         chatId: chat.id,
         content: sendMessageRequestDto.content,
         read: false,
@@ -55,7 +61,7 @@ export class SocketService {
     });
 
     chat.users
-      .filter((user) => user.id !== socket.id)
+      .filter((user) => user.id !== userId)
       .forEach((user) => {
         const clientSocket = this.connectedClients.get(user.id);
         if (clientSocket) {
@@ -65,6 +71,7 @@ export class SocketService {
           );
         }
       });
+
     return new MessageSentResponseDto(message);
   }
 }
