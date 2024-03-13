@@ -46,10 +46,7 @@ export class SocketService {
     const userId = user.id;
     let chat = await client.chat.findFirst({
       where: {
-        OR: [
-          { id: sendMessageRequestDto.target },
-          { users: { some: { id: sendMessageRequestDto.target } } },
-        ],
+        id: sendMessageRequestDto.target,
       },
       include: { users: true },
     });
@@ -63,14 +60,23 @@ export class SocketService {
         throw new NotFoundException('User not found');
       }
 
-      chat = await client.chat.create({
-        data: {
-          users: {
-            connect: [{ id: sendMessageRequestDto.target }],
-          },
+      chat = await client.chat.findFirst({
+        where: {
+          users: { some: { id: sendMessageRequestDto.target } },
         },
         include: { users: true },
       });
+
+      if (!chat) {
+        chat = await client.chat.create({
+          data: {
+            users: {
+              connect: [{ id: sendMessageRequestDto.target }, { id: userId }],
+            },
+          },
+          include: { users: true },
+        });
+      }
     }
 
     const message = await client.message.create({

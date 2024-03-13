@@ -15,16 +15,16 @@ export class SocketGateway implements OnGatewayConnection {
 
   constructor(private readonly socketService: SocketService) {}
 
-  handleConnection(socket: Socket): void {
+  async handleConnection(socket: Socket): Promise<void> {
     const token = socket.handshake.auth.token;
-    this.socketService.handleConnection(socket, token);
+    await this.socketService.handleConnection(socket, token);
   }
 
   @SubscribeMessage('send_message')
-  handleSendMessage(
+  async handleSendMessage(
     socket: Socket,
     sendMessageRequestDto: SendMessageRequestDto,
-  ): void {
-    this.socketService.handleSendMessage(socket, sendMessageRequestDto);
+  ): Promise<void> {
+    await this.socketService.handleSendMessage(socket, sendMessageRequestDto);
   }
 }
