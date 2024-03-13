@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { MessageSentResponseDto, SendMessageRequestDto } from 'src/dto/socket';
 import client from '../../db/prismaClient';
-import { measureMemory } from 'vm';
 
 @Injectable()
 export class SocketService {
@@ -22,29 +21,33 @@ export class SocketService {
     socket: Socket,
     sendMessageRequestDto: SendMessageRequestDto,
   ): Promise<MessageSentResponseDto> {
-    let chat;
-
-    if (sendMessageRequestDto.chatId) {
-      chat = await client.chat.findUnique({
-        where: { id: sendMessageRequestDto.chatId },
-        include: { users: true },
-      });
-    }
+    let chat = await client.chat.findUnique({
+      where: { id: sendMessageRequestDto.target },
+      include: { users: true },
+    });
 
     if (!chat) {
-      chat = await client.chat.create({
-        data: {
-          users: {
-            connect: [{ id: sendMessageRequestDto.userId }],
-          },
-        },
-        include: { users: true },
+      const user = await client.user.findUnique({
+        where: { id: sendMessageRequestDto.target },
       });
+
+      if (user) {
+        chat = await client.chat.create({
+          data: {
+            users: {
+              connect: [{ id: sendMessageRequestDto.target }],
+            },
+          },
+          include: { users: true },
+        });
+      } else {
+        throw new NotFoundException('User not found');
+      }
     }
 
     const message = await client.message.create({
       data: {
-        userId: sendMessageRequestDto.userId,
+        userId: sendMessageRequestDto.target,
         chatId: chat.id,
         content: sendMessageRequestDto.content,
         read: false,
@@ -62,7 +65,6 @@ export class SocketService {
           );
         }
       });
-    console.log(new MessageSentResponseDto(message));
     return new MessageSentResponseDto(message);
   }
 }
