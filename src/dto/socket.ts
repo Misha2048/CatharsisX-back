@@ -38,5 +38,8 @@ export class GetHistoryRequestDto {
 }
 
 export class GetHistoryResponseDto {
+  constructor(messages: Record<string, Message[]>) {
+    Object.assign(this, messages);
+  }
   [date: string]: Message[];
 }
