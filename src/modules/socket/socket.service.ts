@@ -4,7 +4,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { MessageSentResponseDto, SendMessageRequestDto } from 'src/dto/socket';
+import {
+  GetHistoryRequestDto,
+  GetHistoryResponseDto,
+  MessageSentResponseDto,
+  SendMessageRequestDto,
+} from 'src/dto/socket';
 import client from '../../db/prismaClient';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
@@ -42,64 +47,115 @@ export class SocketService {
     socket: Socket,
     sendMessageRequestDto: SendMessageRequestDto,
   ): Promise<MessageSentResponseDto> {
-    const user = socket['user'];
-    const userId = user.id;
-    let chat = await client.chat.findFirst({
-      where: {
-        id: sendMessageRequestDto.target,
-      },
-      include: { users: true },
-    });
-
-    if (!chat) {
-      const user = await client.user.findUnique({
-        where: { id: sendMessageRequestDto.target },
-      });
-
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-
-      chat = await client.chat.findFirst({
+    try {
+      const user = socket['user'];
+      const userId = user.id;
+      let chat = await client.chat.findFirst({
         where: {
-          users: { some: { id: sendMessageRequestDto.target } },
+          id: sendMessageRequestDto.target,
         },
         include: { users: true },
       });
 
       if (!chat) {
-        chat = await client.chat.create({
-          data: {
-            users: {
-              connect: [{ id: sendMessageRequestDto.target }, { id: userId }],
-            },
+        const user = await client.user.findUnique({
+          where: { id: sendMessageRequestDto.target },
+        });
+
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+
+        chat = await client.chat.findFirst({
+          where: {
+            users: { some: { id: sendMessageRequestDto.target } },
           },
           include: { users: true },
         });
-      }
-    }
 
-    const message = await client.message.create({
-      data: {
-        userId: userId,
-        chatId: chat.id,
-        content: sendMessageRequestDto.content,
-        read: false,
-      },
-    });
-
-    chat.users
-      .filter((chatUser) => chatUser.id !== userId)
-      .forEach((chatUser) => {
-        const clientSocket = this.connectedClients.get(chatUser.id);
-        if (clientSocket) {
-          clientSocket.emit(
-            'message_sent',
-            new MessageSentResponseDto(message),
-          );
+        if (!chat) {
+          chat = await client.chat.create({
+            data: {
+              users: {
+                connect: [{ id: sendMessageRequestDto.target }, { id: userId }],
+              },
+            },
+            include: { users: true },
+          });
         }
+      }
+
+      const message = await client.message.create({
+        data: {
+          userId: userId,
+          chatId: chat.id,
+          content: sendMessageRequestDto.content,
+          read: false,
+        },
       });
 
-    return new MessageSentResponseDto(message);
+      chat.users
+        .filter((chatUser) => chatUser.id !== userId)
+        .forEach((chatUser) => {
+          const clientSocket = this.connectedClients.get(chatUser.id);
+          if (clientSocket) {
+            clientSocket.emit(
+              'message_sent',
+              new MessageSentResponseDto(message),
+            );
+          }
+        });
+
+      return new MessageSentResponseDto(message);
+    } catch (error) {
+      socket.emit('error', {
+        message: 'An error occurred while sending the message.',
+        error: error.message,
+        status: error.status,
+      });
+    }
+  }
+
+  async handleGetHistory(
+    socket: Socket,
+    getHistoryRequestDto: GetHistoryRequestDto,
+  ): Promise<void> {
+    try {
+      const history = await client.message.findMany({
+        where: { chatId: getHistoryRequestDto.chatId },
+        orderBy: {
+          created_at: 'asc',
+        },
+      });
+
+      const unreadMessages = history.filter(
+        (message) => message.read === false,
+      );
+
+      for (const message of unreadMessages) {
+        await client.message.update({
+          where: { id: message.id },
+          data: { read: true },
+        });
+      }
+
+      const groupedMessages = history.reduce((acc, message) => {
+        const dateKey = message.created_at.toISOString();
+        acc[dateKey] = acc[dateKey] || [];
+        acc[dateKey].push(message);
+        return acc;
+      }, {});
+
+      socket.emit(
+        'response_history',
+        new GetHistoryResponseDto(groupedMessages),
+      );
+    } catch (error) {
+      socket.emit('error', {
+        message: 'An error occurred while retrieving message history.',
+        error: error.message,
+        status: error.status,
+      });
+    }
   }
 }
