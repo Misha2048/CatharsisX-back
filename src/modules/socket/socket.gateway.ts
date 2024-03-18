@@ -6,7 +6,11 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { SocketService } from './socket.service';
-import { GetHistoryRequestDto, SendMessageRequestDto } from 'src/dto/socket';
+import {
+  GetChatsRequestDto,
+  GetHistoryRequestDto,
+  SendMessageRequestDto,
+} from 'src/dto/socket';
 
 @WebSocketGateway()
 export class SocketGateway implements OnGatewayConnection {
@@ -34,5 +38,13 @@ export class SocketGateway implements OnGatewayConnection {
     getHistoryRequestDto: GetHistoryRequestDto,
   ): Promise<void> {
     await this.socketService.handleGetHistory(socket, getHistoryRequestDto);
+  }
+
+  @SubscribeMessage('get_chats')
+  async handleGetChats(
+    socket: Socket,
+    getChatsRequestDto: GetChatsRequestDto,
+  ): Promise<void> {
+    await this.socketService.handleGetChats(socket, getChatsRequestDto);
   }
 }
