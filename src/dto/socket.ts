@@ -68,3 +68,16 @@ export class GetChatsResponseDto {
   @ApiProperty({ type: [ChatInfoResponse], description: 'New chats' })
   new: ChatInfoResponse[];
 }
+
+export class MessageReadPesponseDto {
+  constructor(message: Message) {
+    this.chatId = message.chatId;
+    this.messageId = message.id;
+  }
+
+  @ApiProperty()
+  chatId: string;
+
+  @ApiProperty()
+  messageId: string;
+}
