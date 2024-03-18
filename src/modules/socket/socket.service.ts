@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import {
+  ChatInfoResponse,
+  GetChatsRequestDto,
   GetHistoryRequestDto,
   GetHistoryResponseDto,
   MessageSentResponseDto,
@@ -153,6 +155,91 @@ export class SocketService {
     } catch (error) {
       socket.emit('error', {
         message: 'An error occurred while retrieving message history.',
+        error: error.message,
+        status: error.status,
+      });
+    }
+  }
+
+  async handleGetChats(
+    socket: Socket,
+    getChatsRequestDto: GetChatsRequestDto,
+  ): Promise<void> {
+    try {
+      const user = socket['user'];
+      const userId = user.id;
+      let users;
+
+      if (getChatsRequestDto.name) {
+        users = await client.user.findMany({
+          where: {
+            AND: [
+              {
+                OR: [
+                  { first_name: { contains: getChatsRequestDto.name } },
+                  { last_name: { contains: getChatsRequestDto.name } },
+                ],
+              },
+              {
+                NOT: {
+                  id: userId,
+                },
+              },
+            ],
+          },
+          include: {
+            chats: {
+              include: {
+                messages: true,
+              },
+            },
+          },
+        });
+      } else {
+        users = await client.user.findMany({
+          where: {
+            NOT: {
+              id: userId,
+            },
+          },
+          include: {
+            chats: {
+              include: {
+                messages: true,
+              },
+            },
+          },
+        });
+      }
+
+      const responseChats = {
+        existing: [],
+        new: [],
+      };
+
+      for (const user of users) {
+        for (const chat of user.chats) {
+          if (chat.messages.length > 0) {
+            responseChats.existing.push({
+              id: chat.id,
+              name: `${user.last_name} ${user.first_name}`,
+              unread: chat.messages.filter((message) => !message.read).length,
+            });
+          } else {
+            responseChats.new.push({
+              id: user.id,
+              name: `${user.last_name} ${user.first_name}`,
+              unread: 0,
+            });
+          }
+        }
+      }
+
+      socket.emit('response_chats', responseChats);
+    } catch (error) {
+      console.log(error);
+      socket.emit('error', {
+        message: 'An error occurred while retrieving chats.',
         error: error.message,
         status: error.status,
       });

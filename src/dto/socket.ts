@@ -43,3 +43,28 @@ export class GetHistoryResponseDto {
   }
   [date: string]: Message[];
 }
+
+export class GetChatsRequestDto {
+  @ApiProperty()
+  @IsOptional()
+  name?: string;
+}
+
+export class ChatInfoResponse {
+  @ApiProperty({ description: 'Chat or user id' })
+  id: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty({ description: 'Number of unread messages' })
+  unread: number;
+}
+
+export class GetChatsResponseDto {
+  @ApiProperty({ type: [ChatInfoResponse], description: 'Existing chats' })
+  existing: ChatInfoResponse[];
+
+  @ApiProperty({ type: [ChatInfoResponse], description: 'New chats' })
+  new: ChatInfoResponse[];
+}
