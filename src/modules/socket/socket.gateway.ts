@@ -20,8 +20,7 @@ export class SocketGateway implements OnGatewayConnection {
   constructor(private readonly socketService: SocketService) {}
 
   async handleConnection(socket: Socket): Promise<void> {
-    const token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRlY2QyYmZhLWFhMjQtNDI0Mi05M2Y4LWMyMDM4YzdhZjMyYyIsImlhdCI6MTcxMDc1NjIxNiwiZXhwIjoxNzEwNzU3MTE2fQ.1NtbEMPN1UbhjqyptwmYh9tuGTOTdwHQxi-tL2eBPRc';
+    const token = socket.handshake.auth.token;
     await this.socketService.handleConnection(socket, token);
   }
 
