@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import {
-  ChatInfoResponse,
   GetChatsRequestDto,
   GetHistoryRequestDto,
   GetHistoryResponseDto,
+  MessageReadPesponseDto,
   MessageSentResponseDto,
   SendMessageRequestDto,
 } from 'src/dto/socket';
@@ -140,6 +140,10 @@ export class SocketService {
           data: { read: true },
         });
       }
+
+      unreadMessages.forEach((message) => {
+        socket.emit('message_read', new MessageReadPesponseDto(message));
+      });
 
       const groupedMessages = history.reduce((acc, message) => {
         const dateKey = message.created_at.toISOString();
