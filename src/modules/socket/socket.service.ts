@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import {
   GetChatsRequestDto,
@@ -27,7 +23,12 @@ export class SocketService {
 
   async handleConnection(socket: Socket, token: string): Promise<void> {
     if (!token) {
-      throw new UnauthorizedException('Missing JWT token');
+      socket.emit('error', {
+        message: 'Missing JWT token',
+        error: 'Unauthorized',
+        status: 401,
+      });
+      return;
     }
     try {
       const payload = await this.jwtService.verifyAsync(token);
