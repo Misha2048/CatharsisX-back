@@ -229,7 +229,7 @@ export class SocketService {
           ).length;
           responseChats.existing.push({
             id: chat.id,
-            name: `${user.last_name} ${user.first_name}`,
+            name: `${user.first_name} ${user.last_name}`,
             unread: unreadMessagesCount,
           });
         });
@@ -239,7 +239,7 @@ export class SocketService {
         users.forEach((user) => {
           responseChats.new.push({
             id: user.id,
-            name: `${user.last_name} ${user.first_name}`,
+            name: `${user.first_name} ${user.last_name}`,
             unread: 0,
           });
         });
