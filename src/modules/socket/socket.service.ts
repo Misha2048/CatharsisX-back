@@ -221,22 +221,27 @@ export class SocketService {
         new: [],
       };
 
-      for (const user of users) {
-        for (const chat of user.chats) {
-          if (chat.messages.length > 0) {
-            responseChats.existing.push({
-              id: chat.id,
-              name: `${user.last_name} ${user.first_name}`,
-              unread: chat.messages.filter((message) => !message.read).length,
-            });
-          } else {
-            responseChats.new.push({
-              id: user.id,
-              name: `${user.last_name} ${user.first_name}`,
-              unread: 0,
-            });
-          }
-        }
+      if (!getChatsRequestDto.name) {
+        user.chats.forEach((chat) => {
+          const unreadMessagesCount = chat.messages.filter(
+            (message) => !message.read,
+          ).length;
+          responseChats.existing.push({
+            id: chat.id,
+            name: `${user.last_name} ${user.first_name}`,
+            unread: unreadMessagesCount,
+          });
+        });
+      }
+
+      if (getChatsRequestDto.name) {
+        users.forEach((user) => {
+          responseChats.new.push({
+            id: user.id,
+            name: `${user.last_name} ${user.first_name}`,
+            unread: 0,
+          });
+        });
       }
 
       socket.emit('response_chats', responseChats);
