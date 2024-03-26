@@ -12,7 +12,7 @@ import {
   SendMessageRequestDto,
 } from 'src/dto/socket';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class SocketGateway implements OnGatewayConnection {
   @WebSocketServer()
   private server: Socket;
