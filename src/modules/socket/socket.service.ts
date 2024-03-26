@@ -227,7 +227,7 @@ export class SocketService {
           if (chat.messages.length > 0) {
             responseChats.existing.push({
               id: chat.id,
-              name: `${user.last_name} ${user.first_name}`,
+              name: `${user.first_name} ${user.last_name}`,
               unread: chat.messages.filter((message) => !message.read).length,
             });
           } else {
