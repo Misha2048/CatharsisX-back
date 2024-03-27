@@ -173,13 +173,41 @@ export class SocketService {
     try {
       const user = socket['user'];
       const userId = user.id;
-      console.log('Current user ID:', userId);
 
-      let users;
+      const responseChats = {
+        existing: [],
+        new: [],
+      };
+
+      const existingChats = await client.chat.findMany({
+        where: {
+          users: {
+            some: {
+              id: userId,
+            },
+          },
+        },
+        include: {
+          messages: true,
+          users: true,
+        },
+      });
+
+      for (const chat of existingChats) {
+        const otherUser = chat.users.find(
+          (otherUser) => otherUser.id !== userId,
+        );
+        responseChats.existing.push({
+          id: chat.id,
+          name: `${otherUser.first_name} ${otherUser.last_name}`,
+          unread: chat.messages.filter(
+            (message) => !message.read && message.userId !== userId,
+          ).length,
+        });
+      }
 
       if (getChatsRequestDto.name) {
-        console.log('Searching for users with name:', getChatsRequestDto.name);
-        users = await client.user.findMany({
+        const newUsers = await client.user.findMany({
           where: {
             AND: [
               {
@@ -205,72 +233,7 @@ export class SocketService {
               },
             ],
           },
-          include: {
-            chats: {
-              include: {
-                messages: true,
-              },
-            },
-          },
         });
-      } else {
-        console.log("No name provided. Searching for current user's chats.");
-        users = await client.user.findMany({
-          where: {
-            id: userId,
-          },
-          include: {
-            chats: {
-              include: {
-                messages: true,
-              },
-            },
-          },
-        });
-      }
-      console.log('Found users:', users);
-
-      const responseChats = {
-        existing: [],
-        new: [],
-      };
-
-      for (const user of users) {
-        for (const chat of user.chats) {
-          if (chat.messages.length > 0) {
-            responseChats.existing.push({
-              id: chat.id,
-              name: `${user.first_name} ${user.last_name}`,
-              unread: chat.messages.filter((message) => !message.read).length,
-            });
-          }
-        }
-      }
-
-      if (getChatsRequestDto.name) {
-        console.log(
-          'Searching for new users with name:',
-          getChatsRequestDto.name,
-        );
-        const newUsers = await client.user.findMany({
-          where: {
-            OR: [
-              {
-                first_name: {
-                  contains: getChatsRequestDto.name,
-                  mode: 'insensitive',
-                },
-              },
-              {
-                last_name: {
-                  contains: getChatsRequestDto.name,
-                  mode: 'insensitive',
-                },
-              },
-            ],
-          },
-        });
-        console.log('Found new users:', newUsers);
 
         for (const newUser of newUsers) {
           responseChats.new.push({
@@ -280,6 +243,7 @@ export class SocketService {
           });
         }
       }
+
       console.log('Response chats:', responseChats);
 
       socket.emit('response_chats', responseChats);
