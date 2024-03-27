@@ -173,16 +173,29 @@ export class SocketService {
     try {
       const user = socket['user'];
       const userId = user.id;
+      console.log('Current user ID:', userId);
+
       let users;
 
       if (getChatsRequestDto.name) {
+        console.log('Searching for users with name:', getChatsRequestDto.name);
         users = await client.user.findMany({
           where: {
             AND: [
               {
                 OR: [
-                  { first_name: { contains: getChatsRequestDto.name } },
-                  { last_name: { contains: getChatsRequestDto.name } },
+                  {
+                    first_name: {
+                      contains: getChatsRequestDto.name,
+                      mode: 'insensitive',
+                    },
+                  },
+                  {
+                    last_name: {
+                      contains: getChatsRequestDto.name,
+                      mode: 'insensitive',
+                    },
+                  },
                 ],
               },
               {
@@ -201,6 +214,7 @@ export class SocketService {
           },
         });
       } else {
+        console.log("No name provided. Searching for current user's chats.");
         users = await client.user.findMany({
           where: {
             id: userId,
@@ -214,6 +228,7 @@ export class SocketService {
           },
         });
       }
+      console.log('Found users:', users);
 
       const responseChats = {
         existing: [],
@@ -233,14 +248,29 @@ export class SocketService {
       }
 
       if (getChatsRequestDto.name) {
+        console.log(
+          'Searching for new users with name:',
+          getChatsRequestDto.name,
+        );
         const newUsers = await client.user.findMany({
           where: {
             OR: [
-              { first_name: { contains: getChatsRequestDto.name } },
-              { last_name: { contains: getChatsRequestDto.name } },
+              {
+                first_name: {
+                  contains: getChatsRequestDto.name,
+                  mode: 'insensitive',
+                },
+              },
+              {
+                last_name: {
+                  contains: getChatsRequestDto.name,
+                  mode: 'insensitive',
+                },
+              },
             ],
           },
         });
+        console.log('Found new users:', newUsers);
 
         for (const newUser of newUsers) {
           responseChats.new.push({
@@ -250,6 +280,7 @@ export class SocketService {
           });
         }
       }
+      console.log('Response chats:', responseChats);
 
       socket.emit('response_chats', responseChats);
     } catch (error) {
