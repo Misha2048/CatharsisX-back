@@ -203,9 +203,7 @@ export class SocketService {
       } else {
         users = await client.user.findMany({
           where: {
-            NOT: {
-              id: userId,
-            },
+            id: userId,
           },
           include: {
             chats: {
@@ -222,27 +220,35 @@ export class SocketService {
         new: [],
       };
 
-      if (!getChatsRequestDto.name) {
-        user.chats.forEach((chat) => {
-          const unreadMessagesCount = chat.messages.filter(
-            (message) => !message.read,
-          ).length;
-          responseChats.existing.push({
-            id: chat.id,
-            name: `${user.first_name} ${user.last_name}`,
-            unread: unreadMessagesCount,
-          });
-        });
+      for (const user of users) {
+        for (const chat of user.chats) {
+          if (chat.messages.length > 0) {
+            responseChats.existing.push({
+              id: chat.id,
+              name: `${user.first_name} ${user.last_name}`,
+              unread: chat.messages.filter((message) => !message.read).length,
+            });
+          }
+        }
       }
 
       if (getChatsRequestDto.name) {
-        users.forEach((user) => {
+        const newUsers = await client.user.findMany({
+          where: {
+            OR: [
+              { first_name: { contains: getChatsRequestDto.name } },
+              { last_name: { contains: getChatsRequestDto.name } },
+            ],
+          },
+        });
+
+        for (const newUser of newUsers) {
           responseChats.new.push({
-            id: user.id,
-            name: `${user.first_name} ${user.last_name}`,
+            id: newUser.id,
+            name: `${newUser.first_name} ${newUser.last_name}`,
             unread: 0,
           });
-        });
+        }
       }
 
       socket.emit('response_chats', responseChats);
