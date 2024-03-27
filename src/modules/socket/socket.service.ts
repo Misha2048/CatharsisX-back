@@ -244,8 +244,6 @@ export class SocketService {
         }
       }
 
-      console.log('Response chats:', responseChats);
-
       socket.emit('response_chats', responseChats);
     } catch (error) {
       console.log(error);
