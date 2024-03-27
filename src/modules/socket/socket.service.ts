@@ -231,6 +231,19 @@ export class SocketService {
                   id: userId,
                 },
               },
+              {
+                NOT: {
+                  chats: {
+                    some: {
+                      users: {
+                        some: {
+                          id: userId,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
             ],
           },
         });
