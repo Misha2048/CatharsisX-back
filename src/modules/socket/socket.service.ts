@@ -179,19 +179,66 @@ export class SocketService {
         new: [],
       };
 
-      const existingChats = await client.chat.findMany({
-        where: {
-          users: {
-            some: {
-              id: userId,
+      let existingChats;
+
+      if (getChatsRequestDto.name) {
+        existingChats = await client.chat.findMany({
+          where: {
+            users: {
+              some: {
+                id: userId,
+              },
+            },
+            NOT: {
+              users: {
+                some: {
+                  id: userId,
+                },
+              },
+            },
+            OR: [
+              {
+                users: {
+                  some: {
+                    first_name: {
+                      contains: getChatsRequestDto.name,
+                      mode: 'insensitive',
+                    },
+                  },
+                },
+              },
+              {
+                users: {
+                  some: {
+                    last_name: {
+                      contains: getChatsRequestDto.name,
+                      mode: 'insensitive',
+                    },
+                  },
+                },
+              },
+            ],
+          },
+          include: {
+            messages: true,
+            users: true,
+          },
+        });
+      } else {
+        existingChats = await client.chat.findMany({
+          where: {
+            users: {
+              some: {
+                id: userId,
+              },
             },
           },
-        },
-        include: {
-          messages: true,
-          users: true,
-        },
-      });
+          include: {
+            messages: true,
+            users: true,
+          },
+        });
+      }
 
       for (const chat of existingChats) {
         const otherUser = chat.users.find(
