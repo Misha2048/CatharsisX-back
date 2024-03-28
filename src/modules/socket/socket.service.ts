@@ -97,17 +97,10 @@ export class SocketService {
         },
       });
 
-      chat.users
-        .filter((chatUser) => chatUser.id !== userId)
-        .forEach((chatUser) => {
-          const clientSocket = this.connectedClients.get(chatUser.id);
-          if (clientSocket) {
-            clientSocket.emit(
-              'message_sent',
-              new MessageSentResponseDto(message),
-            );
-          }
-        });
+      socket.broadcast.emit(
+        'message_sent',
+        new MessageSentResponseDto(message),
+      );
 
       return new MessageSentResponseDto(message);
     } catch (error) {
