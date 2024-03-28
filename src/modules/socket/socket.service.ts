@@ -172,19 +172,61 @@ export class SocketService {
         new: [],
       };
 
-      const existingChats = await client.chat.findMany({
-        where: {
-          users: {
-            some: {
-              id: userId,
+      let existingChats;
+
+      if (getChatsRequestDto.name) {
+        existingChats = await client.chat.findMany({
+          where: {
+            AND: [
+              {
+                users: {
+                  some: {
+                    id: userId,
+                  },
+                },
+              },
+              {
+                users: {
+                  some: {
+                    OR: [
+                      {
+                        first_name: {
+                          contains: getChatsRequestDto.name,
+                          mode: 'insensitive',
+                        },
+                      },
+                      {
+                        last_name: {
+                          contains: getChatsRequestDto.name,
+                          mode: 'insensitive',
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+          include: {
+            messages: true,
+            users: true,
+          },
+        });
+      } else {
+        existingChats = await client.chat.findMany({
+          where: {
+            users: {
+              some: {
+                id: userId,
+              },
             },
           },
-        },
-        include: {
-          messages: true,
-          users: true,
-        },
-      });
+          include: {
+            messages: true,
+            users: true,
+          },
+        });
+      }
 
       for (const chat of existingChats) {
         const otherUser = chat.users.find(
@@ -222,6 +264,19 @@ export class SocketService {
               {
                 NOT: {
                   id: userId,
+                },
+              },
+              {
+                NOT: {
+                  chats: {
+                    some: {
+                      users: {
+                        some: {
+                          id: userId,
+                        },
+                      },
+                    },
+                  },
                 },
               },
             ],
