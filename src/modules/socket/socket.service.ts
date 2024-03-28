@@ -184,36 +184,31 @@ export class SocketService {
       if (getChatsRequestDto.name) {
         existingChats = await client.chat.findMany({
           where: {
-            users: {
-              some: {
-                id: userId,
-              },
-            },
-            NOT: {
-              users: {
-                some: {
-                  id: userId,
-                },
-              },
-            },
-            OR: [
+            AND: [
               {
                 users: {
                   some: {
-                    first_name: {
-                      contains: getChatsRequestDto.name,
-                      mode: 'insensitive',
-                    },
+                    id: userId,
                   },
                 },
               },
               {
                 users: {
                   some: {
-                    last_name: {
-                      contains: getChatsRequestDto.name,
-                      mode: 'insensitive',
-                    },
+                    OR: [
+                      {
+                        first_name: {
+                          contains: getChatsRequestDto.name,
+                          mode: 'insensitive',
+                        },
+                      },
+                      {
+                        last_name: {
+                          contains: getChatsRequestDto.name,
+                          mode: 'insensitive',
+                        },
+                      },
+                    ],
                   },
                 },
               },
